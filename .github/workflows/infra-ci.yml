@@ -58,10 +58,15 @@ jobs:
         id: resolve
         working-directory: .
         env:
-          IMAGE: ghcr.io/${{ github.repository }}-api
           TAG: ${{ inputs.image_tag }}
         run: |
           set -euo pipefail
+
+          # github.repository keeps the owner's capitalisation, and GHCR image
+          # names are lowercase. docker/metadata-action normalises this for us on
+          # the publish side; imagetools does not, so do it here or every lookup
+          # 404s on the capital letters.
+          IMAGE="$(echo "ghcr.io/${GITHUB_REPOSITORY}-api" | tr '[:upper:]' '[:lower:]')"
 
           if ! digest="$(docker buildx imagetools inspect "$IMAGE:$TAG" --format '{{.Manifest.Digest}}' 2>/dev/null)"; then
             echo "::error::No image found at $IMAGE:$TAG."
