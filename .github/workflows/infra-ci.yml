@@ -39,6 +39,13 @@ jobs:
       # passed via -backend-config, those are the standard AWS SDK env vars.
       AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      # OpenTofu reads TF_VAR_<name> automatically for the matching input
+      # variable — avoids ever interpolating a secret into a `run:` script
+      # body (a `-var="...${{ secrets.X }}..."` string breaks if the value
+      # contains a shell-special character; this doesn't).
+      TF_VAR_kubeconfig_path: ./kubeconfig
+      TF_VAR_postgres_password: ${{ secrets.POSTGRES_PASSWORD }}
+      TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
 
     steps:
       - uses: actions/checkout@v5
@@ -52,14 +59,18 @@ jobs:
           tofu_wrapper: false
 
       - name: Write kubeconfig
-        run: echo "${{ secrets.PI_CLUSTER_KUBECONFIG }}" > kubeconfig
+        env:
+          KUBECONFIG_CONTENT: ${{ secrets.PI_CLUSTER_KUBECONFIG }}
+        run: echo "$KUBECONFIG_CONTENT" > kubeconfig
 
       - name: Write backend config
+        env:
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           cat > backend.hcl <<EOF
           bucket = "poker-game-manager-tfstate"
           endpoints = {
-            s3 = "https://${{ secrets.CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com"
+            s3 = "https://${CF_ACCOUNT_ID}.r2.cloudflarestorage.com"
           }
           EOF
 
@@ -67,7 +78,7 @@ jobs:
         run: tofu init -backend-config=backend.hcl
 
       - name: plan
-        run: tofu plan -out=tfplan -var="kubeconfig_path=./kubeconfig" -var="postgres_password=${{ secrets.POSTGRES_PASSWORD }}" -var="jwt_secret=${{ secrets.JWT_SECRET }}"
+        run: tofu plan -out=tfplan
 
       - name: apply
         if: inputs.action == 'apply'
