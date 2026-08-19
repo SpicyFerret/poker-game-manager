@@ -1,0 +1,45 @@
+name: Tunnel route check
+
+# Read-only guard on the Cloudflare Tunnel route that fronts the API.
+#
+# It never writes. The Cloudflare provider has no additive resource for a
+# tunnel's public hostnames — its only ingress resource replaces the whole rule
+# list — so managing our single route from this repo would also make it the
+# owner of portainer, grafana, prometheus and the personal-website routes. That
+# trade isn't worth it, so the route is created by hand and this just notices
+# when it goes missing, instead of finding out through a player who can't log in.
+
+on:
+  schedule:
+    # Weekly. The route changes roughly never; this is a tripwire, not a monitor.
+    - cron: "17 9 * * 1"
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "infra/**"
+      - ".github/workflows/tunnel-route-check.yml"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Check credentials are available
+        id: creds
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        # Forked PRs get no secrets. Skipping beats failing on something the
+        # contributor can neither see nor fix.
+        run: echo "present=${{ env.CLOUDFLARE_API_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
+
+      - name: Verify the API's tunnel route
+        if: steps.creds.outputs.present == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_TUNNEL_ID: ${{ secrets.CLOUDFLARE_TUNNEL_ID }}
+          API_TUNNEL_HOSTNAME: ${{ vars.API_TUNNEL_HOSTNAME }}
+          EXPECTED_SERVICE: http://web-api.poker-game-manager.svc.cluster.local:80
+        run: bash infra/scripts/verify-tunnel-route.sh

@@ -44,11 +44,27 @@ Finished Jobs are reaped an hour after completion.
 
 ## What this module does *not* do
 
-- **Doesn't create the Cloudflare Tunnel.** It already exists and runs
-  replicated as pods on the Pis, managed outside this repo. This module just
-  outputs `web_api_internal_url` — point the tunnel's public hostname at that
-  address, then set that public hostname as `API_ORIGIN` in
-  `frontend/wrangler.jsonc`.
+- **Doesn't create the Cloudflare Tunnel, or its routes.** The tunnel already
+  exists, runs replicated as pods on the Pis, and takes its configuration
+  remotely from Cloudflare. This module only outputs `web_api_internal_url`.
+
+  This one is a deliberate limit rather than an omission. The Cloudflare
+  provider has **no additive resource** for a tunnel's public hostnames:
+  `cloudflare_zero_trust_tunnel_cloudflared_route` handles private network CIDRs,
+  and the only ingress resource,
+  `cloudflare_zero_trust_tunnel_cloudflared_config`, replaces the *entire* rule
+  list. Declaring our single route here would therefore make this repo the owner
+  of every other route on that tunnel — `portainer`, `grafana`, `prometheus`,
+  `k8s` and the `personal-website` API — and a bad apply from a poker deploy
+  would take them down.
+
+  So the route is added by hand (Zero Trust → Networks → Tunnels → published
+  application routes → `HTTP`, `web-api.poker-game-manager.svc.cluster.local:80`;
+  HTTP, not HTTPS, because the API listens in plain text in-cluster), and
+  `.github/workflows/tunnel-route-check.yml` verifies weekly that it is still
+  there and still points at the right Service. That check is **read-only** — see
+  the header of `infra/scripts/verify-tunnel-route.sh`. It needs the API token to
+  carry `Account > Cloudflare Tunnel > Read`.
 - **Doesn't create an Ingress.** Traffic reaches `web-api` straight from the
   tunnel to the in-cluster `Service`, no ingress controller involved.
 - **Doesn't build or push the API image.** That's `.github/workflows/docker-publish.yml`,
