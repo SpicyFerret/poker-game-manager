@@ -1,4 +1,4 @@
-using Domain.Tables;
+﻿using Domain.Tables;
 
 namespace Application.Tables;
 
@@ -39,6 +39,13 @@ public sealed record ChipStockResponse
     public Guid DenominationId { get; init; }
     public int FaceValue { get; init; }
     public int EffectiveValue { get; init; }
+
+    /// <summary>
+    /// The chip's colour, as a palette token. Sent because at the table nobody
+    /// asks for "the 25s" — they ask for the reds, so counting and stock screens
+    /// need it to be the first thing you see.
+    /// </summary>
+    public string? Colour { get; init; }
 
     /// <summary>Still in the case: what it holds, less everything issued here.</summary>
     public int Remaining { get; init; }

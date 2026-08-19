@@ -1,38 +1,31 @@
-<div class="tab-body">
+<section class="section">
   @if (error(); as message) {
-    <p role="alert">{{ message }}</p>
+    <p role="alert" class="alert">{{ message }}</p>
   }
 
-  <form [formGroup]="form" (ngSubmit)="create()">
-    <mat-form-field class="form-field-full">
-      <mat-label i18n="@@field.role">Cargo</mat-label>
-      <mat-select formControlName="role">
-        @for (role of rolesICanInvite(); track role) {
-          <mat-option [value]="role">{{ role | roleLabel }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+  <button
+    matButton="filled"
+    type="button"
+    class="section__action"
+    [disabled]="busy()"
+    (click)="openCreate()"
+    i18n="@@invites.create"
+  >
+    Gerar convite
+  </button>
 
-    <mat-form-field class="form-field-full">
-      <mat-label i18n="@@field.maxUses">Limite de usos</mat-label>
-      <input matInput type="number" inputmode="numeric" formControlName="maxUses" />
-      <mat-hint i18n="@@invites.maxUsesHint">Deixe em branco para ilimitado.</mat-hint>
-    </mat-form-field>
+  @if (invites().length === 0) {
+    <p i18n="@@invites.empty">Nenhum convite ainda.</p>
+  }
 
-    <button matButton="filled" type="submit" [disabled]="busy()" i18n="@@invites.create">
-      Gerar convite
-    </button>
-  </form>
-
-  <mat-list>
-    @for (invite of invites(); track invite.id) {
-      <mat-list-item>
-        <span matListItemTitle class="code">{{ invite.code }}</span>
-
-        <span matListItemLine>
+  @for (invite of invites(); track invite.id) {
+    <mat-card class="invite" [class.invite--revoked]="invite.isRevoked">
+      <mat-card-header>
+        <mat-card-title class="code">{{ invite.code }}</mat-card-title>
+        <mat-card-subtitle>
           {{ invite.role | roleLabel }} ·
           @if (invite.isRevoked) {
-            <span class="warn" i18n="@@invites.revoked">revogado</span>
+            <span class="alert" i18n="@@invites.revoked">revogado</span>
           } @else if (invite.maxUses === null) {
             <span i18n="@@invites.usesUnlimited">{{ invite.uses }} usos</span>
           } @else {
@@ -41,25 +34,25 @@
           @if (copied() === invite.code) {
             <span i18n="@@invites.copied">· copiado</span>
           }
-        </span>
+        </mat-card-subtitle>
+      </mat-card-header>
 
-        <span matListItemMeta>
-          <button matButton type="button" (click)="copy(invite.code)" i18n="@@common.copy">
-            Copiar
+      <mat-card-actions align="end">
+        <button matButton type="button" (click)="copy(invite.code)" i18n="@@common.copy">
+          Copiar
+        </button>
+        @if (!invite.isRevoked) {
+          <button
+            matButton
+            type="button"
+            [disabled]="busy()"
+            (click)="revoke(invite)"
+            i18n="@@invites.revoke"
+          >
+            Revogar
           </button>
-          @if (!invite.isRevoked) {
-            <button
-              matButton
-              type="button"
-              [disabled]="busy()"
-              (click)="revoke(invite)"
-              i18n="@@invites.revoke"
-            >
-              Revogar
-            </button>
-          }
-        </span>
-      </mat-list-item>
-    }
-  </mat-list>
-</div>
+        }
+      </mat-card-actions>
+    </mat-card>
+  }
+</section>

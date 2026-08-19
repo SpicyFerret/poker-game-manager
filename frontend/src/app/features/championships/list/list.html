@@ -26,29 +26,30 @@
   }
 
   @for (championship of items(); track championship.id) {
-    <mat-card class="championship-card">
-      <mat-card-header>
-        <mat-card-title>{{ championship.name }}</mat-card-title>
-        <mat-card-subtitle>
-          {{ championship.role | roleLabel }} ·
-          <span i18n="@@championships.memberCount">{championship.memberCount, plural,
-            =1 {1 membro}
-            other {{{championship.memberCount}} membros}
-          }</span>
-        </mat-card-subtitle>
-      </mat-card-header>
+    <!--
+      The whole card is the link, rather than a card with an "open" button in it.
+      A card that looks tappable should be tappable, and it is a far bigger target
+      on a phone than a button in the corner.
+    -->
+    <a class="card-link" [routerLink]="['/championships', championship.id]">
+      <mat-card class="championship-card">
+        <mat-card-header>
+          <mat-card-title>{{ championship.name }}</mat-card-title>
+          <mat-card-subtitle>
+            {{ championship.role | roleLabel }} ·
+            <span i18n="@@championships.memberCount">{championship.memberCount, plural,
+              =1 {1 membro}
+              other {{{championship.memberCount}} membros}
+            }</span>
+          </mat-card-subtitle>
+        </mat-card-header>
 
-      @if (championship.description) {
-        <mat-card-content>
-          <p>{{ championship.description }}</p>
-        </mat-card-content>
-      }
-
-      <mat-card-actions>
-        <a matButton [routerLink]="['/championships', championship.id]" i18n="@@common.open"
-          >Abrir</a
-        >
-      </mat-card-actions>
-    </mat-card>
+        @if (championship.description) {
+          <mat-card-content>
+            <p>{{ championship.description }}</p>
+          </mat-card-content>
+        }
+      </mat-card>
+    </a>
   }
 </div>

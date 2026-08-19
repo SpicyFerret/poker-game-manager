@@ -5,6 +5,25 @@
   margin-bottom: 1rem;
 }
 
+// Wraps the card so the whole surface is the target, without inheriting link
+// underlines and colours into the card's own text.
+.card-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+
+  &:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: 2px;
+    border-radius: 12px;
+  }
+}
+
 .championship-card {
   margin-bottom: 0.75rem;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--mat-sys-surface-container-high);
+  }
 }

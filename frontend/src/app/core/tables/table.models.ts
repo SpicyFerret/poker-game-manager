@@ -31,6 +31,8 @@ export interface ChipStock {
   denominationId: string;
   faceValue: number;
   effectiveValue: number;
+  /** Palette token. At the table people ask for the reds, not for the 25s. */
+  colour: string | null;
   remaining: number;
   issued: number;
 }

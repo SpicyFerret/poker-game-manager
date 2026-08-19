@@ -1,10 +1,10 @@
 import { Component, OnInit, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
 import { Router, RouterLink } from '@angular/router';
 
@@ -29,7 +29,7 @@ import { TablesService } from '../../../../core/tables/tables.service';
   imports: [
     ReactiveFormsModule,
     RouterLink,
-    MatListModule,
+    MatCardModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,

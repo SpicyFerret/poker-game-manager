@@ -1,15 +1,20 @@
-.tab-body {
-  padding: 1rem 0;
+.section {
+  padding: 0.5rem 0;
 }
 
-.add-member {
-  margin-bottom: 1rem;
+.section__action {
+  width: 100%;
+  margin-bottom: 0.75rem;
 }
 
-.role-select {
-  width: 12rem;
+.member {
+  margin-bottom: 0.75rem;
 }
 
-.warn {
+.member__role {
+  width: 100%;
+}
+
+.alert {
   color: var(--mat-sys-error);
 }

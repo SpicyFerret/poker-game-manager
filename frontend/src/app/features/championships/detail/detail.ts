@@ -2,12 +2,12 @@ import { Component, OnInit, computed, inject, input, signal } from '@angular/cor
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatTabsModule } from '@angular/material/tabs';
 
 import { describeError } from '../../../core/api/problem-details';
 import { Championship, atLeast } from '../../../core/championships/championship.models';
 import { ChampionshipsService } from '../../../core/championships/championships.service';
 import { RoleLabelPipe } from '../../../core/championships/role-label.pipe';
+import { NavSection, SectionNav } from '../../../shared/section-nav/section-nav';
 import { ChipSetsTab } from './chip-sets/chip-sets';
 import { InvitesTab } from './invites/invites';
 import { MembersTab } from './members/members';
@@ -19,10 +19,10 @@ import { TablesTab } from './tables/tables';
   selector: 'app-championship-detail',
   imports: [
     MatCardModule,
-    MatTabsModule,
     MatButtonModule,
     MatProgressBarModule,
     RoleLabelPipe,
+    SectionNav,
     TablesTab,
     MembersTab,
     InvitesTab,
@@ -50,6 +50,8 @@ export class ChampionshipDetail implements OnInit {
    */
   protected readonly setupOpen = signal(false);
 
+  protected readonly section = signal('members');
+
   protected readonly canManage = computed(() => {
     const championship = this.championship();
     return championship !== null && atLeast(championship.role, 'TableManager');
@@ -58,6 +60,23 @@ export class ChampionshipDetail implements OnInit {
   protected readonly canAdminister = computed(() => {
     const championship = this.championship();
     return championship !== null && atLeast(championship.role, 'Admin');
+  });
+
+  /** Invites are hidden from anyone who cannot issue them, since a code is a credential. */
+  protected readonly sections = computed<NavSection[]>(() => {
+    const sections: NavSection[] = [{ id: 'members', label: $localize`:@@tab.members:Membros` }];
+
+    if (this.canManage()) {
+      sections.push({ id: 'invites', label: $localize`:@@tab.invites:Convites` });
+    }
+
+    sections.push(
+      { id: 'chipSets', label: $localize`:@@tab.chipSets:Maletas` },
+      { id: 'seasons', label: $localize`:@@tab.seasons:Temporadas` },
+      { id: 'settings', label: $localize`:@@tab.settings:Configurações` },
+    );
+
+    return sections;
   });
 
   ngOnInit(): void {

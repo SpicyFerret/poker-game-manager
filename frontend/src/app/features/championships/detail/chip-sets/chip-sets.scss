@@ -1,31 +1,78 @@
-.tab-body {
-  padding: 1rem 0;
+.section {
+  padding: 0.5rem 0;
 }
 
-.chip-set-card {
-  margin-top: 0.75rem;
+.section__action {
+  width: 100%;
+  margin-bottom: 0.75rem;
 }
 
-.denominations {
-  margin: 0;
-  padding-left: 1.1rem;
+.chip-set {
+  margin-bottom: 0.75rem;
 }
 
-.colour {
-  color: var(--mat-sys-on-surface-variant);
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
-// Wraps to one field per line on a phone, and packs them across on anything wider.
-.denomination-row {
+// A chip reads as a chip: round, tinted with its own colour, value first. The
+// ink colour comes from the palette so it stays readable on every swatch and in
+// both themes.
+.chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 4.5rem;
+  padding: 0.6rem 0.5rem;
+  border: 2px dashed rgb(255 255 255 / 45%);
+  border-radius: 50%;
+  aspect-ratio: 1;
+  text-align: center;
+}
+
+.chip__face {
+  font: var(--mat-sys-title-medium);
+  line-height: 1.1;
+}
+
+.chip__worth,
+.chip__count {
+  font-size: 0.65rem;
+  line-height: 1.2;
+  opacity: 0.85;
+}
+
+.swatch {
+  display: inline-block;
+  width: 0.9rem;
+  height: 0.9rem;
+  margin-right: 0.5rem;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+.denomination {
+  margin-bottom: 0.5rem;
+}
+
+// One field per line on a phone, packed across on anything wider.
+.denomination__row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
   gap: 0.5rem;
   align-items: start;
-  margin-bottom: 0.5rem;
 }
 
 .editor-actions {
   display: flex;
   gap: 0.5rem;
   margin-top: 1rem;
+}
+
+.alert {
+  color: var(--mat-sys-error);
 }

@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { Observable } from 'rxjs';
 
 import { describeError } from '../../../../core/api/problem-details';
@@ -13,6 +14,7 @@ import {
   atLeast,
 } from '../../../../core/championships/championship.models';
 import { ChampionshipsService } from '../../../../core/championships/championships.service';
+import { CHIP_COLOURS, ChipColour, chipColour } from '../../../../shared/chip-colours';
 
 @Component({
   selector: 'app-chip-sets-tab',
@@ -22,6 +24,7 @@ import { ChampionshipsService } from '../../../../core/championships/championshi
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule,
   ],
   templateUrl: './chip-sets.html',
   styleUrl: './chip-sets.scss',
@@ -51,6 +54,14 @@ export class ChipSetsTab implements OnInit {
 
   protected get denominations(): FormArray {
     return this.form.controls.denominations;
+  }
+
+  /** The palette offered in the editor. */
+  protected readonly palette = CHIP_COLOURS;
+
+  /** Resolves a stored token to a colour, or null for anything unrecognised. */
+  protected colourOf(token: string | null): ChipColour | null {
+    return chipColour(token);
   }
 
   protected canAdminister(): boolean {

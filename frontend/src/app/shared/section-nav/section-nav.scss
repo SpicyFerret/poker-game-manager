@@ -1,0 +1,39 @@
+.strip {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.25rem 0 0.5rem;
+
+  // Drag with a finger, no visible bar eating vertical space on a phone.
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.strip__item {
+  flex: 0 0 auto;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-label-large);
+  cursor: pointer;
+
+  // Comfortably tappable at the table, where nobody is being precise.
+  min-height: 40px;
+
+  &:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: 2px;
+  }
+}
+
+.strip__item--selected {
+  border-color: transparent;
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+}

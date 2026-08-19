@@ -194,10 +194,6 @@
         <source><x id="INTERPOLATION" equiv-text="{{ chipSet.totalUnits }}"/> unidades no total</source>
         <target><x id="INTERPOLATION" equiv-text="{{ chipSet.totalUnits }}"/> units in total</target>
       </trans-unit>
-      <trans-unit id="chipSets.printed" datatype="html">
-        <source>ficha <x id="INTERPOLATION" equiv-text="{{ denomination.faceValue }}"/></source>
-        <target><x id="INTERPOLATION" equiv-text="{{ denomination.faceValue }}"/> chip</target>
-      </trans-unit>
       <trans-unit id="chipSets.countsAs" datatype="html">
         <source>, valendo <x id="INTERPOLATION" equiv-text="{{ denomination.effectiveValue }}"/></source>
         <target>, counting as <x id="INTERPOLATION" equiv-text="{{ denomination.effectiveValue }}"/></target>
@@ -329,10 +325,6 @@
       <trans-unit id="invites.loadFailed" datatype="html">
         <source>Não foi possível carregar os convites.</source>
         <target>The invites could not be loaded.</target>
-      </trans-unit>
-      <trans-unit id="invites.maxUsesInvalid" datatype="html">
-        <source>O limite de usos precisa ser um número inteiro maior que zero.</source>
-        <target>The use limit must be a whole number greater than zero.</target>
       </trans-unit>
       <trans-unit id="invites.createFailed" datatype="html">
         <source>Não foi possível criar o convite.</source>
@@ -479,10 +471,6 @@
             membros}}</source>
         <target>{VAR_PLURAL, plural, =1 {1 member} other {<x id="INTERPOLATION"/>
             members}}</target>
-      </trans-unit>
-      <trans-unit id="common.open" datatype="html">
-        <source>Abrir</source>
-        <target>Open</target>
       </trans-unit>
       <trans-unit id="championships.loadFailed" datatype="html">
         <source>Não foi possível carregar seus campeonatos.</source>
@@ -668,10 +656,6 @@
         <source> Iniciar mesa </source>
         <target> Start table </target>
       </trans-unit>
-      <trans-unit id="table.players" datatype="html">
-        <source>Jogadores</source>
-        <target>Players</target>
-      </trans-unit>
       <trans-unit id="table.paidIn" datatype="html">
         <source>pagou R$ <x id="INTERPOLATION" equiv-text="{{ player.paidIn }}"/></source>
         <target>paid R$ <x id="INTERPOLATION" equiv-text="{{ player.paidIn }}"/></target>
@@ -695,14 +679,6 @@
       <trans-unit id="table.dealIn" datatype="html">
         <source> Dar fichas </source>
         <target> Give chips </target>
-      </trans-unit>
-      <trans-unit id="table.case" datatype="html">
-        <source>Maleta</source>
-        <target>Chip case</target>
-      </trans-unit>
-      <trans-unit id="table.chipLabel" datatype="html">
-        <source>Ficha <x id="INTERPOLATION" equiv-text="{{ chip.faceValue }}"/></source>
-        <target><x id="INTERPOLATION" equiv-text="{{ chip.faceValue }}"/> chip</target>
       </trans-unit>
       <trans-unit id="table.chipCountsAs" datatype="html">
         <source>(vale <x id="INTERPOLATION" equiv-text="{{ chip.effectiveValue }}"/>)</source>
@@ -743,6 +719,82 @@
       <trans-unit id="table.codePrompt" datatype="html">
         <source>Código da mesa</source>
         <target>Table code</target>
+      </trans-unit>
+      <trans-unit id="chipSets.quantity" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ denomination.quantity }}"/> un.</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ denomination.quantity }}"/> pcs</target>
+      </trans-unit>
+      <trans-unit id="chipSets.editHeading" datatype="html">
+        <source>Maleta</source>
+        <target>Chip case</target>
+      </trans-unit>
+      <trans-unit id="chipSets.noColour" datatype="html">
+        <source>Sem cor</source>
+        <target>No colour</target>
+      </trans-unit>
+      <trans-unit id="invites.createHeading" datatype="html">
+        <source>Gerar convite</source>
+        <target>Generate invite</target>
+      </trans-unit>
+      <trans-unit id="invites.empty" datatype="html">
+        <source>Nenhum convite ainda.</source>
+        <target>No invites yet.</target>
+      </trans-unit>
+      <trans-unit id="members.addHeading" datatype="html">
+        <source>Adicionar membro</source>
+        <target>Add member</target>
+      </trans-unit>
+      <trans-unit id="tables.createHeading" datatype="html">
+        <source>Nova mesa</source>
+        <target>New table</target>
+      </trans-unit>
+      <trans-unit id="tableSection.players" datatype="html">
+        <source>Jogadores</source>
+        <target>Players</target>
+      </trans-unit>
+      <trans-unit id="tableSection.case" datatype="html">
+        <source>Maleta</source>
+        <target>Chip case</target>
+      </trans-unit>
+      <trans-unit id="chipColour.white" datatype="html">
+        <source>Branca</source>
+        <target>White</target>
+      </trans-unit>
+      <trans-unit id="chipColour.red" datatype="html">
+        <source>Vermelha</source>
+        <target>Red</target>
+      </trans-unit>
+      <trans-unit id="chipColour.green" datatype="html">
+        <source>Verde</source>
+        <target>Green</target>
+      </trans-unit>
+      <trans-unit id="chipColour.blue" datatype="html">
+        <source>Azul</source>
+        <target>Blue</target>
+      </trans-unit>
+      <trans-unit id="chipColour.black" datatype="html">
+        <source>Preta</source>
+        <target>Black</target>
+      </trans-unit>
+      <trans-unit id="chipColour.purple" datatype="html">
+        <source>Roxa</source>
+        <target>Purple</target>
+      </trans-unit>
+      <trans-unit id="chipColour.yellow" datatype="html">
+        <source>Amarela</source>
+        <target>Yellow</target>
+      </trans-unit>
+      <trans-unit id="chipColour.orange" datatype="html">
+        <source>Laranja</source>
+        <target>Orange</target>
+      </trans-unit>
+      <trans-unit id="chipColour.pink" datatype="html">
+        <source>Rosa</source>
+        <target>Pink</target>
+      </trans-unit>
+      <trans-unit id="chipColour.grey" datatype="html">
+        <source>Cinza</source>
+        <target>Grey</target>
       </trans-unit>
     </body>
   </file>

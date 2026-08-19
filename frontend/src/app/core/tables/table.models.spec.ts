@@ -71,8 +71,8 @@ describe('sortForDisplay', () => {
 
 describe('chip unit helpers', () => {
   const stock = [
-    { denominationId: 'a', faceValue: 5, effectiveValue: 5, remaining: 60, issued: 40 },
-    { denominationId: 'b', faceValue: 100, effectiveValue: 100, remaining: 92, issued: 8 },
+    { denominationId: 'a', faceValue: 5, effectiveValue: 5, colour: 'white', remaining: 60, issued: 40 },
+    { denominationId: 'b', faceValue: 100, effectiveValue: 100, colour: null, remaining: 92, issued: 8 },
   ];
 
   it('should count units by effective value, not face value', () => {

@@ -1,75 +1,87 @@
-<div class="tables">
+<section class="tables">
   @if (error(); as message) {
-    <p role="alert">{{ message }}</p>
+    <p role="alert" class="alert">{{ message }}</p>
   }
 
   @if (creating()) {
-    <form [formGroup]="form" (ngSubmit)="create()">
-      <mat-form-field class="form-field-full">
-        <mat-label i18n="@@field.tableName">Nome da mesa</mat-label>
-        <input matInput formControlName="name" />
-      </mat-form-field>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title i18n="@@tables.createHeading">Nova mesa</mat-card-title>
+      </mat-card-header>
 
-      <mat-form-field class="form-field-full">
-        <mat-label i18n="@@field.chipSet">Maleta</mat-label>
-        <mat-select formControlName="chipSetId">
-          @for (chipSet of chipSets(); track chipSet.id) {
-            <mat-option [value]="chipSet.id">{{ chipSet.name }}</mat-option>
-          }
-        </mat-select>
-        @if (chipSets().length === 0) {
-          <mat-hint i18n="@@tables.noChipSets">Cadastre uma maleta antes de abrir a mesa.</mat-hint>
-        }
-      </mat-form-field>
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="create()">
+          <mat-form-field class="form-field-full">
+            <mat-label i18n="@@field.tableName">Nome da mesa</mat-label>
+            <input matInput formControlName="name" />
+          </mat-form-field>
 
-      <mat-form-field class="form-field-full">
-        <mat-label i18n="@@field.buyIn">Buy-in (R$)</mat-label>
-        <input matInput type="number" inputmode="decimal" step="0.01" formControlName="buyIn" />
-        <mat-hint i18n="@@tables.buyInHint">Em branco usa o padrão do campeonato.</mat-hint>
-      </mat-form-field>
+          <mat-form-field class="form-field-full">
+            <mat-label i18n="@@field.chipSet">Maleta</mat-label>
+            <mat-select formControlName="chipSetId">
+              @for (chipSet of chipSets(); track chipSet.id) {
+                <mat-option [value]="chipSet.id">{{ chipSet.name }}</mat-option>
+              }
+            </mat-select>
+            @if (chipSets().length === 0) {
+              <mat-hint i18n="@@tables.noChipSets"
+                >Cadastre uma maleta antes de abrir a mesa.</mat-hint
+              >
+            }
+          </mat-form-field>
 
-      <mat-form-field class="form-field-full">
-        <mat-label i18n="@@field.rebuy">Rebuy (R$)</mat-label>
-        <input matInput type="number" inputmode="decimal" step="0.01" formControlName="rebuy" />
-      </mat-form-field>
+          <mat-form-field class="form-field-full">
+            <mat-label i18n="@@field.buyIn">Buy-in (R$)</mat-label>
+            <input matInput type="number" inputmode="decimal" step="0.01" formControlName="buyIn" />
+            <mat-hint i18n="@@tables.buyInHint">Em branco usa o padrão do campeonato.</mat-hint>
+          </mat-form-field>
 
-      <mat-form-field class="form-field-full">
-        <mat-label i18n="@@field.joinPolicy">Quem pode entrar</mat-label>
-        <mat-select formControlName="joinPolicy">
-          <mat-option value="AnyMember" i18n="@@joinPolicy.anyMember"
-            >Qualquer um do campeonato</mat-option
-          >
-          <mat-option value="Code" i18n="@@joinPolicy.code">Com código da mesa</mat-option>
-          <mat-option value="InviteOnly" i18n="@@joinPolicy.inviteOnly"
-            >Só quem for adicionado</mat-option
-          >
-        </mat-select>
-      </mat-form-field>
+          <mat-form-field class="form-field-full">
+            <mat-label i18n="@@field.rebuy">Rebuy (R$)</mat-label>
+            <input matInput type="number" inputmode="decimal" step="0.01" formControlName="rebuy" />
+          </mat-form-field>
 
-      <mat-checkbox formControlName="allowLateEntry" i18n="@@field.allowLateEntry">
-        Permitir entrar com a mesa já rolando
-      </mat-checkbox>
+          <mat-form-field class="form-field-full">
+            <mat-label i18n="@@field.joinPolicy">Quem pode entrar</mat-label>
+            <mat-select formControlName="joinPolicy">
+              <mat-option value="AnyMember" i18n="@@joinPolicy.anyMember"
+                >Qualquer um do campeonato</mat-option
+              >
+              <mat-option value="Code" i18n="@@joinPolicy.code">Com código da mesa</mat-option>
+              <mat-option value="InviteOnly" i18n="@@joinPolicy.inviteOnly"
+                >Só quem for adicionado</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
 
-      <mat-form-field class="form-field-full">
-        <mat-label i18n="@@field.smallChipReserve">Reserva de fichas pequenas</mat-label>
-        <input matInput type="number" inputmode="numeric" formControlName="smallChipReserve" />
-        <mat-hint i18n="@@tables.reserveHint"
-          >Fichas da menor denominação guardadas para os primeiros rebuys.</mat-hint
-        >
-      </mat-form-field>
+          <mat-checkbox formControlName="allowLateEntry" i18n="@@field.allowLateEntry">
+            Permitir entrar com a mesa já rolando
+          </mat-checkbox>
 
-      <div class="editor-actions">
-        <button
-          matButton="filled"
-          type="submit"
-          [disabled]="form.invalid || busy()"
-          i18n="@@tables.createSubmit"
-        >
-          Abrir mesa
-        </button>
-        <button matButton type="button" (click)="cancel()" i18n="@@common.cancel">Cancelar</button>
-      </div>
-    </form>
+          <mat-form-field class="form-field-full">
+            <mat-label i18n="@@field.smallChipReserve">Reserva de fichas pequenas</mat-label>
+            <input matInput type="number" inputmode="numeric" formControlName="smallChipReserve" />
+            <mat-hint i18n="@@tables.reserveHint"
+              >Fichas da menor denominação guardadas para os primeiros rebuys.</mat-hint
+            >
+          </mat-form-field>
+
+          <div class="editor-actions">
+            <button
+              matButton="filled"
+              type="submit"
+              [disabled]="form.invalid || busy()"
+              i18n="@@tables.createSubmit"
+            >
+              Abrir mesa
+            </button>
+            <button matButton type="button" (click)="cancel()" i18n="@@common.cancel">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
   } @else {
     @if (canManage()) {
       <button
@@ -87,24 +99,19 @@
       <p i18n="@@tables.empty">Nenhuma mesa ainda.</p>
     }
 
-    <mat-list>
-      @for (table of items(); track table.id) {
-        <mat-list-item [class.finished]="!isActive(table)">
-          <span matListItemTitle>{{ table.name }}</span>
-          <span matListItemLine>
-            {{ table.status | tableStatusLabel }} ·
-            <span i18n="@@tables.playerCount">{{ table.playerCount }} jogador(es)</span> ·
-            <span i18n="@@tables.buyIn">buy-in R$ {{ table.buyIn }}</span>
-          </span>
-          <a
-            matButton
-            matListItemMeta
-            [routerLink]="['/championships', championshipId(), 'tables', table.id]"
-            i18n="@@common.open"
-            >Abrir</a
-          >
-        </mat-list-item>
-      }
-    </mat-list>
+    @for (table of items(); track table.id) {
+      <a class="card-link" [routerLink]="['/championships', championshipId(), 'tables', table.id]">
+        <mat-card class="table-card" [class.table-card--finished]="!isActive(table)">
+          <mat-card-header>
+            <mat-card-title>{{ table.name }}</mat-card-title>
+            <mat-card-subtitle>
+              {{ table.status | tableStatusLabel }} ·
+              <span i18n="@@tables.playerCount">{{ table.playerCount }} jogador(es)</span> ·
+              <span i18n="@@tables.buyIn">buy-in R$ {{ table.buyIn }}</span>
+            </mat-card-subtitle>
+          </mat-card-header>
+        </mat-card>
+      </a>
+    }
   }
-</div>
+</section>

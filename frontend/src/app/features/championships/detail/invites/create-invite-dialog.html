@@ -1,0 +1,33 @@
+<h2 mat-dialog-title i18n="@@invites.createHeading">Gerar convite</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field class="form-field-full">
+      <mat-label i18n="@@field.role">Cargo</mat-label>
+      <mat-select formControlName="role">
+        @for (role of data.assignableRoles; track role) {
+          <mat-option [value]="role">{{ role | roleLabel }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="form-field-full">
+      <mat-label i18n="@@field.maxUses">Limite de usos</mat-label>
+      <input matInput type="number" inputmode="numeric" formControlName="maxUses" />
+      <mat-hint i18n="@@invites.maxUsesHint">Deixe em branco para ilimitado.</mat-hint>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button matButton mat-dialog-close type="button" i18n="@@common.cancel">Cancelar</button>
+  <button
+    matButton="filled"
+    type="button"
+    [disabled]="form.invalid"
+    (click)="confirm()"
+    i18n="@@invites.create"
+  >
+    Gerar convite
+  </button>
+</mat-dialog-actions>

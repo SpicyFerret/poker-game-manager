@@ -7,6 +7,9 @@ import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Subject, merge, switchMap, timer } from 'rxjs';
 
+import { NavSection, SectionNav } from '../../../shared/section-nav/section-nav';
+import { ChipColour, chipColour } from '../../../shared/chip-colours';
+
 import { describeError } from '../../../core/api/problem-details';
 import {
   TableDetail,
@@ -37,6 +40,7 @@ const POLL_MS = 5000;
     MatButtonModule,
     MatProgressBarModule,
     MatDialogModule,
+    SectionNav,
     TableStatusLabelPipe,
     PlayerStatusLabelPipe,
   ],
@@ -73,6 +77,18 @@ export class LiveTable implements OnInit {
     const table = this.table();
     return table ? stacksLeft(table.stock, table.buyInUnits) : 0;
   });
+
+  protected readonly section = signal('players');
+
+  protected readonly sections = computed<NavSection[]>(() => [
+    { id: 'players', label: $localize`:@@tableSection.players:Jogadores` },
+    { id: 'case', label: $localize`:@@tableSection.case:Maleta` },
+  ]);
+
+  /** Resolves a stored colour token, or null for anything unrecognised. */
+  protected colourOf(token: string | null | undefined): ChipColour | null {
+    return chipColour(token);
+  }
 
   protected readonly playing = computed(
     () => this.table()?.players.filter((p) => p.status === 'Playing') ?? [],

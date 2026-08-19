@@ -67,78 +67,94 @@
       </mat-card-actions>
     </mat-card>
 
-    <h3 i18n="@@table.players">Jogadores</h3>
+    <app-section-nav [sections]="sections()" [(selected)]="section" />
 
-    <mat-list>
-      @for (player of table.players; track player.tablePlayerId) {
-        <mat-list-item>
-          <span matListItemTitle>{{ player.displayName }}</span>
-          <span matListItemLine>
-            {{ player.status | playerStatusLabel }} ·
-            <span i18n="@@table.paidIn">pagou R$ {{ player.paidIn }}</span>
-            @if (player.rebuyCount > 0) {
-              · <span i18n="@@table.rebuys">{{ player.rebuyCount }} rebuy(s)</span>
-            }
-            @if (!player.hasPaymentHandle) {
-              · <span class="warn" i18n="@@table.noPaymentHandle">sem chave de recebimento</span>
-            }
-          </span>
+    @switch (section()) {
+      @case ('players') {
+        @for (player of table.players; track player.tablePlayerId) {
+          <mat-card class="player">
+            <mat-card-header>
+              <mat-card-title>{{ player.displayName }}</mat-card-title>
+              <mat-card-subtitle>
+                {{ player.status | playerStatusLabel }} ·
+                <span i18n="@@table.paidIn">pagou R$ {{ player.paidIn }}</span>
+                @if (player.rebuyCount > 0) {
+                  · <span i18n="@@table.rebuys">{{ player.rebuyCount }} rebuy(s)</span>
+                }
+                @if (!player.hasPaymentHandle) {
+                  ·
+                  <span class="alert" i18n="@@table.noPaymentHandle">sem chave de recebimento</span>
+                }
+              </mat-card-subtitle>
+            </mat-card-header>
 
-          @if (table.canManage && table.status === 'Running') {
-            <span matListItemMeta class="row-actions">
-              @if (player.status === 'Playing') {
-                <button
-                  matButton
-                  type="button"
-                  [disabled]="busy()"
-                  (click)="rebuy(player)"
-                  i18n="@@table.rebuy"
+            @if (table.canManage && table.status === 'Running') {
+              <mat-card-actions align="end">
+                @if (player.status === 'Playing') {
+                  <button
+                    matButton
+                    type="button"
+                    [disabled]="busy()"
+                    (click)="rebuy(player)"
+                    i18n="@@table.rebuy"
+                  >
+                    Rebuy
+                  </button>
+                  <button
+                    matButton
+                    type="button"
+                    [disabled]="busy() || playing().length < 2"
+                    (click)="tradeChips(player)"
+                    i18n="@@table.tradeChips"
+                  >
+                    Comprar de jogador
+                  </button>
+                } @else if (player.status === 'Standby') {
+                  <button
+                    matButton
+                    type="button"
+                    [disabled]="busy()"
+                    (click)="dealIn(player)"
+                    i18n="@@table.dealIn"
+                  >
+                    Dar fichas
+                  </button>
+                }
+              </mat-card-actions>
+            }
+          </mat-card>
+        }
+      }
+
+      @case ('case') {
+        <mat-card>
+          <mat-card-content>
+            <div class="chips">
+              @for (chip of table.stock; track chip.denominationId) {
+                @let colour = colourOf(chip.colour);
+                <div
+                  class="chip"
+                  [style.background]="colour?.swatch ?? 'var(--mat-sys-surface-container-high)'"
+                  [style.color]="colour?.ink ?? 'var(--mat-sys-on-surface)'"
                 >
-                  Rebuy
-                </button>
-                <button
-                  matButton
-                  type="button"
-                  [disabled]="busy() || playing().length < 2"
-                  (click)="tradeChips(player)"
-                  i18n="@@table.tradeChips"
-                >
-                  Comprar de jogador
-                </button>
-              } @else if (player.status === 'Standby') {
-                <button
-                  matButton
-                  type="button"
-                  [disabled]="busy()"
-                  (click)="dealIn(player)"
-                  i18n="@@table.dealIn"
-                >
-                  Dar fichas
-                </button>
+                  <span class="chip__face">{{ chip.faceValue }}</span>
+                  @if (chip.effectiveValue !== chip.faceValue) {
+                    <span class="chip__worth" i18n="@@table.chipCountsAs"
+                      >vale {{ chip.effectiveValue }}</span
+                    >
+                  }
+                  <span class="chip__count" i18n="@@table.chipRemaining"
+                    >{{ chip.remaining }} na maleta</span
+                  >
+                  <span class="chip__count" i18n="@@table.chipIssued"
+                    >{{ chip.issued }} em jogo</span
+                  >
+                </div>
               }
-            </span>
-          }
-        </mat-list-item>
+            </div>
+          </mat-card-content>
+        </mat-card>
       }
-    </mat-list>
-
-    <h3 i18n="@@table.case">Maleta</h3>
-
-    <mat-list>
-      @for (chip of table.stock; track chip.denominationId) {
-        <mat-list-item>
-          <span matListItemTitle>
-            <span i18n="@@table.chipLabel">Ficha {{ chip.faceValue }}</span>
-            @if (chip.effectiveValue !== chip.faceValue) {
-              <em i18n="@@table.chipCountsAs">(vale {{ chip.effectiveValue }})</em>
-            }
-          </span>
-          <span matListItemLine>
-            <span i18n="@@table.chipRemaining">{{ chip.remaining }} na maleta</span> ·
-            <span i18n="@@table.chipIssued">{{ chip.issued }} em jogo</span>
-          </span>
-        </mat-list-item>
-      }
-    </mat-list>
+    }
   }
 </div>

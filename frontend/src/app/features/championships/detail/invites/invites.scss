@@ -1,12 +1,27 @@
-.tab-body {
-  padding: 1rem 0;
+.section {
+  padding: 0.5rem 0;
+}
+
+.section__action {
+  width: 100%;
+  margin-bottom: 0.75rem;
+}
+
+.invite {
+  margin-bottom: 0.75rem;
+}
+
+// Revoked codes stay visible — the code is spent and must not be reissued — but
+// stop competing with the live ones.
+.invite--revoked {
+  opacity: 0.6;
 }
 
 .code {
   font-family: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', monospace;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.2em;
 }
 
-.warn {
+.alert {
   color: var(--mat-sys-error);
 }
