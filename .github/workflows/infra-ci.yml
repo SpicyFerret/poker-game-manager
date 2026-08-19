@@ -51,7 +51,7 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Setup OpenTofu
-        uses: opentofu/setup-opentofu@v1
+        uses: opentofu/setup-opentofu@v2
         with:
           # The Node.js-based wrapper needs `node` on PATH. GitHub-hosted
           # runners bundle it; this self-hosted one (bare Debian on rb02)
