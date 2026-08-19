@@ -1,0 +1,65 @@
+<div class="tab-body">
+  @if (error(); as message) {
+    <p role="alert">{{ message }}</p>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="create()">
+    <mat-form-field class="form-field-full">
+      <mat-label i18n="@@field.role">Cargo</mat-label>
+      <mat-select formControlName="role">
+        @for (role of rolesICanInvite(); track role) {
+          <mat-option [value]="role">{{ role | roleLabel }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="form-field-full">
+      <mat-label i18n="@@field.maxUses">Limite de usos</mat-label>
+      <input matInput type="number" inputmode="numeric" formControlName="maxUses" />
+      <mat-hint i18n="@@invites.maxUsesHint">Deixe em branco para ilimitado.</mat-hint>
+    </mat-form-field>
+
+    <button matButton="filled" type="submit" [disabled]="busy()" i18n="@@invites.create">
+      Gerar convite
+    </button>
+  </form>
+
+  <mat-list>
+    @for (invite of invites(); track invite.id) {
+      <mat-list-item>
+        <span matListItemTitle class="code">{{ invite.code }}</span>
+
+        <span matListItemLine>
+          {{ invite.role | roleLabel }} ·
+          @if (invite.isRevoked) {
+            <span class="warn" i18n="@@invites.revoked">revogado</span>
+          } @else if (invite.maxUses === null) {
+            <span i18n="@@invites.usesUnlimited">{{ invite.uses }} usos</span>
+          } @else {
+            <span i18n="@@invites.usesLimited">{{ invite.uses }} de {{ invite.maxUses }} usos</span>
+          }
+          @if (copied() === invite.code) {
+            <span i18n="@@invites.copied">· copiado</span>
+          }
+        </span>
+
+        <span matListItemMeta>
+          <button matButton type="button" (click)="copy(invite.code)" i18n="@@common.copy">
+            Copiar
+          </button>
+          @if (!invite.isRevoked) {
+            <button
+              matButton
+              type="button"
+              [disabled]="busy()"
+              (click)="revoke(invite)"
+              i18n="@@invites.revoke"
+            >
+              Revogar
+            </button>
+          }
+        </span>
+      </mat-list-item>
+    }
+  </mat-list>
+</div>

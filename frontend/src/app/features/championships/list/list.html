@@ -1,0 +1,54 @@
+<div class="page">
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  <div class="list-actions">
+    <a matButton="filled" routerLink="/championships/new" i18n="@@championships.create"
+      >Criar campeonato</a
+    >
+    <a matButton routerLink="/championships/join" i18n="@@championships.join">Entrar com código</a>
+  </div>
+
+  @if (error(); as message) {
+    <p role="alert">{{ message }}</p>
+  }
+
+  @if (!loading() && items().length === 0) {
+    <mat-card>
+      <mat-card-content>
+        <p i18n="@@championships.empty">
+          Você ainda não participa de nenhum campeonato. Crie o seu ou entre com um código que
+          alguém te passou.
+        </p>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @for (championship of items(); track championship.id) {
+    <mat-card class="championship-card">
+      <mat-card-header>
+        <mat-card-title>{{ championship.name }}</mat-card-title>
+        <mat-card-subtitle>
+          {{ championship.role | roleLabel }} ·
+          <span i18n="@@championships.memberCount">{championship.memberCount, plural,
+            =1 {1 membro}
+            other {{{championship.memberCount}} membros}
+          }</span>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      @if (championship.description) {
+        <mat-card-content>
+          <p>{{ championship.description }}</p>
+        </mat-card-content>
+      }
+
+      <mat-card-actions>
+        <a matButton [routerLink]="['/championships', championship.id]" i18n="@@common.open"
+          >Abrir</a
+        >
+      </mat-card-actions>
+    </mat-card>
+  }
+</div>

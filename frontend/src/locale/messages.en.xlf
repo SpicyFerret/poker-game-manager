@@ -78,14 +78,6 @@
         <source>Não foi possível criar a conta.</source>
         <target>The account could not be created.</target>
       </trans-unit>
-      <trans-unit id="home.heading" datatype="html">
-        <source>Seus campeonatos</source>
-        <target>Your championships</target>
-      </trans-unit>
-      <trans-unit id="home.empty" datatype="html">
-        <source> Você ainda não participa de nenhum campeonato. Criar e entrar em campeonatos chega na próxima etapa. </source>
-        <target> You are not in any championship yet. Creating and joining championships lands in the next step. </target>
-      </trans-unit>
       <trans-unit id="profile.heading" datatype="html">
         <source>Meu perfil</source>
         <target>My profile</target>
@@ -125,6 +117,376 @@
       <trans-unit id="profile.saveFailed" datatype="html">
         <source>Não foi possível salvar o perfil.</source>
         <target>The profile could not be saved.</target>
+      </trans-unit>
+      <trans-unit id="role.owner" datatype="html">
+        <source>Dono</source>
+        <target>Owner</target>
+      </trans-unit>
+      <trans-unit id="role.admin" datatype="html">
+        <source>Administrador</source>
+        <target>Admin</target>
+      </trans-unit>
+      <trans-unit id="role.tableManager" datatype="html">
+        <source>Gerente de mesa</source>
+        <target>Table manager</target>
+      </trans-unit>
+      <trans-unit id="role.player" datatype="html">
+        <source>Jogador</source>
+        <target>Player</target>
+      </trans-unit>
+      <trans-unit id="championships.createHeading" datatype="html">
+        <source>Criar campeonato</source>
+        <target>Create championship</target>
+      </trans-unit>
+      <trans-unit id="field.championshipName" datatype="html">
+        <source>Nome</source>
+        <target>Name</target>
+      </trans-unit>
+      <trans-unit id="field.description" datatype="html">
+        <source>Descrição</source>
+        <target>Description</target>
+      </trans-unit>
+      <trans-unit id="field.defaultBuyIn" datatype="html">
+        <source>Buy-in padrão (R$)</source>
+        <target>Default buy-in (R$)</target>
+      </trans-unit>
+      <trans-unit id="field.defaultRebuy" datatype="html">
+        <source>Rebuy padrão (R$)</source>
+        <target>Default rebuy (R$)</target>
+      </trans-unit>
+      <trans-unit id="field.enforceDefaults" datatype="html">
+        <source> Impor esses valores nas mesas </source>
+        <target> Enforce these amounts on tables </target>
+      </trans-unit>
+      <trans-unit id="field.moneyPerUnit" datatype="html">
+        <source>Valor de 1 unidade de ficha (R$)</source>
+        <target>Value of 1 chip unit (R$)</target>
+      </trans-unit>
+      <trans-unit id="championships.moneyPerUnitHint" datatype="html">
+        <source>Com 0,05 um stack de 1000 unidades vale R$ 50.</source>
+        <target>At 0.05, a 1000-unit stack is worth R$ 50.</target>
+      </trans-unit>
+      <trans-unit id="field.pointsByPosition" datatype="html">
+        <source>Pontos por colocação</source>
+        <target>Points by finishing position</target>
+      </trans-unit>
+      <trans-unit id="championships.pointsHint" datatype="html">
+        <source>Do 1º em diante, separados por vírgula. Quem terminar além da lista não pontua.</source>
+        <target>From 1st place onwards, comma separated. Anyone finishing past the end of the list scores nothing.</target>
+      </trans-unit>
+      <trans-unit id="championships.createSubmit" datatype="html">
+        <source> Criar </source>
+        <target> Create </target>
+      </trans-unit>
+      <trans-unit id="championships.pointsInvalid" datatype="html">
+        <source>A tabela de pontos deve ser uma lista de números separados por vírgula.</source>
+        <target>The points table must be a comma-separated list of numbers.</target>
+      </trans-unit>
+      <trans-unit id="championships.createFailed" datatype="html">
+        <source>Não foi possível criar o campeonato.</source>
+        <target>The championship could not be created.</target>
+      </trans-unit>
+      <trans-unit id="chipSets.new" datatype="html">
+        <source> Nova maleta </source>
+        <target> New chip case </target>
+      </trans-unit>
+      <trans-unit id="chipSets.totalUnits" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ chipSet.totalUnits }}"/> unidades no total</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ chipSet.totalUnits }}"/> units in total</target>
+      </trans-unit>
+      <trans-unit id="chipSets.printed" datatype="html">
+        <source>ficha <x id="INTERPOLATION" equiv-text="{{ denomination.faceValue }}"/></source>
+        <target><x id="INTERPOLATION" equiv-text="{{ denomination.faceValue }}"/> chip</target>
+      </trans-unit>
+      <trans-unit id="chipSets.countsAs" datatype="html">
+        <source>, valendo <x id="INTERPOLATION" equiv-text="{{ denomination.effectiveValue }}"/></source>
+        <target>, counting as <x id="INTERPOLATION" equiv-text="{{ denomination.effectiveValue }}"/></target>
+      </trans-unit>
+      <trans-unit id="common.edit" datatype="html">
+        <source> Editar </source>
+        <target> Edit </target>
+      </trans-unit>
+      <trans-unit id="common.delete" datatype="html">
+        <source> Excluir </source>
+        <target> Delete </target>
+      </trans-unit>
+      <trans-unit id="field.chipSetName" datatype="html">
+        <source>Nome da maleta</source>
+        <target>Chip case name</target>
+      </trans-unit>
+      <trans-unit id="field.faceValue" datatype="html">
+        <source>Impresso</source>
+        <target>Printed</target>
+      </trans-unit>
+      <trans-unit id="field.effectiveValue" datatype="html">
+        <source>Vale</source>
+        <target>Counts as</target>
+      </trans-unit>
+      <trans-unit id="field.quantity" datatype="html">
+        <source>Quantidade</source>
+        <target>Quantity</target>
+      </trans-unit>
+      <trans-unit id="field.colour" datatype="html">
+        <source>Cor</source>
+        <target>Colour</target>
+      </trans-unit>
+      <trans-unit id="chipSets.removeDenomination" datatype="html">
+        <source> Remover ficha </source>
+        <target> Remove chip </target>
+      </trans-unit>
+      <trans-unit id="chipSets.addDenomination" datatype="html">
+        <source> Adicionar ficha </source>
+        <target> Add chip </target>
+      </trans-unit>
+      <trans-unit id="common.save" datatype="html">
+        <source> Salvar </source>
+        <target> Save </target>
+      </trans-unit>
+      <trans-unit id="common.cancel" datatype="html">
+        <source>Cancelar</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="chipSets.loadFailed" datatype="html">
+        <source>Não foi possível carregar as maletas.</source>
+        <target>The chip cases could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="chipSets.duplicateFaceValue" datatype="html">
+        <source>Cada ficha da maleta precisa ter um valor impresso diferente.</source>
+        <target>Each chip in a case needs a different printed value.</target>
+      </trans-unit>
+      <trans-unit id="chipSets.saveFailed" datatype="html">
+        <source>Não foi possível salvar a maleta.</source>
+        <target>The chip case could not be saved.</target>
+      </trans-unit>
+      <trans-unit id="chipSets.deleteFailed" datatype="html">
+        <source>Não foi possível excluir a maleta.</source>
+        <target>The chip case could not be deleted.</target>
+      </trans-unit>
+      <trans-unit id="tab.members" datatype="html">
+        <source>Membros</source>
+        <target>Members</target>
+      </trans-unit>
+      <trans-unit id="tab.invites" datatype="html">
+        <source>Convites</source>
+        <target>Invites</target>
+      </trans-unit>
+      <trans-unit id="tab.chipSets" datatype="html">
+        <source>Maletas</source>
+        <target>Chip cases</target>
+      </trans-unit>
+      <trans-unit id="tab.seasons" datatype="html">
+        <source>Temporadas</source>
+        <target>Seasons</target>
+      </trans-unit>
+      <trans-unit id="tab.settings" datatype="html">
+        <source>Configurações</source>
+        <target>Settings</target>
+      </trans-unit>
+      <trans-unit id="championship.loadFailed" datatype="html">
+        <source>Não foi possível carregar o campeonato.</source>
+        <target>The championship could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="field.role" datatype="html">
+        <source>Cargo</source>
+        <target>Role</target>
+      </trans-unit>
+      <trans-unit id="field.maxUses" datatype="html">
+        <source>Limite de usos</source>
+        <target>Use limit</target>
+      </trans-unit>
+      <trans-unit id="invites.maxUsesHint" datatype="html">
+        <source>Deixe em branco para ilimitado.</source>
+        <target>Leave blank for unlimited.</target>
+      </trans-unit>
+      <trans-unit id="invites.create" datatype="html">
+        <source> Gerar convite </source>
+        <target> Generate invite </target>
+      </trans-unit>
+      <trans-unit id="invites.revoked" datatype="html">
+        <source>revogado</source>
+        <target>revoked</target>
+      </trans-unit>
+      <trans-unit id="invites.usesUnlimited" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ invite.uses }}"/> usos</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ invite.uses }}"/> uses</target>
+      </trans-unit>
+      <trans-unit id="invites.usesLimited" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ invite.uses }}"/> de <x id="INTERPOLATION_1" equiv-text="{{ invite.maxUses }}"/> usos</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ invite.uses }}"/> of <x id="INTERPOLATION_1" equiv-text="{{ invite.maxUses }}"/> uses</target>
+      </trans-unit>
+      <trans-unit id="invites.copied" datatype="html">
+        <source>· copiado</source>
+        <target>&#183; copied</target>
+      </trans-unit>
+      <trans-unit id="common.copy" datatype="html">
+        <source> Copiar </source>
+        <target> Copy </target>
+      </trans-unit>
+      <trans-unit id="invites.revoke" datatype="html">
+        <source> Revogar </source>
+        <target> Revoke </target>
+      </trans-unit>
+      <trans-unit id="invites.loadFailed" datatype="html">
+        <source>Não foi possível carregar os convites.</source>
+        <target>The invites could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="invites.maxUsesInvalid" datatype="html">
+        <source>O limite de usos precisa ser um número inteiro maior que zero.</source>
+        <target>The use limit must be a whole number greater than zero.</target>
+      </trans-unit>
+      <trans-unit id="invites.createFailed" datatype="html">
+        <source>Não foi possível criar o convite.</source>
+        <target>The invite could not be created.</target>
+      </trans-unit>
+      <trans-unit id="invites.revokeFailed" datatype="html">
+        <source>Não foi possível revogar o convite.</source>
+        <target>The invite could not be revoked.</target>
+      </trans-unit>
+      <trans-unit id="members.addByEmail" datatype="html">
+        <source>Adicionar por e-mail</source>
+        <target>Add by email</target>
+      </trans-unit>
+      <trans-unit id="members.addByEmailHint" datatype="html">
+        <source>A pessoa já precisa ter conta.</source>
+        <target>They need an account already.</target>
+      </trans-unit>
+      <trans-unit id="members.add" datatype="html">
+        <source> Adicionar </source>
+        <target> Add </target>
+      </trans-unit>
+      <trans-unit id="members.noPaymentHandle" datatype="html">
+        <source>· sem chave de recebimento</source>
+        <target>&#183; no payment details</target>
+      </trans-unit>
+      <trans-unit id="members.remove" datatype="html">
+        <source>Remover membro</source>
+        <target>Remove member</target>
+      </trans-unit>
+      <trans-unit id="members.loadFailed" datatype="html">
+        <source>Não foi possível carregar os membros.</source>
+        <target>The members could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="members.addFailed" datatype="html">
+        <source>Não foi possível adicionar. Confira se essa pessoa já tem conta.</source>
+        <target>Could not add them. Check that this person already has an account.</target>
+      </trans-unit>
+      <trans-unit id="members.roleFailed" datatype="html">
+        <source>Não foi possível alterar o cargo.</source>
+        <target>The role could not be changed.</target>
+      </trans-unit>
+      <trans-unit id="members.removeFailed" datatype="html">
+        <source>Não foi possível remover o membro.</source>
+        <target>The member could not be removed.</target>
+      </trans-unit>
+      <trans-unit id="field.seasonName" datatype="html">
+        <source>Nome da temporada</source>
+        <target>Season name</target>
+      </trans-unit>
+      <trans-unit id="field.startsOn" datatype="html">
+        <source>Começa em</source>
+        <target>Starts on</target>
+      </trans-unit>
+      <trans-unit id="field.endsOn" datatype="html">
+        <source>Termina em</source>
+        <target>Ends on</target>
+      </trans-unit>
+      <trans-unit id="seasons.endsOnHint" datatype="html">
+        <source>Deixe em branco para uma temporada em aberto.</source>
+        <target>Leave blank for an open-ended season.</target>
+      </trans-unit>
+      <trans-unit id="seasons.create" datatype="html">
+        <source> Criar temporada </source>
+        <target> Create season </target>
+      </trans-unit>
+      <trans-unit id="seasons.open" datatype="html">
+        <source>— em aberto</source>
+        <target>&#8212; open-ended</target>
+      </trans-unit>
+      <trans-unit id="seasons.loadFailed" datatype="html">
+        <source>Não foi possível carregar as temporadas.</source>
+        <target>The seasons could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="seasons.createFailed" datatype="html">
+        <source>Não foi possível criar a temporada. Confira se as datas não se sobrepõem a outra.</source>
+        <target>The season could not be created. Check that the dates do not overlap another one.</target>
+      </trans-unit>
+      <trans-unit id="settings.saved" datatype="html">
+        <source>Configurações salvas.</source>
+        <target>Settings saved.</target>
+      </trans-unit>
+      <trans-unit id="settings.transferHeading" datatype="html">
+        <source>Transferir propriedade</source>
+        <target>Transfer ownership</target>
+      </trans-unit>
+      <trans-unit id="settings.noAdmins" datatype="html">
+        <source> Só dá para transferir para um administrador. Promova alguém primeiro na aba de membros. </source>
+        <target> Ownership can only go to an admin. Promote someone on the members tab first. </target>
+      </trans-unit>
+      <trans-unit id="settings.transferWarning" datatype="html">
+        <source> Você passa a administrador e não poderá desfazer isso sozinho. </source>
+        <target> You become an admin, and you will not be able to undo this on your own. </target>
+      </trans-unit>
+      <trans-unit id="settings.newOwner" datatype="html">
+        <source>Novo dono</source>
+        <target>New owner</target>
+      </trans-unit>
+      <trans-unit id="settings.transfer" datatype="html">
+        <source> Transferir </source>
+        <target> Transfer </target>
+      </trans-unit>
+      <trans-unit id="settings.saveFailed" datatype="html">
+        <source>Não foi possível salvar.</source>
+        <target>Could not save.</target>
+      </trans-unit>
+      <trans-unit id="settings.transferFailed" datatype="html">
+        <source>Não foi possível transferir a propriedade.</source>
+        <target>Ownership could not be transferred.</target>
+      </trans-unit>
+      <trans-unit id="join.heading" datatype="html">
+        <source>Entrar com código</source>
+        <target>Join with a code</target>
+      </trans-unit>
+      <trans-unit id="field.inviteCode" datatype="html">
+        <source>Código do convite</source>
+        <target>Invite code</target>
+      </trans-unit>
+      <trans-unit id="join.codeHint" datatype="html">
+        <source>6 caracteres. Maiúsculas, espaços e traços não importam.</source>
+        <target>6 characters. Case, spaces and dashes do not matter.</target>
+      </trans-unit>
+      <trans-unit id="join.submit" datatype="html">
+        <source> Entrar </source>
+        <target> Join </target>
+      </trans-unit>
+      <trans-unit id="join.failed" datatype="html">
+        <source>Código inválido ou já expirado.</source>
+        <target>Invalid or expired code.</target>
+      </trans-unit>
+      <trans-unit id="championships.create" datatype="html">
+        <source>Criar campeonato</source>
+        <target>Create championship</target>
+      </trans-unit>
+      <trans-unit id="championships.join" datatype="html">
+        <source>Entrar com código</source>
+        <target>Join with a code</target>
+      </trans-unit>
+      <trans-unit id="championships.empty" datatype="html">
+        <source> Você ainda não participa de nenhum campeonato. Crie o seu ou entre com um código que alguém te passou. </source>
+        <target> You are not in any championship yet. Create one, or join with a code someone sent you. </target>
+      </trans-unit>
+      <trans-unit id="championships.memberCount" datatype="html">
+        <source>{VAR_PLURAL, plural, =1 {1 membro} other {<x id="INTERPOLATION"/>
+            membros}}</source>
+        <target>{VAR_PLURAL, plural, =1 {1 member} other {<x id="INTERPOLATION"/>
+            members}}</target>
+      </trans-unit>
+      <trans-unit id="common.open" datatype="html">
+        <source>Abrir</source>
+        <target>Open</target>
+      </trans-unit>
+      <trans-unit id="championships.loadFailed" datatype="html">
+        <source>Não foi possível carregar seus campeonatos.</source>
+        <target>Your championships could not be loaded.</target>
       </trans-unit>
     </body>
   </file>
