@@ -8,11 +8,16 @@ public static class ChampionshipErrors
         "Championships.NotFound",
         $"The championship with the Id = '{championshipId}' was not found");
 
+    /// <summary>
+    /// NotFound rather than Forbidden on purpose, and worded to cover both: a
+    /// non-member must not be able to tell an id they cannot see from one that
+    /// does not exist.
+    /// </summary>
     public static readonly Error NotAMember = Error.NotFound(
         "Championships.NotAMember",
         "The championship was not found, or you are not a member of it");
 
-    public static Error InsufficientRole(ChampionshipRole required) => Error.Failure(
+    public static Error InsufficientRole(ChampionshipRole required) => Error.Forbidden(
         "Championships.InsufficientRole",
         $"This action requires the {required} role or higher in this championship");
 
@@ -28,19 +33,21 @@ public static class ChampionshipErrors
     /// Covers both directions of the same rule: you can neither grant a role at
     /// or above your own, nor act on a member who already holds one.
     /// </summary>
-    public static readonly Error CannotActOnEqualOrHigherRole = Error.Failure(
+    public static readonly Error CannotActOnEqualOrHigherRole = Error.Forbidden(
         "Championships.CannotActOnEqualOrHigherRole",
         "You can only manage members whose role is strictly below your own, and only up to the role below yours");
 
-    public static readonly Error OwnerRoleIsTransferredNotAssigned = Error.Failure(
+    // The next three are bad requests, not permission problems: the caller is
+    // allowed to do this, they just asked for something that makes no sense.
+    public static readonly Error OwnerRoleIsTransferredNotAssigned = Error.Problem(
         "Championships.OwnerRoleIsTransferredNotAssigned",
         "Ownership is handed over with the transfer action, not by assigning the Owner role");
 
-    public static readonly Error NewOwnerMustBeAdmin = Error.Failure(
+    public static readonly Error NewOwnerMustBeAdmin = Error.Problem(
         "Championships.NewOwnerMustBeAdmin",
         "Ownership can only be transferred to an existing Admin of this championship");
 
-    public static readonly Error CannotRemoveOwner = Error.Failure(
+    public static readonly Error CannotRemoveOwner = Error.Conflict(
         "Championships.CannotRemoveOwner",
         "The owner cannot be removed. Transfer ownership first");
 }

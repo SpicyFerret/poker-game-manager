@@ -8,7 +8,10 @@ public static class UserErrors
         "Users.NotFound",
         $"The user with the Id = '{userId}' was not found");
 
-    public static Error Unauthorized() => Error.Failure(
+    // Forbidden, not Failure: as a Failure this answered 403's situation with a
+    // 500 and the description stripped, so the caller could not tell a
+    // permission problem from a broken server.
+    public static Error Unauthorized() => Error.Forbidden(
         "Users.Unauthorized",
         "You are not authorized to perform this action.");
 
