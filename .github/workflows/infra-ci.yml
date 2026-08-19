@@ -78,17 +78,6 @@ jobs:
       - name: init
         run: tofu init -backend-config=backend.hcl
 
-      # ONE-OFF: the first apply attempt errored out mid-rollout-wait (no
-      # image existed in GHCR yet), leaving kubernetes_deployment_v1.web_api
-      # in state with null identity metadata. A later apply then hits
-      # "Unexpected Identity Change" trying to refresh it against the real
-      # (now-existing) object. Drop it from state and re-import cleanly.
-      # Remove this step once a clean apply has run once.
-      - name: Fix web_api deployment state (one-off)
-        run: |
-          tofu state rm kubernetes_deployment_v1.web_api || true
-          tofu import kubernetes_deployment_v1.web_api poker-game-manager/web-api || true
-
       - name: plan
         run: tofu plan -out=tfplan
 
