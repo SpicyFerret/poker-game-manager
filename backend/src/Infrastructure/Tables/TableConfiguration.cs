@@ -90,12 +90,16 @@ internal sealed class LedgerEntryConfiguration : IEntityTypeConfiguration<Ledger
             .HasForeignKey(e => e.TablePlayerId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // No cascade from the counterparty: one player's row disappearing must not
-        // silently delete the other side's money.
+        // SetNull, not Cascade or Restrict. Cascade would let one player's row
+        // disappearing silently delete the other side's money. Restrict looks
+        // safer but deadlocks the cascade that removes a whole table: the
+        // counterparty rows block the table_players they point at from going,
+        // and the delete fails with a constraint violation. Nulling the pointer
+        // keeps the money and lets the table go.
         builder.HasOne<TablePlayer>()
             .WithMany()
             .HasForeignKey(e => e.CounterpartyPlayerId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasMany(e => e.Chips)
             .WithOne()

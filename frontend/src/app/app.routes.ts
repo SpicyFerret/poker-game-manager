@@ -22,6 +22,12 @@ export const routes: Routes = [
       import('./features/championships/join/join').then((m) => m.ChampionshipJoin),
   },
   {
+    // Before the championship detail route, so the longer path wins.
+    path: 'championships/:championshipId/tables/:tableId',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/tables/live/live-table').then((m) => m.LiveTable),
+  },
+  {
     // Sits after the literal routes above so 'new' and 'join' are not swallowed
     // as ids.
     path: 'championships/:championshipId',

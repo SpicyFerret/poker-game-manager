@@ -488,6 +488,262 @@
         <source>Não foi possível carregar seus campeonatos.</source>
         <target>Your championships could not be loaded.</target>
       </trans-unit>
+      <trans-unit id="tableStatus.draft" datatype="html">
+        <source>Rascunho</source>
+        <target>Draft</target>
+      </trans-unit>
+      <trans-unit id="tableStatus.open" datatype="html">
+        <source>Aberta</source>
+        <target>Open</target>
+      </trans-unit>
+      <trans-unit id="tableStatus.running" datatype="html">
+        <source>Em jogo</source>
+        <target>In play</target>
+      </trans-unit>
+      <trans-unit id="tableStatus.counting" datatype="html">
+        <source>Contando fichas</source>
+        <target>Counting chips</target>
+      </trans-unit>
+      <trans-unit id="tableStatus.reconciled" datatype="html">
+        <source>Conferida</source>
+        <target>Reconciled</target>
+      </trans-unit>
+      <trans-unit id="tableStatus.settled" datatype="html">
+        <source>Acertada</source>
+        <target>Settled</target>
+      </trans-unit>
+      <trans-unit id="tableStatus.closed" datatype="html">
+        <source>Encerrada</source>
+        <target>Closed</target>
+      </trans-unit>
+      <trans-unit id="tableStatus.cancelled" datatype="html">
+        <source>Cancelada</source>
+        <target>Cancelled</target>
+      </trans-unit>
+      <trans-unit id="playerStatus.standby" datatype="html">
+        <source>Aguardando</source>
+        <target>Waiting</target>
+      </trans-unit>
+      <trans-unit id="playerStatus.playing" datatype="html">
+        <source>Jogando</source>
+        <target>Playing</target>
+      </trans-unit>
+      <trans-unit id="playerStatus.left" datatype="html">
+        <source>Saiu</source>
+        <target>Left</target>
+      </trans-unit>
+      <trans-unit id="championship.setupToggle" datatype="html">
+        <source>Configurações do campeonato</source>
+        <target>Championship settings</target>
+      </trans-unit>
+      <trans-unit id="field.tableName" datatype="html">
+        <source>Nome da mesa</source>
+        <target>Table name</target>
+      </trans-unit>
+      <trans-unit id="field.chipSet" datatype="html">
+        <source>Maleta</source>
+        <target>Chip case</target>
+      </trans-unit>
+      <trans-unit id="tables.noChipSets" datatype="html">
+        <source>Cadastre uma maleta antes de abrir a mesa.</source>
+        <target>Add a chip case before opening a table.</target>
+      </trans-unit>
+      <trans-unit id="field.buyIn" datatype="html">
+        <source>Buy-in (R$)</source>
+        <target>Buy-in (R$)</target>
+      </trans-unit>
+      <trans-unit id="tables.buyInHint" datatype="html">
+        <source>Em branco usa o padrão do campeonato.</source>
+        <target>Blank uses the championship's default.</target>
+      </trans-unit>
+      <trans-unit id="field.rebuy" datatype="html">
+        <source>Rebuy (R$)</source>
+        <target>Rebuy (R$)</target>
+      </trans-unit>
+      <trans-unit id="field.joinPolicy" datatype="html">
+        <source>Quem pode entrar</source>
+        <target>Who can join</target>
+      </trans-unit>
+      <trans-unit id="joinPolicy.anyMember" datatype="html">
+        <source>Qualquer um do campeonato</source>
+        <target>Anyone in the championship</target>
+      </trans-unit>
+      <trans-unit id="joinPolicy.code" datatype="html">
+        <source>Com código da mesa</source>
+        <target>With the table code</target>
+      </trans-unit>
+      <trans-unit id="joinPolicy.inviteOnly" datatype="html">
+        <source>Só quem for adicionado</source>
+        <target>Only people who are added</target>
+      </trans-unit>
+      <trans-unit id="field.allowLateEntry" datatype="html">
+        <source> Permitir entrar com a mesa já rolando </source>
+        <target> Allow joining after play has started </target>
+      </trans-unit>
+      <trans-unit id="field.smallChipReserve" datatype="html">
+        <source>Reserva de fichas pequenas</source>
+        <target>Small-chip reserve</target>
+      </trans-unit>
+      <trans-unit id="tables.reserveHint" datatype="html">
+        <source>Fichas da menor denominação guardadas para os primeiros rebuys.</source>
+        <target>Chips of the smallest denomination held back for the first rebuys.</target>
+      </trans-unit>
+      <trans-unit id="tables.createSubmit" datatype="html">
+        <source> Abrir mesa </source>
+        <target> Open table </target>
+      </trans-unit>
+      <trans-unit id="tables.new" datatype="html">
+        <source> Nova mesa </source>
+        <target> New table </target>
+      </trans-unit>
+      <trans-unit id="tables.empty" datatype="html">
+        <source>Nenhuma mesa ainda.</source>
+        <target>No tables yet.</target>
+      </trans-unit>
+      <trans-unit id="tables.playerCount" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ table.playerCount }}"/> jogador(es)</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ table.playerCount }}"/> player(s)</target>
+      </trans-unit>
+      <trans-unit id="tables.buyIn" datatype="html">
+        <source>buy-in R$ <x id="INTERPOLATION" equiv-text="{{ table.buyIn }}"/></source>
+        <target>buy-in R$ <x id="INTERPOLATION" equiv-text="{{ table.buyIn }}"/></target>
+      </trans-unit>
+      <trans-unit id="tables.loadFailed" datatype="html">
+        <source>Não foi possível carregar as mesas.</source>
+        <target>The tables could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="tables.createFailed" datatype="html">
+        <source>Não foi possível criar a mesa.</source>
+        <target>The table could not be created.</target>
+      </trans-unit>
+      <trans-unit id="trade.heading" datatype="html">
+        <source>Comprar fichas de outro jogador</source>
+        <target>Buy chips from another player</target>
+      </trans-unit>
+      <trans-unit id="trade.explanation" datatype="html">
+        <source> Use quando a maleta acabou. Quem vender é creditado no mesmo valor, então não sai no prejuízo — e a conferência do fim continua fechando, porque nenhuma ficha sai da maleta. </source>
+        <target> Use this when the case has run out. Whoever sells is credited the same amount, so they are not out of pocket - and the count at the end still reconciles, because no chips left the case. </target>
+      </trans-unit>
+      <trans-unit id="trade.buyer" datatype="html">
+        <source>Comprador</source>
+        <target>Buyer</target>
+      </trans-unit>
+      <trans-unit id="trade.seller" datatype="html">
+        <source>Vendedor</source>
+        <target>Seller</target>
+      </trans-unit>
+      <trans-unit id="trade.amount" datatype="html">
+        <source>Valor (R$)</source>
+        <target>Amount (R$)</target>
+      </trans-unit>
+      <trans-unit id="trade.confirm" datatype="html">
+        <source> Registrar </source>
+        <target> Record </target>
+      </trans-unit>
+      <trans-unit id="table.buyIn" datatype="html">
+        <source>buy-in R$ <x id="INTERPOLATION" equiv-text="{{ table.buyIn }}"/></source>
+        <target>buy-in R$ <x id="INTERPOLATION" equiv-text="{{ table.buyIn }}"/></target>
+      </trans-unit>
+      <trans-unit id="table.onTheTable" datatype="html">
+        <source>Na mesa</source>
+        <target>On the table</target>
+      </trans-unit>
+      <trans-unit id="table.stacksLeft" datatype="html">
+        <source>Stacks que a maleta ainda cobre</source>
+        <target>Stacks the case can still cover</target>
+      </trans-unit>
+      <trans-unit id="table.unitsIssued" datatype="html">
+        <source>Unidades em jogo</source>
+        <target>Units in play</target>
+      </trans-unit>
+      <trans-unit id="table.joinCode" datatype="html">
+        <source>Código da mesa</source>
+        <target>Table code</target>
+      </trans-unit>
+      <trans-unit id="table.join" datatype="html">
+        <source> Entrar na mesa </source>
+        <target> Join table </target>
+      </trans-unit>
+      <trans-unit id="table.start" datatype="html">
+        <source> Iniciar mesa </source>
+        <target> Start table </target>
+      </trans-unit>
+      <trans-unit id="table.players" datatype="html">
+        <source>Jogadores</source>
+        <target>Players</target>
+      </trans-unit>
+      <trans-unit id="table.paidIn" datatype="html">
+        <source>pagou R$ <x id="INTERPOLATION" equiv-text="{{ player.paidIn }}"/></source>
+        <target>paid R$ <x id="INTERPOLATION" equiv-text="{{ player.paidIn }}"/></target>
+      </trans-unit>
+      <trans-unit id="table.rebuys" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ player.rebuyCount }}"/> rebuy(s)</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ player.rebuyCount }}"/> rebuy(s)</target>
+      </trans-unit>
+      <trans-unit id="table.noPaymentHandle" datatype="html">
+        <source>sem chave de recebimento</source>
+        <target>no payment details</target>
+      </trans-unit>
+      <trans-unit id="table.rebuy" datatype="html">
+        <source> Rebuy </source>
+        <target> Rebuy </target>
+      </trans-unit>
+      <trans-unit id="table.tradeChips" datatype="html">
+        <source> Comprar de jogador </source>
+        <target> Buy from a player </target>
+      </trans-unit>
+      <trans-unit id="table.dealIn" datatype="html">
+        <source> Dar fichas </source>
+        <target> Give chips </target>
+      </trans-unit>
+      <trans-unit id="table.case" datatype="html">
+        <source>Maleta</source>
+        <target>Chip case</target>
+      </trans-unit>
+      <trans-unit id="table.chipLabel" datatype="html">
+        <source>Ficha <x id="INTERPOLATION" equiv-text="{{ chip.faceValue }}"/></source>
+        <target><x id="INTERPOLATION" equiv-text="{{ chip.faceValue }}"/> chip</target>
+      </trans-unit>
+      <trans-unit id="table.chipCountsAs" datatype="html">
+        <source>(vale <x id="INTERPOLATION" equiv-text="{{ chip.effectiveValue }}"/>)</source>
+        <target>(counts as <x id="INTERPOLATION" equiv-text="{{ chip.effectiveValue }}"/>)</target>
+      </trans-unit>
+      <trans-unit id="table.chipRemaining" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ chip.remaining }}"/> na maleta</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ chip.remaining }}"/> in the case</target>
+      </trans-unit>
+      <trans-unit id="table.chipIssued" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ chip.issued }}"/> em jogo</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ chip.issued }}"/> in play</target>
+      </trans-unit>
+      <trans-unit id="table.loadFailed" datatype="html">
+        <source>Não foi possível carregar a mesa.</source>
+        <target>The table could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="table.startFailed" datatype="html">
+        <source>Não foi possível iniciar a mesa.</source>
+        <target>The table could not be started.</target>
+      </trans-unit>
+      <trans-unit id="table.joinFailed" datatype="html">
+        <source>Não foi possível entrar na mesa.</source>
+        <target>You could not be added to the table.</target>
+      </trans-unit>
+      <trans-unit id="table.rebuyFailed" datatype="html">
+        <source>Não foi possível fazer o rebuy.</source>
+        <target>The rebuy could not be recorded.</target>
+      </trans-unit>
+      <trans-unit id="table.dealInFailed" datatype="html">
+        <source>Não foi possível dar fichas ao jogador.</source>
+        <target>The player could not be given chips.</target>
+      </trans-unit>
+      <trans-unit id="table.tradeFailed" datatype="html">
+        <source>Não foi possível registrar a compra de fichas.</source>
+        <target>The chip purchase could not be recorded.</target>
+      </trans-unit>
+      <trans-unit id="table.codePrompt" datatype="html">
+        <source>Código da mesa</source>
+        <target>Table code</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

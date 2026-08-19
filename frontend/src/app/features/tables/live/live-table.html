@@ -1,0 +1,144 @@
+<div class="page">
+  @if (loading() || busy()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (error(); as message) {
+    <p role="alert" class="alert">{{ message }}</p>
+  }
+
+  @if (table(); as table) {
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>{{ table.name }}</mat-card-title>
+        <mat-card-subtitle>
+          {{ table.status | tableStatusLabel }} ·
+          <span i18n="@@table.buyIn">buy-in R$ {{ table.buyIn }}</span>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <dl class="figures">
+          <div>
+            <dt i18n="@@table.onTheTable">Na mesa</dt>
+            <dd>R$ {{ table.totalPaidIn }}</dd>
+          </div>
+          <div>
+            <dt i18n="@@table.stacksLeft">Stacks que a maleta ainda cobre</dt>
+            <dd>{{ stacksLeft() }}</dd>
+          </div>
+          <div>
+            <dt i18n="@@table.unitsIssued">Unidades em jogo</dt>
+            <dd>{{ issuedUnits() }}</dd>
+          </div>
+        </dl>
+
+        @if (table.canManage && table.joinCode) {
+          <p>
+            <span i18n="@@table.joinCode">Código da mesa</span>:
+            <strong class="code">{{ table.joinCode }}</strong>
+          </p>
+        }
+      </mat-card-content>
+
+      <mat-card-actions>
+        @if (canJoin()) {
+          <button
+            matButton="filled"
+            type="button"
+            [disabled]="busy()"
+            (click)="join()"
+            i18n="@@table.join"
+          >
+            Entrar na mesa
+          </button>
+        }
+        @if (canStart()) {
+          <button
+            matButton="filled"
+            type="button"
+            [disabled]="busy()"
+            (click)="start()"
+            i18n="@@table.start"
+          >
+            Iniciar mesa
+          </button>
+        }
+      </mat-card-actions>
+    </mat-card>
+
+    <h3 i18n="@@table.players">Jogadores</h3>
+
+    <mat-list>
+      @for (player of table.players; track player.tablePlayerId) {
+        <mat-list-item>
+          <span matListItemTitle>{{ player.displayName }}</span>
+          <span matListItemLine>
+            {{ player.status | playerStatusLabel }} ·
+            <span i18n="@@table.paidIn">pagou R$ {{ player.paidIn }}</span>
+            @if (player.rebuyCount > 0) {
+              · <span i18n="@@table.rebuys">{{ player.rebuyCount }} rebuy(s)</span>
+            }
+            @if (!player.hasPaymentHandle) {
+              · <span class="warn" i18n="@@table.noPaymentHandle">sem chave de recebimento</span>
+            }
+          </span>
+
+          @if (table.canManage && table.status === 'Running') {
+            <span matListItemMeta class="row-actions">
+              @if (player.status === 'Playing') {
+                <button
+                  matButton
+                  type="button"
+                  [disabled]="busy()"
+                  (click)="rebuy(player)"
+                  i18n="@@table.rebuy"
+                >
+                  Rebuy
+                </button>
+                <button
+                  matButton
+                  type="button"
+                  [disabled]="busy() || playing().length < 2"
+                  (click)="tradeChips(player)"
+                  i18n="@@table.tradeChips"
+                >
+                  Comprar de jogador
+                </button>
+              } @else if (player.status === 'Standby') {
+                <button
+                  matButton
+                  type="button"
+                  [disabled]="busy()"
+                  (click)="dealIn(player)"
+                  i18n="@@table.dealIn"
+                >
+                  Dar fichas
+                </button>
+              }
+            </span>
+          }
+        </mat-list-item>
+      }
+    </mat-list>
+
+    <h3 i18n="@@table.case">Maleta</h3>
+
+    <mat-list>
+      @for (chip of table.stock; track chip.denominationId) {
+        <mat-list-item>
+          <span matListItemTitle>
+            <span i18n="@@table.chipLabel">Ficha {{ chip.faceValue }}</span>
+            @if (chip.effectiveValue !== chip.faceValue) {
+              <em i18n="@@table.chipCountsAs">(vale {{ chip.effectiveValue }})</em>
+            }
+          </span>
+          <span matListItemLine>
+            <span i18n="@@table.chipRemaining">{{ chip.remaining }} na maleta</span> ·
+            <span i18n="@@table.chipIssued">{{ chip.issued }} em jogo</span>
+          </span>
+        </mat-list-item>
+      }
+    </mat-list>
+  }
+</div>

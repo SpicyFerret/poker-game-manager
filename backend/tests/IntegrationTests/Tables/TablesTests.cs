@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
 
 namespace IntegrationTests.Tables;
@@ -340,6 +340,20 @@ public sealed class TablesTests(IntegrationTestWebAppFactory factory) : BaseInte
             $"championships/{championshipId}/tables/{tableId}");
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task DeletingAChipSetUsedByATable_Should_NotBlowUp()
+    {
+        (Guid _, AccessTokens tokens) = await RegisterAndLoginAsync();
+        Authenticate(tokens.AccessToken);
+        (Guid championshipId, Guid chipSetId) = await SetUpChampionshipAsync();
+        await CreateTableAsync(championshipId, chipSetId);
+
+        HttpResponseMessage response = await HttpClient.DeleteAsync(
+            $"championships/{championshipId}/chip-sets/{chipSetId}");
+
+        response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
     }
 
     [Fact]

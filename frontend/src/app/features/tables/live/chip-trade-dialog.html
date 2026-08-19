@@ -1,0 +1,42 @@
+<h2 mat-dialog-title i18n="@@trade.heading">Comprar fichas de outro jogador</h2>
+
+<mat-dialog-content>
+  <p i18n="@@trade.explanation">
+    Use quando a maleta acabou. Quem vender é creditado no mesmo valor, então não sai no prejuízo —
+    e a conferência do fim continua fechando, porque nenhuma ficha sai da maleta.
+  </p>
+
+  <form [formGroup]="form">
+    <mat-form-field class="form-field-full">
+      <mat-label i18n="@@trade.buyer">Comprador</mat-label>
+      <input matInput [value]="data.buyer.displayName" disabled />
+    </mat-form-field>
+
+    <mat-form-field class="form-field-full">
+      <mat-label i18n="@@trade.seller">Vendedor</mat-label>
+      <mat-select formControlName="sellerPlayerId">
+        @for (seller of sellers(); track seller.tablePlayerId) {
+          <mat-option [value]="seller.tablePlayerId">{{ seller.displayName }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="form-field-full">
+      <mat-label i18n="@@trade.amount">Valor (R$)</mat-label>
+      <input matInput type="number" inputmode="decimal" step="0.01" formControlName="amount" />
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button matButton mat-dialog-close type="button" i18n="@@common.cancel">Cancelar</button>
+  <button
+    matButton="filled"
+    type="button"
+    [disabled]="form.invalid"
+    (click)="confirm()"
+    i18n="@@trade.confirm"
+  >
+    Registrar
+  </button>
+</mat-dialog-actions>
