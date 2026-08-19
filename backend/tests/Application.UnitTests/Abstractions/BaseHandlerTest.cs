@@ -6,14 +6,22 @@ namespace Application.UnitTests.Abstractions;
 
 public abstract class BaseHandlerTest
 {
-    protected static TestDbContext CreateDbContext()
+    /// <summary>
+    /// A context over its own throwaway database. Pass the same
+    /// <paramref name="databaseName"/> twice to get a second context over the
+    /// same data — worth doing when a test seeds and then acts, since sharing one
+    /// context lets change tracking paper over mistakes a real request would hit.
+    /// </summary>
+    protected static TestDbContext CreateDbContext(string? databaseName = null)
     {
         DbContextOptions<TestDbContext> options = new DbContextOptionsBuilder<TestDbContext>()
-            .UseInMemoryDatabase($"clean-architecture-{Guid.NewGuid()}")
+            .UseInMemoryDatabase(databaseName ?? $"poker-game-manager-{Guid.NewGuid()}")
             .Options;
 
         return new TestDbContext(options);
     }
+
+    protected static string NewDatabaseName() => $"poker-game-manager-{Guid.NewGuid()}";
 
     protected static HybridCache CreateCache()
     {

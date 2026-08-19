@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Application.Abstractions.Authentication;
+using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
 using Infrastructure.Authentication;
 using Infrastructure.Authorization;
@@ -122,6 +123,8 @@ public static class DependencyInjection
         services.AddAuthorization();
 
         services.AddScoped<PermissionProvider>();
+
+        services.AddScoped<IChampionshipContext, ChampionshipContext>();
 
         services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
