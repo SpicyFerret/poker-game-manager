@@ -1,0 +1,66 @@
+namespace Domain.Tables;
+
+public enum LedgerEntryType
+{
+    /// <summary>Opening stack. Chips leave the case.</summary>
+    BuyIn = 0,
+
+    /// <summary>Topping up during play. Chips leave the case.</summary>
+    Rebuy = 1,
+
+    /// <summary>
+    /// Bought chips from another player because the case was empty. Money in,
+    /// no chips out of the case.
+    /// </summary>
+    ChipPurchaseFromPlayer = 2,
+
+    /// <summary>
+    /// The other side of that trade: handed over chips already in play and is
+    /// credited what the buyer paid.
+    /// </summary>
+    ChipSaleToPlayer = 3,
+
+    /// <summary>Manual correction, for when the table and the books disagree.</summary>
+    Adjustment = 4
+}
+
+/// <summary>
+/// One movement of money for one player. The night's whole accounting is the sum
+/// of these plus the final chip count, and nothing else.
+/// </summary>
+public sealed class LedgerEntry
+{
+    public Guid Id { get; set; }
+    public Guid TableId { get; set; }
+    public Guid TablePlayerId { get; set; }
+    public LedgerEntryType Type { get; set; }
+
+    /// <summary>
+    /// Always positive; the type says which way it moves. Signing the amount as
+    /// well would let the two disagree.
+    /// </summary>
+    public decimal MoneyAmount { get; set; }
+
+    /// <summary>The other player, for a chip trade between two people.</summary>
+    public Guid? CounterpartyPlayerId { get; set; }
+
+    public string? Note { get; set; }
+    public Guid CreatedBy { get; set; }
+    public DateTime CreatedAtUtc { get; set; }
+
+    /// <summary>
+    /// Which chips left the case for this entry, per denomination. **Empty unless
+    /// chips actually came out of the case** — a trade between players moves chips
+    /// that were already in play, so it records none, and the end-of-night
+    /// reconciliation still balances.
+    /// </summary>
+    public List<LedgerEntryChip> Chips { get; set; } = [];
+}
+
+public sealed class LedgerEntryChip
+{
+    public Guid Id { get; set; }
+    public Guid LedgerEntryId { get; set; }
+    public Guid ChipDenominationId { get; set; }
+    public int Quantity { get; set; }
+}

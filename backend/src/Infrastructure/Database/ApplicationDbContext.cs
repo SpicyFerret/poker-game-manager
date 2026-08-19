@@ -2,6 +2,7 @@
 using Domain.Championships;
 using Domain.ChipSets;
 using Domain.Seasons;
+using Domain.Tables;
 using Domain.Users;
 using Infrastructure.DomainEvents;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,14 @@ public sealed class ApplicationDbContext(
     public DbSet<ChipDenomination> ChipDenominations { get; set; }
 
     public DbSet<Season> Seasons { get; set; }
+
+    public DbSet<PokerTable> Tables { get; set; }
+
+    public DbSet<TablePlayer> TablePlayers { get; set; }
+
+    public DbSet<LedgerEntry> LedgerEntries { get; set; }
+
+    public DbSet<LedgerEntryChip> LedgerEntryChips { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

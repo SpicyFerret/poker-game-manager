@@ -8,4 +8,5 @@ public static class Tags
     public const string Invites = "Invites";
     public const string ChipSets = "Chip sets";
     public const string Seasons = "Seasons";
+    public const string Tables = "Tables";
 }
