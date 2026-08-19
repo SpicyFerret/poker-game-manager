@@ -125,5 +125,20 @@ public sealed class UsersTests(IntegrationTestWebAppFactory factory) : BaseInteg
         profile!.DisplayName.ShouldBe("Test");
     }
 
+    [Fact]
+    public async Task GetById_Should_ReturnUnauthorized_WhenTokenIsInvalid()
+    {
+        // Arrange
+        (Guid userId, _) = await RegisterAndLoginAsync();
+        Authenticate("not-a-valid-token");
+
+        // Act
+        HttpResponseMessage response = await HttpClient.GetAsync($"users/{userId}");
+
+        // Assert — this route goes through HasPermission, whose handler used to
+        // fall through to GetUserId() and throw, answering 500 instead of 401.
+        response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+    }
+
     private sealed record UserProfile(string DisplayName, string? PaymentType, string? PaymentHandle);
 }

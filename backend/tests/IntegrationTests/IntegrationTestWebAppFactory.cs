@@ -11,7 +11,7 @@ namespace IntegrationTests;
 public sealed class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder("postgres:17")
-        .WithDatabase("clean-architecture")
+        .WithDatabase("poker-game-manager")
         .WithUsername("postgres")
         .WithPassword("postgres")
         .Build();
@@ -20,11 +20,12 @@ public sealed class IntegrationTestWebAppFactory : WebApplicationFactory<Program
     {
         builder.UseSetting("ConnectionStrings:Database", _dbContainer.GetConnectionString());
 
-        // Provide deterministic JWT settings so tokens can be issued and validated in tests.
-        builder.UseSetting("Jwt:Secret", "super-duper-secret-value-that-should-be-in-user-secrets");
-        builder.UseSetting("Jwt:Issuer", "clean-architecture");
-        builder.UseSetting("Jwt:Audience", "developers");
-        builder.UseSetting("Jwt:ExpirationInMinutes", "60");
+        // Only the secret is supplied — issuer, audience and expiry deliberately
+        // come from the shipped appsettings.json, so these tests exercise the same
+        // token settings a deployed instance uses. Overriding all four is what let
+        // "Jwt:ExpirationInMinutes": 0 reach production unnoticed: every token was
+        // born expired, and no test could see it.
+        builder.UseSetting("Jwt:Secret", "integration-tests-signing-secret-32-chars");
 
         // Relax rate limiting so the test suite is not throttled.
         builder.UseSetting("RateLimiting:Global:PermitLimit", "100000");
