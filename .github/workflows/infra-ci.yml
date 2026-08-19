@@ -63,6 +63,12 @@ jobs:
           KUBECONFIG_CONTENT: ${{ secrets.PI_CLUSTER_KUBECONFIG }}
         run: echo "$KUBECONFIG_CONTENT" > kubeconfig
 
+      - name: Debug kubeconfig structure (no secret content printed)
+        run: |
+          wc -l kubeconfig
+          grep -c "^clusters:\|^contexts:\|^users:\|^    client-key-data:\|^    client-certificate-data:\|^    certificate-authority-data:" kubeconfig || true
+          head -c 20 kubeconfig | cat -A
+
       - name: Write backend config
         env:
           CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
