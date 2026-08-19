@@ -1,0 +1,55 @@
+<div class="page">
+  <mat-card>
+    @if (loading() || submitting()) {
+      <mat-progress-bar mode="indeterminate" />
+    }
+
+    <mat-card-header>
+      <mat-card-title i18n="@@profile.heading">Meu perfil</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <mat-form-field class="form-field-full">
+          <mat-label i18n="@@field.displayName">Apelido na mesa</mat-label>
+          <input matInput formControlName="displayName" autocomplete="nickname" />
+        </mat-form-field>
+
+        <mat-form-field class="form-field-full">
+          <mat-label i18n="@@field.paymentType">Forma de recebimento</mat-label>
+          <mat-select formControlName="paymentType">
+            <mat-option [value]="null" i18n="@@profile.paymentNone">Não informar</mat-option>
+            <mat-option value="Pix">Pix</mat-option>
+            <mat-option value="Other" i18n="@@profile.paymentOther">Outra</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="form-field-full">
+          <mat-label i18n="@@field.paymentHandle">Chave para receber</mat-label>
+          <input matInput formControlName="paymentHandle" />
+          <mat-hint i18n="@@profile.paymentHandleHint"
+            >Aparece no acerto da mesa para quem precisa te pagar.</mat-hint
+          >
+        </mat-form-field>
+
+        @if (error(); as message) {
+          <p role="alert">{{ message }}</p>
+        }
+
+        @if (saved()) {
+          <p role="status" i18n="@@profile.saved">Perfil salvo.</p>
+        }
+
+        <button
+          matButton="filled"
+          type="submit"
+          class="form-field-full"
+          [disabled]="form.invalid || submitting()"
+          i18n="@@profile.submit"
+        >
+          Salvar
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

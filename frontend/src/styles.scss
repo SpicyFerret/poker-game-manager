@@ -1,1 +1,56 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+html {
+  // Follows the phone's own light/dark setting. Home games run at night, so
+  // dark is what most players will actually see.
+  color-scheme: light dark;
+
+  @include mat.theme(
+    (
+      // Green primary is the felt; amber tertiary is the chip/accent colour.
+      color: (primary: mat.$green-palette, tertiary: mat.$orange-palette),
+      // System font stack on purpose: no external font request, which keeps the
+      // first paint fast on a phone with bad signal at the table.
+      typography: (
+          plain-family: (
+            system-ui,
+            -apple-system,
+            'Segoe UI',
+            Roboto,
+            sans-serif,
+          ),
+          brand-family: (
+            system-ui,
+            -apple-system,
+            'Segoe UI',
+            Roboto,
+            sans-serif,
+          )
+        ),
+      density: 0
+    )
+  );
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+}
+
+// Mobile-first shared helpers. Anything wider than a phone just gets the same
+// column centred, rather than a separate desktop layout.
+.page {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.form-field-full {
+  width: 100%;
+}

@@ -23,6 +23,7 @@ public sealed class RegisterUserCommandHandlerTests : BaseHandlerTest
             Email = Command.Email,
             FirstName = "Existing",
             LastName = "User",
+            DisplayName = "Existing",
             PasswordHash = "hash"
         });
         await context.SaveChangesAsync();
@@ -58,5 +59,39 @@ public sealed class RegisterUserCommandHandlerTests : BaseHandlerTest
         user.Email.ShouldBe(Command.Email);
         user.PasswordHash.ShouldBe("hashed-password");
         user.DomainEvents.ShouldContain(domainEvent => domainEvent is UserRegisteredDomainEvent);
+    }
+
+    [Fact]
+    public async Task Handle_Should_DefaultDisplayNameToFirstName_WhenNotProvided()
+    {
+        // Arrange
+        await using TestDbContext context = CreateDbContext();
+        var handler = new RegisterUserCommandHandler(context, Substitute.For<IPasswordHasher>());
+
+        // Act
+        Result<Guid> result = await handler.Handle(Command, CancellationToken.None);
+
+        // Assert
+        User user = await context.Users.SingleAsync(u => u.Id == result.Value);
+        user.DisplayName.ShouldBe(Command.FirstName);
+    }
+
+    [Theory]
+    [InlineData("  Dan  ", "Dan")]
+    [InlineData("Dan", "Dan")]
+    public async Task Handle_Should_UseTrimmedDisplayName_WhenProvided(string provided, string expected)
+    {
+        // Arrange
+        await using TestDbContext context = CreateDbContext();
+        var handler = new RegisterUserCommandHandler(context, Substitute.For<IPasswordHasher>());
+
+        // Act
+        Result<Guid> result = await handler.Handle(
+            Command with { DisplayName = provided },
+            CancellationToken.None);
+
+        // Assert
+        User user = await context.Users.SingleAsync(u => u.Id == result.Value);
+        user.DisplayName.ShouldBe(expected);
     }
 }

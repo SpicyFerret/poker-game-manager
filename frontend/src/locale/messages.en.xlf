@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="pt" target-language="en" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="app.title" datatype="html">
+        <source>Poker Manager</source>
+        <target>Poker Manager</target>
+      </trans-unit>
+      <trans-unit id="app.profile" datatype="html">
+        <source>Meu perfil</source>
+        <target>My profile</target>
+      </trans-unit>
+      <trans-unit id="app.logout" datatype="html">
+        <source>Sair</source>
+        <target>Sign out</target>
+      </trans-unit>
+      <trans-unit id="error.offline" datatype="html">
+        <source>Sem conexão com o servidor.</source>
+        <target>Cannot reach the server.</target>
+      </trans-unit>
+      <trans-unit id="login.heading" datatype="html">
+        <source>Entrar</source>
+        <target>Sign in</target>
+      </trans-unit>
+      <trans-unit id="field.email" datatype="html">
+        <source>E-mail</source>
+        <target>Email</target>
+      </trans-unit>
+      <trans-unit id="field.password" datatype="html">
+        <source>Senha</source>
+        <target>Password</target>
+      </trans-unit>
+      <trans-unit id="login.submit" datatype="html">
+        <source> Entrar </source>
+        <target> Sign in </target>
+      </trans-unit>
+      <trans-unit id="login.toRegister" datatype="html">
+        <source>Ainda não tenho conta</source>
+        <target>I don't have an account yet</target>
+      </trans-unit>
+      <trans-unit id="login.failed" datatype="html">
+        <source>E-mail ou senha inválidos.</source>
+        <target>Invalid email or password.</target>
+      </trans-unit>
+      <trans-unit id="register.heading" datatype="html">
+        <source>Criar conta</source>
+        <target>Create account</target>
+      </trans-unit>
+      <trans-unit id="field.firstName" datatype="html">
+        <source>Nome</source>
+        <target>First name</target>
+      </trans-unit>
+      <trans-unit id="field.lastName" datatype="html">
+        <source>Sobrenome</source>
+        <target>Last name</target>
+      </trans-unit>
+      <trans-unit id="field.displayName" datatype="html">
+        <source>Apelido na mesa</source>
+        <target>Name at the table</target>
+      </trans-unit>
+      <trans-unit id="register.displayNameHint" datatype="html">
+        <source>Opcional — se ficar em branco usamos seu nome.</source>
+        <target>Optional — we'll use your first name if you leave it blank.</target>
+      </trans-unit>
+      <trans-unit id="register.passwordHint" datatype="html">
+        <source>Mínimo de 8 caracteres.</source>
+        <target>At least 8 characters.</target>
+      </trans-unit>
+      <trans-unit id="register.submit" datatype="html">
+        <source> Criar conta </source>
+        <target> Create account </target>
+      </trans-unit>
+      <trans-unit id="register.toLogin" datatype="html">
+        <source>Já tenho conta</source>
+        <target>I already have an account</target>
+      </trans-unit>
+      <trans-unit id="register.failed" datatype="html">
+        <source>Não foi possível criar a conta.</source>
+        <target>The account could not be created.</target>
+      </trans-unit>
+      <trans-unit id="home.heading" datatype="html">
+        <source>Seus campeonatos</source>
+        <target>Your championships</target>
+      </trans-unit>
+      <trans-unit id="home.empty" datatype="html">
+        <source> Você ainda não participa de nenhum campeonato. Criar e entrar em campeonatos chega na próxima etapa. </source>
+        <target> You are not in any championship yet. Creating and joining championships lands in the next step. </target>
+      </trans-unit>
+      <trans-unit id="profile.heading" datatype="html">
+        <source>Meu perfil</source>
+        <target>My profile</target>
+      </trans-unit>
+      <trans-unit id="field.paymentType" datatype="html">
+        <source>Forma de recebimento</source>
+        <target>How you get paid</target>
+      </trans-unit>
+      <trans-unit id="profile.paymentNone" datatype="html">
+        <source>Não informar</source>
+        <target>Prefer not to say</target>
+      </trans-unit>
+      <trans-unit id="profile.paymentOther" datatype="html">
+        <source>Outra</source>
+        <target>Other</target>
+      </trans-unit>
+      <trans-unit id="field.paymentHandle" datatype="html">
+        <source>Chave para receber</source>
+        <target>Payment details</target>
+      </trans-unit>
+      <trans-unit id="profile.paymentHandleHint" datatype="html">
+        <source>Aparece no acerto da mesa para quem precisa te pagar.</source>
+        <target>Shown in the table settlement to whoever has to pay you.</target>
+      </trans-unit>
+      <trans-unit id="profile.saved" datatype="html">
+        <source>Perfil salvo.</source>
+        <target>Profile saved.</target>
+      </trans-unit>
+      <trans-unit id="profile.submit" datatype="html">
+        <source> Salvar </source>
+        <target> Save </target>
+      </trans-unit>
+      <trans-unit id="profile.loadFailed" datatype="html">
+        <source>Não foi possível carregar o perfil.</source>
+        <target>The profile could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="profile.saveFailed" datatype="html">
+        <source>Não foi possível salvar o perfil.</source>
+        <target>The profile could not be saved.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

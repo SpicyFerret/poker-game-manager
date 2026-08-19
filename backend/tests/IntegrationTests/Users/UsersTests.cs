@@ -77,4 +77,53 @@ public sealed class UsersTests(IntegrationTestWebAppFactory factory) : BaseInteg
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
+
+    [Fact]
+    public async Task UpdateProfile_Should_PersistDisplayNameAndPaymentHandle()
+    {
+        // Arrange
+        (Guid userId, AccessTokens tokens) = await RegisterAndLoginAsync();
+        Authenticate(tokens.AccessToken);
+
+        // Act
+        HttpResponseMessage update = await HttpClient.PutAsJsonAsync(
+            "users/me/profile",
+            new { displayName = "Dan", paymentType = "Pix", paymentHandle = "dan@example.com" });
+
+        // Assert
+        update.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+
+        UserProfile? profile = await HttpClient.GetFromJsonAsync<UserProfile>($"users/{userId}");
+        profile!.DisplayName.ShouldBe("Dan");
+        profile.PaymentType.ShouldBe("Pix");
+        profile.PaymentHandle.ShouldBe("dan@example.com");
+    }
+
+    [Fact]
+    public async Task UpdateProfile_Should_ReturnUnauthorized_WhenNotAuthenticated()
+    {
+        // Act
+        HttpResponseMessage response = await HttpClient.PutAsJsonAsync(
+            "users/me/profile",
+            new { displayName = "Dan" });
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task Register_Should_DefaultDisplayNameToFirstName()
+    {
+        // Arrange
+        (Guid userId, AccessTokens tokens) = await RegisterAndLoginAsync();
+        Authenticate(tokens.AccessToken);
+
+        // Act
+        UserProfile? profile = await HttpClient.GetFromJsonAsync<UserProfile>($"users/{userId}");
+
+        // Assert
+        profile!.DisplayName.ShouldBe("Test");
+    }
+
+    private sealed record UserProfile(string DisplayName, string? PaymentType, string? PaymentHandle);
 }
