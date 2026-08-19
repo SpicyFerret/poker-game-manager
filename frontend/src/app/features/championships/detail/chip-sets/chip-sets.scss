@@ -1,0 +1,31 @@
+.tab-body {
+  padding: 1rem 0;
+}
+
+.chip-set-card {
+  margin-top: 0.75rem;
+}
+
+.denominations {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.colour {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+// Wraps to one field per line on a phone, and packs them across on anything wider.
+.denomination-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  gap: 0.5rem;
+  align-items: start;
+  margin-bottom: 0.5rem;
+}
+
+.editor-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}

@@ -1,0 +1,53 @@
+<div class="page">
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (error(); as message) {
+    <p role="alert">{{ message }}</p>
+  }
+
+  @if (championship(); as championship) {
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>{{ championship.name }}</mat-card-title>
+        <mat-card-subtitle>{{ championship.role | roleLabel }}</mat-card-subtitle>
+      </mat-card-header>
+      @if (championship.description) {
+        <mat-card-content>
+          <p>{{ championship.description }}</p>
+        </mat-card-content>
+      }
+    </mat-card>
+
+    <mat-tab-group>
+      <mat-tab i18n-label="@@tab.members" label="Membros">
+        <app-members-tab
+          [championshipId]="championshipId()"
+          [callerRole]="championship.role"
+          (changed)="load()"
+        />
+      </mat-tab>
+
+      @if (canManage(championship)) {
+        <mat-tab i18n-label="@@tab.invites" label="Convites">
+          <app-invites-tab [championshipId]="championshipId()" [callerRole]="championship.role" />
+        </mat-tab>
+      }
+
+      <mat-tab i18n-label="@@tab.chipSets" label="Maletas">
+        <app-chip-sets-tab [championshipId]="championshipId()" [callerRole]="championship.role" />
+      </mat-tab>
+
+      <mat-tab i18n-label="@@tab.seasons" label="Temporadas">
+        <app-seasons-tab [championshipId]="championshipId()" [callerRole]="championship.role" />
+      </mat-tab>
+
+      @if (canAdminister(championship)) {
+        <mat-tab i18n-label="@@tab.settings" label="Configurações">
+          <app-settings-tab [championship]="championship" (saved)="load()" />
+        </mat-tab>
+      }
+    </mat-tab-group>
+  }
+</div>

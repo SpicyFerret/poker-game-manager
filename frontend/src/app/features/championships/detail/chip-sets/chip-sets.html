@@ -1,0 +1,116 @@
+<div class="tab-body">
+  @if (error(); as message) {
+    <p role="alert">{{ message }}</p>
+  }
+
+  @if (editing() === null) {
+    @if (canAdminister()) {
+      <button matButton="filled" type="button" (click)="startNew()" i18n="@@chipSets.new">
+        Nova maleta
+      </button>
+    }
+
+    @for (chipSet of chipSets(); track chipSet.id) {
+      <mat-card class="chip-set-card">
+        <mat-card-header>
+          <mat-card-title>{{ chipSet.name }}</mat-card-title>
+          <mat-card-subtitle i18n="@@chipSets.totalUnits"
+            >{{ chipSet.totalUnits }} unidades no total</mat-card-subtitle
+          >
+        </mat-card-header>
+
+        <mat-card-content>
+          <ul class="denominations">
+            @for (denomination of chipSet.denominations; track denomination.id) {
+              <li>
+                <strong>{{ denomination.quantity }}×</strong>
+                <span i18n="@@chipSets.printed">ficha {{ denomination.faceValue }}</span>
+                @if (denomination.effectiveValue !== denomination.faceValue) {
+                  <em i18n="@@chipSets.countsAs">, valendo {{ denomination.effectiveValue }}</em>
+                }
+                @if (denomination.colour) {
+                  <span class="colour">({{ denomination.colour }})</span>
+                }
+              </li>
+            }
+          </ul>
+        </mat-card-content>
+
+        @if (canAdminister()) {
+          <mat-card-actions>
+            <button matButton type="button" (click)="startEdit(chipSet)" i18n="@@common.edit">
+              Editar
+            </button>
+            <button
+              matButton
+              type="button"
+              [disabled]="busy()"
+              (click)="remove(chipSet)"
+              i18n="@@common.delete"
+            >
+              Excluir
+            </button>
+          </mat-card-actions>
+        }
+      </mat-card>
+    }
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <mat-form-field class="form-field-full">
+        <mat-label i18n="@@field.chipSetName">Nome da maleta</mat-label>
+        <input matInput formControlName="name" />
+      </mat-form-field>
+
+      <div formArrayName="denominations">
+        @for (control of denominations.controls; track $index) {
+          <div [formGroupName]="$index" class="denomination-row">
+            <mat-form-field>
+              <mat-label i18n="@@field.faceValue">Impresso</mat-label>
+              <input matInput type="number" inputmode="numeric" formControlName="faceValue" />
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label i18n="@@field.effectiveValue">Vale</mat-label>
+              <input matInput type="number" inputmode="numeric" formControlName="effectiveValue" />
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label i18n="@@field.quantity">Quantidade</mat-label>
+              <input matInput type="number" inputmode="numeric" formControlName="quantity" />
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label i18n="@@field.colour">Cor</mat-label>
+              <input matInput formControlName="colour" />
+            </mat-form-field>
+
+            <button
+              matButton
+              type="button"
+              (click)="removeDenomination($index)"
+              i18n="@@chipSets.removeDenomination"
+            >
+              Remover ficha
+            </button>
+          </div>
+        }
+      </div>
+
+      <button matButton type="button" (click)="addDenomination()" i18n="@@chipSets.addDenomination">
+        Adicionar ficha
+      </button>
+
+      <div class="editor-actions">
+        <button
+          matButton="filled"
+          type="submit"
+          [disabled]="form.invalid || busy()"
+          i18n="@@common.save"
+        >
+          Salvar
+        </button>
+        <button matButton type="button" (click)="cancel()" i18n="@@common.cancel">Cancelar</button>
+      </div>
+    </form>
+  }
+</div>

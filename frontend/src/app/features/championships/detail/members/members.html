@@ -1,0 +1,77 @@
+<div class="tab-body">
+  @if (error(); as message) {
+    <p role="alert">{{ message }}</p>
+  }
+
+  @if (canAdminister()) {
+    <form [formGroup]="addForm" (ngSubmit)="add()" class="add-member">
+      <mat-form-field class="form-field-full">
+        <mat-label i18n="@@members.addByEmail">Adicionar por e-mail</mat-label>
+        <input matInput type="email" formControlName="email" autocomplete="off" />
+        <mat-hint i18n="@@members.addByEmailHint">A pessoa já precisa ter conta.</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field class="form-field-full">
+        <mat-label i18n="@@field.role">Cargo</mat-label>
+        <mat-select formControlName="role">
+          @for (role of rolesICanAssign(); track role) {
+            <mat-option [value]="role">{{ role | roleLabel }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <button
+        matButton="filled"
+        type="submit"
+        [disabled]="addForm.invalid || busy()"
+        i18n="@@members.add"
+      >
+        Adicionar
+      </button>
+    </form>
+  }
+
+  <mat-list>
+    @for (member of members(); track member.userId) {
+      <mat-list-item class="member-row">
+        <span matListItemTitle>{{ member.displayName }}</span>
+
+        <span matListItemLine>
+          @if (canActOn(member)) {
+            <mat-form-field class="role-select">
+              <mat-select
+                [value]="member.role"
+                [disabled]="busy()"
+                (valueChange)="changeRole(member, $event)"
+              >
+                @for (role of rolesICanAssign(); track role) {
+                  <mat-option [value]="role">{{ role | roleLabel }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          } @else {
+            {{ member.role | roleLabel }}
+          }
+
+          @if (!member.hasPaymentHandle) {
+            <span class="warn" i18n="@@members.noPaymentHandle">· sem chave de recebimento</span>
+          }
+        </span>
+
+        @if (canActOn(member)) {
+          <button
+            matIconButton
+            matListItemMeta
+            type="button"
+            [disabled]="busy()"
+            (click)="remove(member)"
+            i18n-aria-label="@@members.remove"
+            aria-label="Remover membro"
+          >
+            &times;
+          </button>
+        }
+      </mat-list-item>
+    }
+  </mat-list>
+</div>
