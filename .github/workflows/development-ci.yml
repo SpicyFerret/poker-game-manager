@@ -38,13 +38,30 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: github/codeql-action/init@v3
+      - uses: actions/setup-dotnet@v4
+        if: matrix.language == 'csharp'
+        with:
+          dotnet-version: "10.0.x"
+
+      - uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
 
-      - uses: github/codeql-action/autobuild@v3
+      # autobuild can't reliably pick one project out of this multi-project
+      # repo for csharp, so build explicitly — same NU1903-avoidance scoping
+      # as the other backend jobs (excludes IntegrationTests.csproj).
+      - name: Build (csharp)
+        if: matrix.language == 'csharp'
+        working-directory: backend
+        run: |
+          dotnet build src/Web.Api/Web.Api.csproj
+          dotnet build tests/Application.UnitTests/Application.UnitTests.csproj
+          dotnet build tests/ArchitectureTests/ArchitectureTests.csproj
 
-      - uses: github/codeql-action/analyze@v3
+      - uses: github/codeql-action/autobuild@v4
+        if: matrix.language == 'javascript-typescript'
+
+      - uses: github/codeql-action/analyze@v4
 
   # --- Security check (dependency audit) --------------------------------------
   # Scoped to non-test backend projects deliberately: IntegrationTests.csproj
@@ -87,9 +104,19 @@ jobs:
         with:
           dotnet-version: "10.0.x"
 
+      # Every project except IntegrationTests.csproj — same NU1903 reason as
+      # dependency-audit/backend-unit-tests above (whole-solution restore
+      # would hit the vulnerable transitive SSH.NET during restore itself).
       - name: dotnet format (style, per .editorconfig)
         working-directory: backend
-        run: dotnet format CleanArchitecture.slnx --verify-no-changes --no-restore || dotnet format CleanArchitecture.slnx --verify-no-changes
+        run: |
+          for proj in src/Domain/Domain.csproj src/SharedKernel/SharedKernel.csproj \
+                      src/Application/Application.csproj src/Infrastructure/Infrastructure.csproj \
+                      src/Web.Api/Web.Api.csproj tests/Application.UnitTests/Application.UnitTests.csproj \
+                      tests/ArchitectureTests/ArchitectureTests.csproj; do
+            dotnet restore "$proj"
+            dotnet format "$proj" --verify-no-changes --no-restore
+          done
 
       - uses: actions/setup-node@v4
         with:
