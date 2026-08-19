@@ -66,10 +66,36 @@ public static class DependencyInjection
         return services;
     }
 
+    /// <summary>
+    /// Fails the process rather than starting with JWT settings that can't work.
+    /// An expiry of 0 in particular is silent and vicious: login succeeds, every
+    /// token is born expired, and every authenticated call comes back 401.
+    /// </summary>
+    private static void ValidateJwtConfiguration(IConfiguration configuration)
+    {
+        if (string.IsNullOrWhiteSpace(configuration["Jwt:Secret"]))
+        {
+            throw new InvalidOperationException("Jwt:Secret is not configured.");
+        }
+
+        if (string.IsNullOrWhiteSpace(configuration["Jwt:Issuer"]) ||
+            string.IsNullOrWhiteSpace(configuration["Jwt:Audience"]))
+        {
+            throw new InvalidOperationException("Jwt:Issuer and Jwt:Audience must both be configured.");
+        }
+
+        if (configuration.GetValue<int>("Jwt:ExpirationInMinutes") <= 0)
+        {
+            throw new InvalidOperationException("Jwt:ExpirationInMinutes must be greater than zero.");
+        }
+    }
+
     private static IServiceCollection AddAuthenticationInternal(
         this IServiceCollection services,
         IConfiguration configuration)
     {
+        ValidateJwtConfiguration(configuration);
+
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(o =>
             {

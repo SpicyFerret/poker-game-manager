@@ -10,4 +10,7 @@ regexes = [
   # only to boot the app against an ephemeral, throwaway Postgres container
   # inside the CI job itself. Never used anywhere real.
   '''ci-smoke-test-secret-at-least-32-characters-long''',
+  # IntegrationTestWebAppFactory: signing secret for tokens issued against a
+  # throwaway Testcontainers Postgres that lives for the length of the run.
+  '''integration-tests-signing-secret-32-chars''',
 ]
