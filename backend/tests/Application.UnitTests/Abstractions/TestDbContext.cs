@@ -38,4 +38,12 @@ public sealed class TestDbContext(DbContextOptions<TestDbContext> options)
     public DbSet<LedgerEntry> LedgerEntries { get; set; }
 
     public DbSet<LedgerEntryChip> LedgerEntryChips { get; set; }
+
+    public DbSet<FinalCount> FinalCounts { get; set; }
+
+    public DbSet<Settlement> Settlements { get; set; }
+
+    public DbSet<SettlementTransfer> SettlementTransfers { get; set; }
+
+    public DbSet<TableResult> TableResults { get; set; }
 }

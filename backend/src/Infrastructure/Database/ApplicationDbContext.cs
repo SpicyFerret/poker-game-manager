@@ -39,6 +39,14 @@ public sealed class ApplicationDbContext(
 
     public DbSet<LedgerEntryChip> LedgerEntryChips { get; set; }
 
+    public DbSet<FinalCount> FinalCounts { get; set; }
+
+    public DbSet<Settlement> Settlements { get; set; }
+
+    public DbSet<SettlementTransfer> SettlementTransfers { get; set; }
+
+    public DbSet<TableResult> TableResults { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);

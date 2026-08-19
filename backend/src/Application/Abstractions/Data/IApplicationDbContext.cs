@@ -25,6 +25,10 @@ public interface IApplicationDbContext
     DbSet<TablePlayer> TablePlayers { get; }
     DbSet<LedgerEntry> LedgerEntries { get; }
     DbSet<LedgerEntryChip> LedgerEntryChips { get; }
+    DbSet<FinalCount> FinalCounts { get; }
+    DbSet<Settlement> Settlements { get; }
+    DbSet<SettlementTransfer> SettlementTransfers { get; }
+    DbSet<TableResult> TableResults { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

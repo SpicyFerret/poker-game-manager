@@ -1,4 +1,4 @@
-using SharedKernel;
+﻿using SharedKernel;
 
 namespace Domain.Tables;
 
@@ -67,4 +67,28 @@ public static class TableErrors
     public static readonly Error AmountMustBePositive = Error.Problem(
         "Tables.AmountMustBePositive",
         "The amount must be greater than zero");
+
+    public static readonly Error CountsDoNotBalance = Error.Conflict(
+        "Tables.CountsDoNotBalance",
+        "The chips counted do not match what left the case. Settle up only once they do");
+
+    public static readonly Error StillWaitingOnCounts = Error.Conflict(
+        "Tables.StillWaitingOnCounts",
+        "Some players have not reported what they are holding yet");
+
+    public static readonly Error QuantityCannotBeNegative = Error.Problem(
+        "Tables.QuantityCannotBeNegative",
+        "A chip count cannot be negative");
+
+    public static readonly Error DenominationNotInThisCase = Error.Problem(
+        "Tables.DenominationNotInThisCase",
+        "One of the chips reported is not part of this table's chip case");
+
+    public static readonly Error CannotCountForSomeoneElse = Error.Forbidden(
+        "Tables.CannotCountForSomeoneElse",
+        "You can only report your own chips. A table manager can report for anyone");
+
+    public static readonly Error AlreadySettled = Error.Conflict(
+        "Tables.AlreadySettled",
+        "This table has already been settled");
 }

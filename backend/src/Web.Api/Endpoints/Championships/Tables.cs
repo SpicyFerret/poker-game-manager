@@ -1,10 +1,12 @@
-using Application.Abstractions.Messaging;
+﻿using Application.Abstractions.Messaging;
 using Application.Tables;
 using Application.Tables.BuyChips;
+using Application.Tables.Counting;
 using Application.Tables.Create;
 using Application.Tables.Get;
 using Application.Tables.IssueStack;
 using Application.Tables.Join;
+using Application.Tables.Settle;
 using Application.Tables.Start;
 using Domain.Tables;
 using SharedKernel;
@@ -29,6 +31,8 @@ internal sealed class Tables : IEndpoint
     public sealed record IssueStackRequest(Guid TablePlayerId, bool IsRebuy);
 
     public sealed record BuyChipsRequest(Guid BuyerPlayerId, Guid SellerPlayerId, decimal Amount);
+
+    public sealed record ReportCountRequest(Guid TablePlayerId, IReadOnlyList<ChipCountEntry> Counts);
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -139,6 +143,72 @@ internal sealed class Tables : IEndpoint
             Result result = await handler.Handle(command, cancellationToken);
 
             return result.Match(Results.NoContent, CustomResults.Problem);
+        });
+
+        group.MapPost("{tableId:guid}/counting", async (
+            Guid championshipId,
+            Guid tableId,
+            ICommandHandler<StartCountingCommand> handler,
+            CancellationToken cancellationToken) =>
+        {
+            Result result = await handler.Handle(
+                new StartCountingCommand(championshipId, tableId),
+                cancellationToken);
+
+            return result.Match(Results.NoContent, CustomResults.Problem);
+        });
+
+        group.MapPost("{tableId:guid}/counts", async (
+            Guid championshipId,
+            Guid tableId,
+            ReportCountRequest request,
+            ICommandHandler<ReportCountCommand> handler,
+            CancellationToken cancellationToken) =>
+        {
+            Result result = await handler.Handle(
+                new ReportCountCommand(championshipId, tableId, request.TablePlayerId, request.Counts),
+                cancellationToken);
+
+            return result.Match(Results.NoContent, CustomResults.Problem);
+        });
+
+        group.MapGet("{tableId:guid}/reconciliation", async (
+            Guid championshipId,
+            Guid tableId,
+            IQueryHandler<GetReconciliationQuery, ReconciliationResponse> handler,
+            CancellationToken cancellationToken) =>
+        {
+            Result<ReconciliationResponse> result = await handler.Handle(
+                new GetReconciliationQuery(championshipId, tableId),
+                cancellationToken);
+
+            return result.Match(Results.Ok, CustomResults.Problem);
+        });
+
+        group.MapPost("{tableId:guid}/settlement", async (
+            Guid championshipId,
+            Guid tableId,
+            ICommandHandler<SettleTableCommand> handler,
+            CancellationToken cancellationToken) =>
+        {
+            Result result = await handler.Handle(
+                new SettleTableCommand(championshipId, tableId),
+                cancellationToken);
+
+            return result.Match(Results.NoContent, CustomResults.Problem);
+        });
+
+        group.MapGet("{tableId:guid}/settlement", async (
+            Guid championshipId,
+            Guid tableId,
+            IQueryHandler<GetSettlementQuery, SettlementResponse> handler,
+            CancellationToken cancellationToken) =>
+        {
+            Result<SettlementResponse> result = await handler.Handle(
+                new GetSettlementQuery(championshipId, tableId),
+                cancellationToken);
+
+            return result.Match(Results.Ok, CustomResults.Problem);
         });
     }
 }
