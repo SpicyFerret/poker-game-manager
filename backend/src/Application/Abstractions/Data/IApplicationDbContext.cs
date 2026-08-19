@@ -29,6 +29,8 @@ public interface IApplicationDbContext
     DbSet<Settlement> Settlements { get; }
     DbSet<SettlementTransfer> SettlementTransfers { get; }
     DbSet<TableResult> TableResults { get; }
+    DbSet<BlindLevel> BlindLevels { get; }
+    DbSet<TableClock> TableClocks { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

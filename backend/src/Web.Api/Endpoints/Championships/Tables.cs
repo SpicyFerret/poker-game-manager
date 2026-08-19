@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Tables;
+using Application.Tables.Blinds;
 using Application.Tables.BuyChips;
 using Application.Tables.Counting;
 using Application.Tables.Create;
@@ -33,6 +34,10 @@ internal sealed class Tables : IEndpoint
     public sealed record BuyChipsRequest(Guid BuyerPlayerId, Guid SellerPlayerId, decimal Amount);
 
     public sealed record ReportCountRequest(Guid TablePlayerId, IReadOnlyList<ChipCountEntry> Counts);
+
+    public sealed record SetBlindLevelsRequest(IReadOnlyList<BlindLevelInput> Levels);
+
+    public sealed record ClockRequest(ClockAction Action);
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -209,6 +214,47 @@ internal sealed class Tables : IEndpoint
                 cancellationToken);
 
             return result.Match(Results.Ok, CustomResults.Problem);
+        });
+
+        group.MapGet("{tableId:guid}/blinds", async (
+            Guid championshipId,
+            Guid tableId,
+            IQueryHandler<GetBlindsQuery, BlindsResponse> handler,
+            CancellationToken cancellationToken) =>
+        {
+            Result<BlindsResponse> result = await handler.Handle(
+                new GetBlindsQuery(championshipId, tableId),
+                cancellationToken);
+
+            return result.Match(Results.Ok, CustomResults.Problem);
+        });
+
+        group.MapPut("{tableId:guid}/blinds", async (
+            Guid championshipId,
+            Guid tableId,
+            SetBlindLevelsRequest request,
+            ICommandHandler<SetBlindLevelsCommand> handler,
+            CancellationToken cancellationToken) =>
+        {
+            Result result = await handler.Handle(
+                new SetBlindLevelsCommand(championshipId, tableId, request.Levels),
+                cancellationToken);
+
+            return result.Match(Results.NoContent, CustomResults.Problem);
+        });
+
+        group.MapPost("{tableId:guid}/clock", async (
+            Guid championshipId,
+            Guid tableId,
+            ClockRequest request,
+            ICommandHandler<ControlClockCommand> handler,
+            CancellationToken cancellationToken) =>
+        {
+            Result result = await handler.Handle(
+                new ControlClockCommand(championshipId, tableId, request.Action),
+                cancellationToken);
+
+            return result.Match(Results.NoContent, CustomResults.Problem);
         });
     }
 }
