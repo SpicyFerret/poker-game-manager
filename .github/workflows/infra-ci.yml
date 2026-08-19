@@ -2,6 +2,14 @@ name: Infra CI
 
 on:
   workflow_dispatch:
+    inputs:
+      action:
+        description: "tofu action to run on the self-hosted (Pi) runner"
+        type: choice
+        options:
+          - plan
+          - apply
+        default: plan
   pull_request:
     branches:
       - main
@@ -14,6 +22,8 @@ defaults:
     working-directory: infra/kubernetes
 
 jobs:
+  # fmt/validate need no cluster access, so this stays on a GitHub-hosted
+  # runner and runs on every PR that touches infra/.
   fmt-and-validate:
     runs-on: ubuntu-latest
 
@@ -32,12 +42,20 @@ jobs:
       - name: validate
         run: tofu validate
 
-  # Real plan/apply needs the Pi cluster's kubeconfig as a secret — run
-  # manually (workflow_dispatch) once that secret exists in the repo.
-  plan:
+  # plan/apply need to reach the k3s API server at 192.168.100.10:6443, a
+  # private LAN address GitHub-hosted runners cannot route to. This job only
+  # runs on the self-hosted runner registered on rb02 (see
+  # infra/kubernetes/README.md for setup) and only on manual dispatch — never
+  # automatically on push, since `apply` changes real infrastructure.
+  plan-or-apply:
     if: github.event_name == 'workflow_dispatch'
     needs: fmt-and-validate
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, arm64, pi]
+    env:
+      # Picked up automatically by the S3-compatible backend (R2) — not
+      # passed via -backend-config, those are the standard AWS SDK env vars.
+      AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
 
     steps:
       - uses: actions/checkout@v5
@@ -48,8 +66,21 @@ jobs:
       - name: Write kubeconfig
         run: echo "${{ secrets.PI_CLUSTER_KUBECONFIG }}" > kubeconfig
 
+      - name: Write backend config
+        run: |
+          cat > backend.hcl <<EOF
+          bucket = "poker-game-manager-tfstate"
+          endpoints = {
+            s3 = "https://${{ secrets.CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com"
+          }
+          EOF
+
       - name: init
-        run: tofu init
+        run: tofu init -backend-config=backend.hcl
 
       - name: plan
-        run: tofu plan -var="kubeconfig_path=./kubeconfig" -var="postgres_password=${{ secrets.POSTGRES_PASSWORD }}" -var="jwt_secret=${{ secrets.JWT_SECRET }}"
+        run: tofu plan -out=tfplan -var="kubeconfig_path=./kubeconfig" -var="postgres_password=${{ secrets.POSTGRES_PASSWORD }}" -var="jwt_secret=${{ secrets.JWT_SECRET }}"
+
+      - name: apply
+        if: inputs.action == 'apply'
+        run: tofu apply -auto-approve tfplan

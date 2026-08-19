@@ -405,6 +405,8 @@ FodyWeavers.xsd
 *.tfstate.*
 terraform.tfvars
 !terraform.tfvars.example
+backend.hcl
+!backend.hcl.example
 crash.log
 crash.*.log
 
