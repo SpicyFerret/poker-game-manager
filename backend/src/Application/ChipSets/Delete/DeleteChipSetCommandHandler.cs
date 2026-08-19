@@ -34,6 +34,15 @@ internal sealed class DeleteChipSetCommandHandler(
             return Result.Failure(ChipSetErrors.NotFound(command.ChipSetId));
         }
 
+        int tablesUsingIt = await context.Tables.CountAsync(
+            t => t.ChipSetId == chipSet.Id,
+            cancellationToken);
+
+        if (tablesUsingIt > 0)
+        {
+            return Result.Failure(ChipSetErrors.InUseByTables(tablesUsingIt));
+        }
+
         context.ChipSets.Remove(chipSet);
 
         await context.SaveChangesAsync(cancellationToken);

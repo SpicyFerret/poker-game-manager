@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, input, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, input, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -12,14 +13,17 @@ import { InvitesTab } from './invites/invites';
 import { MembersTab } from './members/members';
 import { SeasonsTab } from './seasons/seasons';
 import { SettingsTab } from './settings/settings';
+import { TablesTab } from './tables/tables';
 
 @Component({
   selector: 'app-championship-detail',
   imports: [
     MatCardModule,
     MatTabsModule,
+    MatButtonModule,
     MatProgressBarModule,
     RoleLabelPipe,
+    TablesTab,
     MembersTab,
     InvitesTab,
     ChipSetsTab,
@@ -27,6 +31,7 @@ import { SettingsTab } from './settings/settings';
     SettingsTab,
   ],
   templateUrl: './detail.html',
+  styleUrl: './detail.scss',
 })
 export class ChampionshipDetail implements OnInit {
   private readonly championships = inject(ChampionshipsService);
@@ -38,14 +43,30 @@ export class ChampionshipDetail implements OnInit {
   protected readonly error = signal<string | null>(null);
   protected readonly championship = signal<Championship | null>(null);
 
+  /**
+   * Setup — members, invites, chip cases, seasons, settings — is folded away
+   * behind the gear. It is configured once and then rarely touched, while the
+   * tables are what someone opens this screen for on a game night.
+   */
+  protected readonly setupOpen = signal(false);
+
+  protected readonly canManage = computed(() => {
+    const championship = this.championship();
+    return championship !== null && atLeast(championship.role, 'TableManager');
+  });
+
+  protected readonly canAdminister = computed(() => {
+    const championship = this.championship();
+    return championship !== null && atLeast(championship.role, 'Admin');
+  });
+
   ngOnInit(): void {
     this.load();
   }
 
   /**
-   * Settings edits change the header, and the members tab can change the
-   * caller's own role, so tabs ask for a reload rather than each keeping its own
-   * stale copy.
+   * Settings edits change the header, and the members tab can change the caller's
+   * own role, so children ask for a reload rather than each keeping a stale copy.
    */
   protected load(): void {
     this.championships.get(this.championshipId()).subscribe({
@@ -65,11 +86,7 @@ export class ChampionshipDetail implements OnInit {
     });
   }
 
-  protected canManage(championship: Championship): boolean {
-    return atLeast(championship.role, 'TableManager');
-  }
-
-  protected canAdminister(championship: Championship): boolean {
-    return atLeast(championship.role, 'Admin');
+  protected toggleSetup(): void {
+    this.setupOpen.update((open) => !open);
   }
 }

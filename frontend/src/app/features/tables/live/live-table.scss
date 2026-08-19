@@ -1,0 +1,36 @@
+.alert {
+  color: var(--mat-sys-error);
+}
+
+.warn {
+  color: var(--mat-sys-error);
+}
+
+.code {
+  font-family: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', monospace;
+  letter-spacing: 0.15em;
+}
+
+.figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+
+  dt {
+    color: var(--mat-sys-on-surface-variant);
+    font: var(--mat-sys-label-small);
+  }
+
+  dd {
+    margin: 0;
+    font: var(--mat-sys-title-medium);
+  }
+}
+
+// Stacked on a phone; the row is already tight with a name and two buttons.
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}

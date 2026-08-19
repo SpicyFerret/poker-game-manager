@@ -1,0 +1,19 @@
+.tables {
+  margin-top: 1rem;
+}
+
+.new-table {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+// Finished tables stay reachable but stop competing with the live one.
+.finished {
+  opacity: 0.6;
+}
+
+.editor-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}

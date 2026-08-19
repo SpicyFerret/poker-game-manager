@@ -9,10 +9,27 @@
 
   @if (championship(); as championship) {
     <mat-card>
-      <mat-card-header>
-        <mat-card-title>{{ championship.name }}</mat-card-title>
-        <mat-card-subtitle>{{ championship.role | roleLabel }}</mat-card-subtitle>
-      </mat-card-header>
+      <div class="header-row">
+        <mat-card-header class="header-row__text">
+          <mat-card-title>{{ championship.name }}</mat-card-title>
+          <mat-card-subtitle>{{ championship.role | roleLabel }}</mat-card-subtitle>
+        </mat-card-header>
+
+        @if (canAdminister()) {
+          <button
+            matIconButton
+            type="button"
+            class="header-row__gear"
+            [attr.aria-expanded]="setupOpen()"
+            (click)="toggleSetup()"
+            i18n-aria-label="@@championship.setupToggle"
+            aria-label="Configurações do campeonato"
+          >
+            <span aria-hidden="true">&#9881;</span>
+          </button>
+        }
+      </div>
+
       @if (championship.description) {
         <mat-card-content>
           <p>{{ championship.description }}</p>
@@ -20,34 +37,36 @@
       }
     </mat-card>
 
-    <mat-tab-group>
-      <mat-tab i18n-label="@@tab.members" label="Membros">
-        <app-members-tab
-          [championshipId]="championshipId()"
-          [callerRole]="championship.role"
-          (changed)="load()"
-        />
-      </mat-tab>
-
-      @if (canManage(championship)) {
-        <mat-tab i18n-label="@@tab.invites" label="Convites">
-          <app-invites-tab [championshipId]="championshipId()" [callerRole]="championship.role" />
+    @if (setupOpen()) {
+      <mat-tab-group class="setup">
+        <mat-tab i18n-label="@@tab.members" label="Membros">
+          <app-members-tab
+            [championshipId]="championshipId()"
+            [callerRole]="championship.role"
+            (changed)="load()"
+          />
         </mat-tab>
-      }
 
-      <mat-tab i18n-label="@@tab.chipSets" label="Maletas">
-        <app-chip-sets-tab [championshipId]="championshipId()" [callerRole]="championship.role" />
-      </mat-tab>
+        @if (canManage()) {
+          <mat-tab i18n-label="@@tab.invites" label="Convites">
+            <app-invites-tab [championshipId]="championshipId()" [callerRole]="championship.role" />
+          </mat-tab>
+        }
 
-      <mat-tab i18n-label="@@tab.seasons" label="Temporadas">
-        <app-seasons-tab [championshipId]="championshipId()" [callerRole]="championship.role" />
-      </mat-tab>
+        <mat-tab i18n-label="@@tab.chipSets" label="Maletas">
+          <app-chip-sets-tab [championshipId]="championshipId()" [callerRole]="championship.role" />
+        </mat-tab>
 
-      @if (canAdminister(championship)) {
+        <mat-tab i18n-label="@@tab.seasons" label="Temporadas">
+          <app-seasons-tab [championshipId]="championshipId()" [callerRole]="championship.role" />
+        </mat-tab>
+
         <mat-tab i18n-label="@@tab.settings" label="Configurações">
           <app-settings-tab [championship]="championship" (saved)="load()" />
         </mat-tab>
-      }
-    </mat-tab-group>
+      </mat-tab-group>
+    }
+
+    <app-tables-tab [championshipId]="championshipId()" [callerRole]="championship.role" />
   }
 </div>
