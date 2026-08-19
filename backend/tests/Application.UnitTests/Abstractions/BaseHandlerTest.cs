@@ -27,9 +27,7 @@ public abstract class BaseHandlerTest
     {
         var services = new ServiceCollection();
 
-#pragma warning disable EXTEXP0018
         services.AddHybridCache();
-#pragma warning restore EXTEXP0018
 
         return services.BuildServiceProvider().GetRequiredService<HybridCache>();
     }
