@@ -22,25 +22,8 @@ defaults:
     working-directory: infra/kubernetes
 
 jobs:
-  # fmt/validate need no cluster access, so this stays on a GitHub-hosted
-  # runner and runs on every PR that touches infra/.
   fmt-and-validate:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Setup OpenTofu
-        uses: opentofu/setup-opentofu@v1
-
-      - name: fmt check
-        run: tofu fmt -check -recursive ..
-
-      - name: init (no backend, no real credentials needed)
-        run: tofu init -backend=false
-
-      - name: validate
-        run: tofu validate
+    uses: ./.github/workflows/infra-fmt-validate.yml
 
   # plan/apply need to reach the k3s API server at 192.168.100.10:6443, a
   # private LAN address GitHub-hosted runners cannot route to. This job only

@@ -1,0 +1,29 @@
+name: Infra fmt & validate
+
+# Reusable — no cluster access needed, so this can run from any GitHub-hosted
+# runner. Called by infra-ci.yml (on every PR touching infra/) and by
+# development-ci.yml (only when a push to development touches infra/).
+on:
+  workflow_call:
+
+jobs:
+  fmt-and-validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra/kubernetes
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+
+      - name: fmt check
+        run: tofu fmt -check -recursive ..
+
+      - name: init (no backend, no real credentials needed)
+        run: tofu init -backend=false
+
+      - name: validate
+        run: tofu validate
