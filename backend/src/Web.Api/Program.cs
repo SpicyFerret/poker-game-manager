@@ -26,6 +26,18 @@ builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 
 WebApplication app = builder.Build();
 
+// Migration entry point for the cluster: infra/kubernetes runs this image as a
+// Job with --migrate-only, and the API Deployment only rolls out once that Job
+// succeeds. Keeping schema changes out of the request-serving path means a
+// broken migration fails loudly and blocks the apply, instead of showing up as
+// replicas that never become ready.
+if (args.Contains("--migrate-only"))
+{
+    app.ApplyMigrations();
+
+    return;
+}
+
 RouteGroupBuilder apiV1 = app.MapGroup("api/v1");
 app.MapEndpoints(apiV1);
 

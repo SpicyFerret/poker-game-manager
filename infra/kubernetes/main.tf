@@ -126,11 +126,76 @@ resource "kubernetes_secret" "web_api" {
   }
 }
 
+# Applies EF Core migrations before any API replica serves traffic. The app image
+# is reused with --migrate-only, which runs the migrations and exits.
+#
+# A Job rather than migrating on API startup: a broken or slow migration fails
+# the apply loudly here, instead of showing up as replicas that never turn ready
+# while the old ones keep serving against a schema that no longer matches.
+#
+# Kubernetes Jobs are immutable, so the name carries a hash of the image plus
+# migration_revision — a new revision produces a new Job rather than a conflict.
+# Re-running is harmless: EF skips migrations already in the history table.
+resource "kubernetes_job_v1" "migrate" {
+  metadata {
+    name      = "web-api-migrate-${substr(sha1("${var.image_repository}:${var.image_tag}:${var.migration_revision}"), 0, 10)}"
+    namespace = kubernetes_namespace.app.metadata[0].name
+  }
+
+  spec {
+    backoff_limit = 2
+
+    # Keeps a finished Job around long enough to read its logs, then reaps it so
+    # they don't pile up one per deploy.
+    ttl_seconds_after_finished = 3600
+
+    template {
+      metadata {
+        labels = {
+          app = "web-api-migrate"
+        }
+      }
+
+      spec {
+        restart_policy = "Never"
+
+        container {
+          name  = "migrate"
+          image = "${var.image_repository}:${var.image_tag}"
+          args  = ["--migrate-only"]
+
+          env {
+            name  = "ASPNETCORE_ENVIRONMENT"
+            value = "Production"
+          }
+
+          env_from {
+            secret_ref {
+              name = kubernetes_secret.web_api.metadata[0].name
+            }
+          }
+        }
+      }
+    }
+  }
+
+  wait_for_completion = true
+
+  timeouts {
+    create = "10m"
+  }
+
+  depends_on = [kubernetes_stateful_set_v1.postgres]
+}
+
 resource "kubernetes_deployment_v1" "web_api" {
   metadata {
     name      = "web-api"
     namespace = kubernetes_namespace.app.metadata[0].name
   }
+
+  # No replica starts against a schema the migration Job has not finished applying.
+  depends_on = [kubernetes_job_v1.migrate]
 
   spec {
     replicas = var.api_replicas

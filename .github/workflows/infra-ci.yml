@@ -46,6 +46,10 @@ jobs:
       TF_VAR_kubeconfig_path: ./kubeconfig
       TF_VAR_postgres_password: ${{ secrets.POSTGRES_PASSWORD }}
       TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
+      # Kubernetes Jobs are immutable, and image_tag defaults to 'latest'. Without
+      # a per-run value the migration Job would be reused and quietly skipped on
+      # the next deploy — see variable "migration_revision".
+      TF_VAR_migration_revision: ${{ github.sha }}
 
     steps:
       - uses: actions/checkout@v5
