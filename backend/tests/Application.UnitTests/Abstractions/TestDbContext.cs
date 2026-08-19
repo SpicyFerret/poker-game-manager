@@ -46,4 +46,8 @@ public sealed class TestDbContext(DbContextOptions<TestDbContext> options)
     public DbSet<SettlementTransfer> SettlementTransfers { get; set; }
 
     public DbSet<TableResult> TableResults { get; set; }
+
+    public DbSet<BlindLevel> BlindLevels { get; set; }
+
+    public DbSet<TableClock> TableClocks { get; set; }
 }

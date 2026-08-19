@@ -91,4 +91,15 @@ public static class TableErrors
     public static readonly Error AlreadySettled = Error.Conflict(
         "Tables.AlreadySettled",
         "This table has already been settled");
+
+    public static readonly Error InvalidBlindLevel = Error.Problem(
+        "Tables.InvalidBlindLevel",
+        "Blinds must be greater than zero, and ante and duration cannot be negative");
+
+    /// <summary>
+    /// The clock is optional: a table with no blind ladder has nothing to count.
+    /// </summary>
+    public static readonly Error NoBlindLevels = Error.Problem(
+        "Tables.NoBlindLevels",
+        "This table has no blind levels, so it has no clock. Add levels first");
 }

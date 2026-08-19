@@ -47,6 +47,10 @@ public sealed class ApplicationDbContext(
 
     public DbSet<TableResult> TableResults { get; set; }
 
+    public DbSet<BlindLevel> BlindLevels { get; set; }
+
+    public DbSet<TableClock> TableClocks { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
