@@ -62,6 +62,26 @@ resource "kubernetes_stateful_set_v1" "postgres" {
       }
 
       spec {
+        # Pins Postgres to the node with real disk. The 'local-path' provisioner
+        # stores the volume on the node's own root filesystem, so the database
+        # competes with container images for the same space — and rb02 is a
+        # ~7GB SD card that has already evicted a pod for running out. rb01 has
+        # ~29GB. A required (not preferred) rule: scheduling the database
+        # anywhere else silently puts the data back on the small disk.
+        affinity {
+          node_affinity {
+            required_during_scheduling_ignored_during_execution {
+              node_selector_term {
+                match_expressions {
+                  key      = "kubernetes.io/hostname"
+                  operator = "In"
+                  values   = [var.postgres_node]
+                }
+              }
+            }
+          }
+        }
+
         container {
           name  = "postgres"
           image = "postgres:17"

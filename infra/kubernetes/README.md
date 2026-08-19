@@ -5,6 +5,18 @@ k3s cluster running on the 2 Raspberry Pi nodes: a namespace, a single-replica
 Postgres `StatefulSet` (PVC-backed), and the `web-api` `Deployment` (2
 replicas, spread across both nodes via pod anti-affinity) + its `Service`.
 
+## Where Postgres runs
+
+The two Pis are not interchangeable: **rb01 has ~29GB, rb02 is a ~7GB SD card**.
+The `local-path` provisioner stores a volume on the node's own root filesystem,
+so the database competes with container images for that space — rb02 has already
+evicted a pod for running out of ephemeral storage.
+
+Postgres is therefore pinned to `var.postgres_node` (default `rb01`) with a
+**required** node affinity. Changing that variable after the database has data
+means moving the data as well: the PVC does not follow the pod, and a
+`local-path` volume is bound to the node that provisioned it.
+
 ## Database migrations
 
 The API image is also run as a `Job` (`web-api-migrate-*`) with `--migrate-only`,

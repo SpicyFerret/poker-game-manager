@@ -33,6 +33,17 @@ variable "postgres_password" {
   sensitive   = true
 }
 
+variable "postgres_node" {
+  description = <<-EOT
+    Node the Postgres pod is pinned to. 'local-path' volumes live on the node's own
+    root filesystem, so this decides which disk the database grows on — and the two
+    Pis are not equivalent (rb01 ~29GB, rb02 ~7GB SD card). Changing this after the
+    database has data means moving the data too; the PVC does not follow the pod.
+  EOT
+  type        = string
+  default     = "rb01"
+}
+
 variable "postgres_storage_size" {
   description = "Size of the Postgres PVC."
   type        = string
