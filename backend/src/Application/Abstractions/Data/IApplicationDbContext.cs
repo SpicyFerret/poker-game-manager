@@ -1,6 +1,7 @@
-using Domain.Championships;
+﻿using Domain.Championships;
 using Domain.ChipSets;
 using Domain.Seasons;
+using Domain.Tables;
 using Domain.Users;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,11 @@ public interface IApplicationDbContext
     DbSet<ChipDenomination> ChipDenominations { get; }
 
     DbSet<Season> Seasons { get; }
+
+    DbSet<PokerTable> Tables { get; }
+    DbSet<TablePlayer> TablePlayers { get; }
+    DbSet<LedgerEntry> LedgerEntries { get; }
+    DbSet<LedgerEntryChip> LedgerEntryChips { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
