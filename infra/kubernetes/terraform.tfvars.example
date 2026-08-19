@@ -1,0 +1,8 @@
+# Copy to terraform.tfvars (gitignored) and fill in real values once the
+# Pi cluster's kubeconfig is available. Never commit the real file.
+
+kubeconfig_path   = "~/.kube/poker-pis.config"
+postgres_password = "CHANGEME"
+jwt_secret        = "CHANGEME-at-least-32-characters-long"
+image_repository  = "ghcr.io/CHANGEME/poker-game-manager-api"
+image_tag         = "latest"

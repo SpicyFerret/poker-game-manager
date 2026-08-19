@@ -1,0 +1,45 @@
+name: Backend CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
+  pull_request:
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
+
+env:
+  DOTNET_VERSION: "10.x"
+
+defaults:
+  run:
+    working-directory: backend
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore CleanArchitecture.slnx
+
+      - name: Build
+        run: dotnet build CleanArchitecture.slnx --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test CleanArchitecture.slnx --configuration Release --no-restore --no-build
+
+      - name: Publish
+        run: dotnet publish CleanArchitecture.slnx --configuration Release --no-restore --no-build

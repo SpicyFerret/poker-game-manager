@@ -1,0 +1,27 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "poker-game-manager-frontend",
+  "compatibility_date": "2026-08-18",
+  "main": "./worker/index.ts",
+
+  // Serves the Angular production build; falls back to index.html for
+  // client-side routes so the Angular router owns unknown paths.
+  "assets": {
+    "directory": "./dist/frontend/browser",
+    "not_found_handling": "single-page-application",
+    "binding": "ASSETS"
+  },
+
+  // API_ORIGIN is the public hostname the (already-running) Cloudflare
+  // Tunnel on the Raspberry Pi cluster exposes for the web-api Service.
+  // Fill in the real value once the tunnel hostname is known — see
+  // infra/kubernetes/README.md for what the tunnel should point at.
+  "vars": {
+    "API_ORIGIN": "https://REPLACE_WITH_TUNNEL_HOSTNAME"
+  }
+
+  // Uncomment and set once a domain is attached to this Worker:
+  // "routes": [
+  //   { "pattern": "poker.example.com", "custom_domain": true }
+  // ]
+}

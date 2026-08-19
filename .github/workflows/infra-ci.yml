@@ -1,0 +1,55 @@
+name: Infra CI
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "infra/**"
+      - ".github/workflows/infra-ci.yml"
+
+defaults:
+  run:
+    working-directory: infra/kubernetes
+
+jobs:
+  fmt-and-validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+
+      - name: fmt check
+        run: tofu fmt -check -recursive ..
+
+      - name: init (no backend, no real credentials needed)
+        run: tofu init -backend=false
+
+      - name: validate
+        run: tofu validate
+
+  # Real plan/apply needs the Pi cluster's kubeconfig as a secret — run
+  # manually (workflow_dispatch) once that secret exists in the repo.
+  plan:
+    if: github.event_name == 'workflow_dispatch'
+    needs: fmt-and-validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+
+      - name: Write kubeconfig
+        run: echo "${{ secrets.PI_CLUSTER_KUBECONFIG }}" > kubeconfig
+
+      - name: init
+        run: tofu init
+
+      - name: plan
+        run: tofu plan -var="kubeconfig_path=./kubeconfig" -var="postgres_password=${{ secrets.POSTGRES_PASSWORD }}" -var="jwt_secret=${{ secrets.JWT_SECRET }}"
