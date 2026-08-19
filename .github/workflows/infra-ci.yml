@@ -45,6 +45,11 @@ jobs:
 
       - name: Setup OpenTofu
         uses: opentofu/setup-opentofu@v1
+        with:
+          # The Node.js-based wrapper needs `node` on PATH. GitHub-hosted
+          # runners bundle it; this self-hosted one (bare Debian on rb02)
+          # doesn't. Not needed for our use anyway.
+          tofu_wrapper: false
 
       - name: Write kubeconfig
         run: echo "${{ secrets.PI_CLUSTER_KUBECONFIG }}" > kubeconfig
