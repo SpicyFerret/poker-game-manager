@@ -1,3 +1,11 @@
+output "deployed_image" {
+  description = <<-EOT
+    The exact image the API is running, repository plus digest. Answers "what is
+    actually deployed right now" from state, which a mutable tag cannot.
+  EOT
+  value       = local.image
+}
+
 output "namespace" {
   description = "Namespace the app was deployed into."
   value       = kubernetes_namespace.app.metadata[0].name

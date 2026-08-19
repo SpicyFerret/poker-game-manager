@@ -62,21 +62,26 @@ variable "image_repository" {
   default     = "ghcr.io/spicyferret/poker-game-manager-api"
 }
 
-variable "image_tag" {
-  description = "Container image tag to deploy."
-  type        = string
-  default     = "latest"
-}
-
-variable "migration_revision" {
+variable "image_digest" {
   description = <<-EOT
-    Opaque value that forces the migration Job to be recreated. Kubernetes Jobs are
-    immutable, so without this a deploy that reuses the same image tag (the default
-    is 'latest') would silently keep the old, already-completed Job and skip the
-    migration. infra-ci.yml passes the commit SHA; set it by hand for a local apply.
+    Digest of the API image to run, as "sha256:...".
+
+    A digest rather than a tag, on purpose. A tag is not a version: republishing
+    'latest' leaves the Deployment spec identical, so Tofu sees no change and
+    Kubernetes never recycles the pods - a deploy that looks successful while the
+    old code keeps serving, which needed a manual rollout restart every time. A
+    digest names exactly one image, so what runs is identifiable from state alone
+    and a rollback is just applying an older one.
+
+    infra-ci.yml resolves this from a tag before applying. To resolve one by hand,
+    see the "Which image runs" section of README.md.
   EOT
   type        = string
-  default     = "manual"
+
+  validation {
+    condition     = can(regex("^sha256:[0-9a-f]{64}$", var.image_digest))
+    error_message = "image_digest must be a full digest: sha256: followed by 64 hex characters."
+  }
 }
 
 variable "api_replicas" {

@@ -5,6 +5,36 @@ k3s cluster running on the 2 Raspberry Pi nodes: a namespace, a single-replica
 Postgres `StatefulSet` (PVC-backed), and the `web-api` `Deployment` (2
 replicas, spread across both nodes via pod anti-affinity) + its `Service`.
 
+## Which image runs
+
+The Deployment is pinned to an image **digest**, never a tag.
+
+A tag is not a version. Pinned to `:latest`, the Deployment spec was byte-for-byte
+identical between builds, so Tofu saw no change and Kubernetes never recycled the
+pods — an `apply` reported success while the API kept serving the previous build,
+and every release needed a manual `kubectl rollout restart`. That happened twice
+before it was fixed. A digest names exactly one image, so a new build *is* a spec
+change, `tofu output deployed_image` answers "what is actually running", and a
+rollback is just applying an older digest.
+
+`infra-ci.yml` resolves the digest for you: dispatch it with an `image_tag`
+(default `latest`, or `sha-<short-sha>` to go back to a specific build) and the
+`resolve-image` job turns that into a digest before anything is applied. If the
+tag doesn't exist the run fails there, before touching the cluster.
+
+Note that `docker-publish.yml` only builds when `backend/src` changes, so a commit
+that touched only the frontend or infra has no image of its own — deploy `latest`,
+or the `sha-` tag of the last backend build.
+
+To resolve one by hand for a local apply:
+
+```bash
+docker login ghcr.io                       # username + a PAT with read:packages
+docker buildx imagetools inspect \
+  ghcr.io/spicyferret/poker-game-manager-api:latest \
+  --format '{{.Manifest.Digest}}'
+```
+
 ## Where Postgres runs
 
 The two Pis are not interchangeable: **rb01 has ~29GB, rb02 is a ~7GB SD card**.
@@ -27,20 +57,21 @@ This is deliberate rather than migrating on API startup: a broken or slow
 migration fails the `apply` loudly, instead of surfacing as replicas that never
 become ready while the old ones keep serving.
 
-Kubernetes Jobs are immutable, so the Job name embeds a hash of the image
-reference plus `migration_revision`. Since `image_tag` defaults to `latest`, a
-deploy that reuses the tag would otherwise keep the old completed Job and skip
-the migration entirely. `infra-ci.yml` passes the commit SHA via
-`TF_VAR_migration_revision`; set it yourself for a local apply. Re-running is
-harmless — EF skips whatever is already in the history table.
+Kubernetes Jobs are immutable, so the Job name embeds part of the image digest: a
+new image gets a new Job, and re-applying the same image reuses the existing one.
+Re-running is harmless either way — EF skips whatever is already in the history
+table.
+
+Finished Jobs are reaped after 24 hours. Within a day of iterating, re-applying
+the same image finds the Job still there and plans clean; after that the next
+apply recreates it and the migration re-runs, which costs seconds and changes
+nothing.
 
 To read what a migration did:
 
 ```bash
 kubectl logs -n poker-game-manager job/web-api-migrate-<hash>
 ```
-
-Finished Jobs are reaped an hour after completion.
 
 ## What this module does *not* do
 

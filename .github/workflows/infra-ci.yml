@@ -10,6 +10,10 @@ on:
           - plan
           - apply
         default: plan
+      image_tag:
+        description: "API image tag to deploy. Resolved to a digest before applying. Use sha-<short-sha> to roll back to a specific build."
+        type: string
+        default: latest
   pull_request:
     branches:
       - main
@@ -25,6 +29,51 @@ jobs:
   fmt-and-validate:
     uses: ./.github/workflows/infra-fmt-validate.yml
 
+  # Turns a tag into the digest it currently points at, so the Deployment is
+  # pinned to exactly one image.
+  #
+  # This is what makes a deploy actually happen. Pinned to ':latest' the
+  # Deployment spec never changed between builds, so Tofu saw no diff and
+  # Kubernetes never recycled the pods — every release needed a manual
+  # `kubectl rollout restart`, and twice that meant the API quietly kept serving
+  # the previous build after an apply reported success.
+  #
+  # Runs on a GitHub-hosted runner rather than the Pi: it only needs the
+  # registry, and the tooling is already there.
+  resolve-image:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.resolve.outputs.digest }}
+
+    steps:
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve tag to digest
+        id: resolve
+        working-directory: .
+        env:
+          IMAGE: ghcr.io/${{ github.repository }}-api
+          TAG: ${{ inputs.image_tag }}
+        run: |
+          set -euo pipefail
+
+          if ! digest="$(docker buildx imagetools inspect "$IMAGE:$TAG" --format '{{.Manifest.Digest}}' 2>/dev/null)"; then
+            echo "::error::No image found at $IMAGE:$TAG."
+            echo "docker-publish.yml only builds when backend/src changes, so a commit that"
+            echo "touched only the frontend or infra has no image of its own — deploy 'latest',"
+            echo "or the sha-<short-sha> tag of the last backend build."
+            exit 1
+          fi
+
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+          echo "Deploying \`$IMAGE:$TAG\` → \`$digest\`" >> "$GITHUB_STEP_SUMMARY"
+
   # plan/apply need to reach the k3s API server at 192.168.100.10:6443, a
   # private LAN address GitHub-hosted runners cannot route to. This job only
   # runs on the self-hosted runner registered on rb02 (see
@@ -32,7 +81,7 @@ jobs:
   # automatically on push, since `apply` changes real infrastructure.
   plan-or-apply:
     if: github.event_name == 'workflow_dispatch'
-    needs: fmt-and-validate
+    needs: [fmt-and-validate, resolve-image]
     runs-on: [self-hosted, linux, arm64, pi]
     env:
       # Picked up automatically by the S3-compatible backend (R2) — not
@@ -46,10 +95,7 @@ jobs:
       TF_VAR_kubeconfig_path: ./kubeconfig
       TF_VAR_postgres_password: ${{ secrets.POSTGRES_PASSWORD }}
       TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
-      # Kubernetes Jobs are immutable, and image_tag defaults to 'latest'. Without
-      # a per-run value the migration Job would be reused and quietly skipped on
-      # the next deploy — see variable "migration_revision".
-      TF_VAR_migration_revision: ${{ github.sha }}
+      TF_VAR_image_digest: ${{ needs.resolve-image.outputs.digest }}
 
     steps:
       - uses: actions/checkout@v7
@@ -82,20 +128,15 @@ jobs:
       - name: init
         run: tofu init -backend-config=backend.hcl
 
-      # ONE-OFF: the first apply attempt errored out mid-rollout-wait (no
-      # image existed in GHCR yet), leaving kubernetes_deployment_v1.web_api
-      # in state with null identity metadata. A later apply then hits
-      # "Unexpected Identity Change" trying to refresh it against the real
-      # (now-existing) object. Drop it from state and re-import cleanly.
-      # Remove this step once a clean apply has run once.
-      - name: Fix web_api deployment state (one-off)
-        run: |
-          tofu state rm kubernetes_deployment_v1.web_api || true
-          tofu import kubernetes_deployment_v1.web_api poker-game-manager/web-api || true
-
       - name: plan
         run: tofu plan -out=tfplan
 
       - name: apply
         if: inputs.action == 'apply'
         run: tofu apply -auto-approve tfplan
+
+      - name: Report what is running
+        if: inputs.action == 'apply'
+        run: |
+          echo "### Deployed" >> "$GITHUB_STEP_SUMMARY"
+          tofu output -raw deployed_image >> "$GITHUB_STEP_SUMMARY"
