@@ -205,8 +205,93 @@ public sealed class ChampionshipsTests(IntegrationTestWebAppFactory factory) : B
             $"championships/{championshipId}/members/{ownerId}/role",
             new { role = "Player" });
 
+        // Assert — the exact code matters. Asserting only "not a success" let a
+        // 500 pass here, which is how the missing Forbidden error type reached
+        // production: authorization failures fell through to Failure.
+        response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+    }
+
+    [Fact]
+    public async Task Invites_Should_BeForbiddenForAPlayer()
+    {
+        // Arrange
+        (Guid _, AccessTokens ownerTokens) = await RegisterAndLoginAsync();
+        Authenticate(ownerTokens.AccessToken);
+        Guid championshipId = await CreateChampionshipAsync();
+
+        HttpResponseMessage created = await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/invites",
+            new { role = "Player", expiresAtUtc = (DateTime?)null, maxUses = (int?)null });
+        Invite? invite = await created.Content.ReadFromJsonAsync<Invite>();
+
+        (Guid _, AccessTokens playerTokens) = await RegisterAndLoginAsync();
+        Authenticate(playerTokens.AccessToken);
+        await HttpClient.PostAsJsonAsync("championships/join", new { code = invite!.Code });
+
+        // Act — codes are credentials: reading one is enough to hand out membership.
+        HttpResponseMessage response = await HttpClient.GetAsync(
+            $"championships/{championshipId}/invites");
+
         // Assert
-        response.IsSuccessStatusCode.ShouldBeFalse();
+        response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+    }
+
+    [Fact]
+    public async Task ChipSets_Should_BeReadableByAPlayerButNotWritable()
+    {
+        // Arrange
+        (Guid _, AccessTokens ownerTokens) = await RegisterAndLoginAsync();
+        Authenticate(ownerTokens.AccessToken);
+        Guid championshipId = await CreateChampionshipAsync();
+
+        HttpResponseMessage created = await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/invites",
+            new { role = "Player", expiresAtUtc = (DateTime?)null, maxUses = (int?)null });
+        Invite? invite = await created.Content.ReadFromJsonAsync<Invite>();
+
+        (Guid _, AccessTokens playerTokens) = await RegisterAndLoginAsync();
+        Authenticate(playerTokens.AccessToken);
+        await HttpClient.PostAsJsonAsync("championships/join", new { code = invite!.Code });
+
+        // Act + Assert — knowing what the case holds is part of playing, but only
+        // an Admin changes it.
+        HttpResponseMessage read = await HttpClient.GetAsync(
+            $"championships/{championshipId}/chip-sets");
+        read.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        HttpResponseMessage write = await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/chip-sets",
+            new { name = "Minha", denominations = new[] { new { faceValue = 5, effectiveValue = 5, quantity = 1, colour = (string?)null } } });
+        write.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+    }
+
+    [Fact]
+    public async Task TransferOwnership_Should_ReturnBadRequest_WhenSuccessorIsNotAnAdmin()
+    {
+        // Arrange
+        (Guid _, AccessTokens ownerTokens) = await RegisterAndLoginAsync();
+        Authenticate(ownerTokens.AccessToken);
+        Guid championshipId = await CreateChampionshipAsync();
+
+        HttpResponseMessage created = await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/invites",
+            new { role = "Player", expiresAtUtc = (DateTime?)null, maxUses = (int?)null });
+        Invite? invite = await created.Content.ReadFromJsonAsync<Invite>();
+
+        (Guid playerId, AccessTokens playerTokens) = await RegisterAndLoginAsync();
+        Authenticate(playerTokens.AccessToken);
+        await HttpClient.PostAsJsonAsync("championships/join", new { code = invite!.Code });
+
+        Authenticate(ownerTokens.AccessToken);
+
+        // Act — the caller is allowed to transfer; they just picked someone who
+        // cannot receive it. That is a bad request, not a permission problem.
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/transfer-ownership",
+            new { newOwnerId = playerId });
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
 
     [Fact]
