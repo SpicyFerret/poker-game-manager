@@ -61,17 +61,8 @@ jobs:
       - name: Write kubeconfig
         env:
           KUBECONFIG_CONTENT: ${{ secrets.PI_CLUSTER_KUBECONFIG }}
-        # Strips any stray \r — the secret may have been stored with CRLF
-        # line endings at some point, which breaks the kubernetes provider's
-        # YAML parse in ways that surface as a field silently missing.
+        # Defensive \r strip — harmless either way, doesn't hurt to keep.
         run: echo "$KUBECONFIG_CONTENT" | tr -d '\r' > kubeconfig
-
-      - name: Debug kubeconfig structure (no secret content printed)
-        run: |
-          wc -l kubeconfig
-          grep -c "^clusters:\|^contexts:\|^users:\|^    client-key-data:\|^    client-certificate-data:\|^    certificate-authority-data:" kubeconfig || true
-          head -c 20 kubeconfig | cat -A
-          sha256sum kubeconfig
 
       - name: Write backend config
         env:
