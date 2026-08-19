@@ -57,6 +57,17 @@ variable "image_tag" {
   default     = "latest"
 }
 
+variable "migration_revision" {
+  description = <<-EOT
+    Opaque value that forces the migration Job to be recreated. Kubernetes Jobs are
+    immutable, so without this a deploy that reuses the same image tag (the default
+    is 'latest') would silently keep the old, already-completed Job and skip the
+    migration. infra-ci.yml passes the commit SHA; set it by hand for a local apply.
+  EOT
+  type        = string
+  default     = "manual"
+}
+
 variable "api_replicas" {
   description = "Number of web-api replicas. Set to 2 to spread across both Pi nodes via pod anti-affinity."
   type        = number

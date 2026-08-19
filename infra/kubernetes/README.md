@@ -5,6 +5,31 @@ k3s cluster running on the 2 Raspberry Pi nodes: a namespace, a single-replica
 Postgres `StatefulSet` (PVC-backed), and the `web-api` `Deployment` (2
 replicas, spread across both nodes via pod anti-affinity) + its `Service`.
 
+## Database migrations
+
+The API image is also run as a `Job` (`web-api-migrate-*`) with `--migrate-only`,
+which applies the EF Core migrations and exits. The `Deployment` `depends_on` that
+Job, so no replica serves traffic against a schema that hasn't been migrated.
+
+This is deliberate rather than migrating on API startup: a broken or slow
+migration fails the `apply` loudly, instead of surfacing as replicas that never
+become ready while the old ones keep serving.
+
+Kubernetes Jobs are immutable, so the Job name embeds a hash of the image
+reference plus `migration_revision`. Since `image_tag` defaults to `latest`, a
+deploy that reuses the tag would otherwise keep the old completed Job and skip
+the migration entirely. `infra-ci.yml` passes the commit SHA via
+`TF_VAR_migration_revision`; set it yourself for a local apply. Re-running is
+harmless — EF skips whatever is already in the history table.
+
+To read what a migration did:
+
+```bash
+kubectl logs -n poker-game-manager job/web-api-migrate-<hash>
+```
+
+Finished Jobs are reaped an hour after completion.
+
 ## What this module does *not* do
 
 - **Doesn't create the Cloudflare Tunnel.** It already exists and runs
