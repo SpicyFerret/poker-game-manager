@@ -1,6 +1,6 @@
 using Application.Abstractions.Authentication;
-using Application.Users.Register;
 using Application.UnitTests.Abstractions;
+using Application.Users.Register;
 using Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
