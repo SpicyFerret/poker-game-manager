@@ -71,6 +71,7 @@ jobs:
           wc -l kubeconfig
           grep -c "^clusters:\|^contexts:\|^users:\|^    client-key-data:\|^    client-certificate-data:\|^    certificate-authority-data:" kubeconfig || true
           head -c 20 kubeconfig | cat -A
+          sha256sum kubeconfig
 
       - name: Write backend config
         env:
