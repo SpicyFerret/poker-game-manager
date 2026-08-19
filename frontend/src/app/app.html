@@ -1,4 +1,21 @@
+<mat-toolbar color="primary" class="app-bar">
+  <a routerLink="/" class="app-bar__title" i18n="@@app.title">Poker Manager</a>
+
+  <span class="app-bar__spacer"></span>
+
+  @if (auth.isAuthenticated()) {
+    <button mat-button [matMenuTriggerFor]="accountMenu">
+      {{ auth.user()?.displayName ?? '' }}
+      <span aria-hidden="true">&#9662;</span>
+    </button>
+
+    <mat-menu #accountMenu="matMenu">
+      <a mat-menu-item routerLink="/profile" i18n="@@app.profile">Meu perfil</a>
+      <button mat-menu-item (click)="logout()" i18n="@@app.logout">Sair</button>
+    </mat-menu>
+  }
+</mat-toolbar>
+
 <main>
-  <h1>{{ title() }}</h1>
   <router-outlet />
 </main>

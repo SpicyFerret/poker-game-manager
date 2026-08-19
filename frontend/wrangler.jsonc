@@ -4,12 +4,15 @@
   "compatibility_date": "2026-08-18",
   "main": "./worker/index.ts",
 
-  // Serves the Angular production build; falls back to index.html for
-  // client-side routes so the Angular router owns unknown paths.
+  // Serves the Angular production build. The build emits one directory per
+  // locale (dist/frontend/browser/pt, /en), each with its own <base href>, so
+  // the SPA fallback cannot be Wrangler's — it only knows about a single
+  // index.html at the root. "none" lets a miss reach the Worker, which picks
+  // the right per-locale index.html (see worker/index.ts).
   "assets": {
     "directory": "./dist/frontend/browser",
-    "not_found_handling": "single-page-application",
-    "binding": "ASSETS"
+    "not_found_handling": "none",
+    "binding": "ASSETS",
   },
 
   // API_ORIGIN and the route pattern below are placeholders. They're filled
@@ -20,10 +23,8 @@
   // replace the __PLACEHOLDER__ tokens by hand first (see infra/kubernetes/README.md
   // and .env.example section 5 for what API_TUNNEL_HOSTNAME should be).
   "vars": {
-    "API_ORIGIN": "https://__API_TUNNEL_HOSTNAME__"
+    "API_ORIGIN": "https://__API_TUNNEL_HOSTNAME__",
   },
 
-  "routes": [
-    { "pattern": "__FRONTEND_DOMAIN__", "custom_domain": true }
-  ]
+  "routes": [{ "pattern": "__FRONTEND_DOMAIN__", "custom_domain": true }],
 }

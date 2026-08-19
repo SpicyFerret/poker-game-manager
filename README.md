@@ -1,5 +1,12 @@
 # Poker Game Manager
 
+Organises in-person, amateur poker nights: chip-case inventory, buy-ins and rebuys, closing the
+table without a hole in the count, the minimum set of payments to settle up, and a season ranking.
+It does **not** deal cards — the poker happens at the table, this keeps the books.
+
+The domain model, the algorithms and the delivery phases are written up in
+[`docs/domain.md`](docs/domain.md).
+
 A monorepo with three parts:
 
 - **`backend/`** — .NET 10 API (Clean Architecture template), backed by PostgreSQL.
@@ -16,10 +23,10 @@ backend features/entities/tests and frontend features consistently — see
 ## What's in the backend
 
 - **SharedKernel** project with common Domain-Driven Design abstractions.
-- **Domain** layer with sample entities and domain events.
+- **Domain** layer with the entities and domain events.
 - **Application** layer with abstractions for:
   - CQRS (lightweight, MediatR-free command/query handlers)
-  - Example use cases (Todos and Users)
+  - Use cases as vertical slices (`Users/Register`, `Users/UpdateProfile`, …)
   - Cross-cutting concerns (logging, validation) implemented as decorators
 - **Infrastructure** layer with:
   - JWT authentication with **refresh tokens** (with token rotation)
@@ -33,6 +40,7 @@ backend features/entities/tests and frontend features consistently — see
   - **Rate limiting** (configurable global + authentication policies)
   - **OpenTelemetry** tracing and metrics (ASP.NET Core, HTTP, Npgsql, runtime)
   - Global exception handling and `ProblemDetails`
+  - Enums serialized as strings, so reordering a member is not a silent breaking change
   - Swagger / OpenAPI with JWT support
 - **Seq** for searching and analyzing structured logs
   - Seq is available at http://localhost:8081 by default
@@ -65,6 +73,21 @@ cd frontend
 npm install
 npm start                    # http://localhost:4200
 ```
+
+### Translations
+
+The UI is built with Angular's compile-time i18n: `pt` is the source locale (strings live in the
+templates) and `en` is a translation file. After adding or changing any `i18n` attribute or
+`$localize` string:
+
+```bash
+cd frontend
+npx ng extract-i18n          # refreshes src/locale/messages.xlf
+```
+
+then add the matching `<trans-unit>` to `src/locale/messages.en.xlf`. `npm run build` emits one full
+copy of the app per locale (`dist/frontend/browser/pt`, `/en`), each with its own `<base href>`;
+`worker/index.ts` picks the locale from `Accept-Language` and owns the SPA fallback inside it.
 
 To target .NET 8 or .NET 9 instead of .NET 10, see the notes in `backend/Directory.Build.props`.
 

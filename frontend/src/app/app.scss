@@ -1,0 +1,15 @@
+.app-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.app-bar__title {
+  color: inherit;
+  font: var(--mat-sys-title-medium);
+  text-decoration: none;
+}
+
+.app-bar__spacer {
+  flex: 1 1 auto;
+}
