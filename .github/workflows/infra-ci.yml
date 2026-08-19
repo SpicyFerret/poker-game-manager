@@ -52,7 +52,7 @@ jobs:
       TF_VAR_migration_revision: ${{ github.sha }}
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Setup OpenTofu
         uses: opentofu/setup-opentofu@v2
