@@ -1,8 +1,13 @@
-# Copy to terraform.tfvars (gitignored) and fill in real values once the
-# Pi cluster's kubeconfig is available. Never commit the real file.
+# Copy to terraform.tfvars (gitignored) and fill in real values.
+# Never commit the real file.
 
 kubeconfig_path   = "~/.kube/poker-pis.config"
 postgres_password = "CHANGEME"
 jwt_secret        = "CHANGEME-at-least-32-characters-long"
 image_repository  = "ghcr.io/spicyferret/poker-game-manager-api"
-image_tag         = "latest"
+
+# The exact image to run. There is no default and no tag: a tag is not a version,
+# and pinning to one is what let a deploy report success while the pods kept
+# running the previous build. See the "Which image runs" section of README.md for
+# the one-liner that resolves a tag to its digest.
+image_digest = "sha256:0000000000000000000000000000000000000000000000000000000000000000"

@@ -1,3 +1,10 @@
+locals {
+  # Pinned by digest, never by tag. Republishing a tag leaves this string
+  # unchanged, so Tofu would see no change and the pods would keep running the
+  # old image — see variable "image_digest".
+  image = "${var.image_repository}@${var.image_digest}"
+}
+
 resource "kubernetes_namespace" "app" {
   metadata {
     name = var.namespace
@@ -153,12 +160,13 @@ resource "kubernetes_secret" "web_api" {
 # the apply loudly here, instead of showing up as replicas that never turn ready
 # while the old ones keep serving against a schema that no longer matches.
 #
-# Kubernetes Jobs are immutable, so the name carries a hash of the image plus
-# migration_revision — a new revision produces a new Job rather than a conflict.
-# Re-running is harmless: EF skips migrations already in the history table.
+# Kubernetes Jobs are immutable, so the name carries part of the image digest: a
+# new image produces a new Job rather than a conflict with the old one, and the
+# same image reuses it. Re-running is harmless either way — EF skips migrations
+# already in the history table.
 resource "kubernetes_job_v1" "migrate" {
   metadata {
-    name      = "web-api-migrate-${substr(sha1("${var.image_repository}:${var.image_tag}:${var.migration_revision}"), 0, 10)}"
+    name      = "web-api-migrate-${substr(replace(var.image_digest, "sha256:", ""), 0, 10)}"
     namespace = kubernetes_namespace.app.metadata[0].name
   }
 
@@ -166,8 +174,12 @@ resource "kubernetes_job_v1" "migrate" {
     backoff_limit = 2
 
     # Keeps a finished Job around long enough to read its logs, then reaps it so
-    # they don't pile up one per deploy.
-    ttl_seconds_after_finished = 3600
+    # they don't pile up one per deployed image.
+    # 24h rather than an hour: within a normal day of iterating, re-applying the
+    # same image finds the Job still there and plans clean. Once it is reaped,
+    # the next apply recreates and re-runs it, which costs seconds and changes
+    # nothing.
+    ttl_seconds_after_finished = 86400
 
     template {
       metadata {
@@ -181,7 +193,7 @@ resource "kubernetes_job_v1" "migrate" {
 
         container {
           name  = "migrate"
-          image = "${var.image_repository}:${var.image_tag}"
+          image = local.image
           args  = ["--migrate-only"]
 
           env {
@@ -255,7 +267,7 @@ resource "kubernetes_deployment_v1" "web_api" {
 
         container {
           name  = "web-api"
-          image = "${var.image_repository}:${var.image_tag}"
+          image = local.image
 
           env {
             name  = "ASPNETCORE_ENVIRONMENT"
