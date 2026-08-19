@@ -34,3 +34,40 @@
   flex-wrap: wrap;
   gap: 0.25rem;
 }
+
+.player {
+  margin-bottom: 0.75rem;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+// Same chip shape as the chip-case editor, so a chip looks like the same object
+// wherever it appears.
+.chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 5rem;
+  padding: 0.6rem 0.5rem;
+  border: 2px dashed rgb(255 255 255 / 45%);
+  border-radius: 50%;
+  aspect-ratio: 1;
+  text-align: center;
+}
+
+.chip__face {
+  font: var(--mat-sys-title-medium);
+  line-height: 1.1;
+}
+
+.chip__worth,
+.chip__count {
+  font-size: 0.62rem;
+  line-height: 1.2;
+  opacity: 0.85;
+}

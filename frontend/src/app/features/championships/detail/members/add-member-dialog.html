@@ -1,0 +1,33 @@
+<h2 mat-dialog-title i18n="@@members.addHeading">Adicionar membro</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field class="form-field-full">
+      <mat-label i18n="@@members.addByEmail">Adicionar por e-mail</mat-label>
+      <input matInput type="email" formControlName="email" autocomplete="off" />
+      <mat-hint i18n="@@members.addByEmailHint">A pessoa já precisa ter conta.</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field class="form-field-full">
+      <mat-label i18n="@@field.role">Cargo</mat-label>
+      <mat-select formControlName="role">
+        @for (role of data.assignableRoles; track role) {
+          <mat-option [value]="role">{{ role | roleLabel }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button matButton mat-dialog-close type="button" i18n="@@common.cancel">Cancelar</button>
+  <button
+    matButton="filled"
+    type="button"
+    [disabled]="form.invalid"
+    (click)="confirm()"
+    i18n="@@members.add"
+  >
+    Adicionar
+  </button>
+</mat-dialog-actions>

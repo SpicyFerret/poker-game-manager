@@ -1,77 +1,66 @@
-<div class="tab-body">
+<section class="section">
   @if (error(); as message) {
-    <p role="alert">{{ message }}</p>
+    <p role="alert" class="alert">{{ message }}</p>
   }
 
   @if (canAdminister()) {
-    <form [formGroup]="addForm" (ngSubmit)="add()" class="add-member">
-      <mat-form-field class="form-field-full">
-        <mat-label i18n="@@members.addByEmail">Adicionar por e-mail</mat-label>
-        <input matInput type="email" formControlName="email" autocomplete="off" />
-        <mat-hint i18n="@@members.addByEmailHint">A pessoa já precisa ter conta.</mat-hint>
-      </mat-form-field>
-
-      <mat-form-field class="form-field-full">
-        <mat-label i18n="@@field.role">Cargo</mat-label>
-        <mat-select formControlName="role">
-          @for (role of rolesICanAssign(); track role) {
-            <mat-option [value]="role">{{ role | roleLabel }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-
-      <button
-        matButton="filled"
-        type="submit"
-        [disabled]="addForm.invalid || busy()"
-        i18n="@@members.add"
-      >
-        Adicionar
-      </button>
-    </form>
+    <button
+      matButton="filled"
+      type="button"
+      class="section__action"
+      [disabled]="busy()"
+      (click)="openAdd()"
+      i18n="@@members.add"
+    >
+      Adicionar
+    </button>
   }
 
-  <mat-list>
-    @for (member of members(); track member.userId) {
-      <mat-list-item class="member-row">
-        <span matListItemTitle>{{ member.displayName }}</span>
-
-        <span matListItemLine>
-          @if (canActOn(member)) {
-            <mat-form-field class="role-select">
-              <mat-select
-                [value]="member.role"
-                [disabled]="busy()"
-                (valueChange)="changeRole(member, $event)"
-              >
-                @for (role of rolesICanAssign(); track role) {
-                  <mat-option [value]="role">{{ role | roleLabel }}</mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
-          } @else {
-            {{ member.role | roleLabel }}
-          }
-
+  @for (member of members(); track member.userId) {
+    <mat-card class="member">
+      <mat-card-header>
+        <mat-card-title>{{ member.displayName }}</mat-card-title>
+        <mat-card-subtitle>
+          {{ member.role | roleLabel }}
           @if (!member.hasPaymentHandle) {
-            <span class="warn" i18n="@@members.noPaymentHandle">· sem chave de recebimento</span>
+            <span class="alert" i18n="@@members.noPaymentHandle">· sem chave de recebimento</span>
           }
-        </span>
+        </mat-card-subtitle>
+      </mat-card-header>
 
-        @if (canActOn(member)) {
+      @if (canActOn(member)) {
+        <mat-card-content>
+          <!--
+            The select lives in the card body with room to breathe. Nested in a
+            list line it was clipped by the line's fixed height, which is what
+            hid its value.
+          -->
+          <mat-form-field class="member__role">
+            <mat-label i18n="@@field.role">Cargo</mat-label>
+            <mat-select
+              [value]="member.role"
+              [disabled]="busy()"
+              (valueChange)="changeRole(member, $event)"
+            >
+              @for (role of rolesICanAssign(); track role) {
+                <mat-option [value]="role">{{ role | roleLabel }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </mat-card-content>
+
+        <mat-card-actions align="end">
           <button
-            matIconButton
-            matListItemMeta
+            matButton
             type="button"
             [disabled]="busy()"
             (click)="remove(member)"
-            i18n-aria-label="@@members.remove"
-            aria-label="Remover membro"
+            i18n="@@members.remove"
           >
-            &times;
+            Remover
           </button>
-        }
-      </mat-list-item>
-    }
-  </mat-list>
-</div>
+        </mat-card-actions>
+      }
+    </mat-card>
+  }
+</section>

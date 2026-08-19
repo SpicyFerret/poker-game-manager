@@ -1,10 +1,7 @@
 import { Component, OnInit, inject, input, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatListModule } from '@angular/material/list';
-import { MatSelectModule } from '@angular/material/select';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import { describeError } from '../../../../core/api/problem-details';
 import {
@@ -14,24 +11,17 @@ import {
 } from '../../../../core/championships/championship.models';
 import { ChampionshipsService } from '../../../../core/championships/championships.service';
 import { RoleLabelPipe } from '../../../../core/championships/role-label.pipe';
+import { CreateInviteDialog, CreateInviteResult } from './create-invite-dialog';
 
 @Component({
   selector: 'app-invites-tab',
-  imports: [
-    ReactiveFormsModule,
-    MatListModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    RoleLabelPipe,
-  ],
+  imports: [MatCardModule, MatButtonModule, MatDialogModule, RoleLabelPipe],
   templateUrl: './invites.html',
   styleUrl: './invites.scss',
 })
 export class InvitesTab implements OnInit {
-  private readonly formBuilder = inject(FormBuilder);
   private readonly championships = inject(ChampionshipsService);
+  private readonly dialog = inject(MatDialog);
 
   readonly championshipId = input.required<string>();
   readonly callerRole = input.required<ChampionshipRole>();
@@ -40,18 +30,6 @@ export class InvitesTab implements OnInit {
   protected readonly error = signal<string | null>(null);
   protected readonly busy = signal(false);
   protected readonly copied = signal<string | null>(null);
-
-  protected readonly form = this.formBuilder.group({
-    role: this.formBuilder.nonNullable.control<ChampionshipRole>('Player', [Validators.required]),
-    // number | null, not string: the template binds this to <input type="number">,
-    // so Angular's NumberValueAccessor puts a number in the control (or null when
-    // the field is cleared) regardless of what it was initialised with. Typing it
-    // as a string and calling .trim() threw inside the click handler, which meant
-    // the button silently did nothing.
-    // Null is the empty case, and it means unlimited — the usual choice for a code
-    // pasted into the group's chat.
-    maxUses: this.formBuilder.control<number | null>(null),
-  });
 
   ngOnInit(): void {
     this.load();
@@ -74,36 +52,36 @@ export class InvitesTab implements OnInit {
     });
   }
 
-  protected create(): void {
-    if (this.form.invalid || this.busy()) {
-      return;
-    }
+  protected openCreate(): void {
+    this.dialog
+      .open(CreateInviteDialog, { data: { assignableRoles: this.rolesICanInvite() } })
+      .afterClosed()
+      .subscribe((result: CreateInviteResult | undefined) => {
+        if (!result) {
+          return;
+        }
 
-    const raw = this.form.getRawValue();
-    const maxUses = raw.maxUses;
+        this.busy.set(true);
+        this.error.set(null);
 
-    if (maxUses !== null && (!Number.isInteger(maxUses) || maxUses < 1)) {
-      this.error.set(
-        $localize`:@@invites.maxUsesInvalid:O limite de usos precisa ser um número inteiro maior que zero.`,
-      );
-      return;
-    }
-
-    this.busy.set(true);
-    this.error.set(null);
-
-    this.championships.createInvite(this.championshipId(), raw.role, maxUses, null).subscribe({
-      next: () => {
-        this.busy.set(false);
-        this.load();
-      },
-      error: (err: unknown) => {
-        this.busy.set(false);
-        this.error.set(
-          describeError(err, $localize`:@@invites.createFailed:Não foi possível criar o convite.`),
-        );
-      },
-    });
+        this.championships
+          .createInvite(this.championshipId(), result.role, result.maxUses, null)
+          .subscribe({
+            next: () => {
+              this.busy.set(false);
+              this.load();
+            },
+            error: (err: unknown) => {
+              this.busy.set(false);
+              this.error.set(
+                describeError(
+                  err,
+                  $localize`:@@invites.createFailed:Não foi possível criar o convite.`,
+                ),
+              );
+            },
+          });
+      });
   }
 
   protected revoke(invite: Invite): void {

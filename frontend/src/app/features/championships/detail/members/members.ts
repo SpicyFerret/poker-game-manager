@@ -1,9 +1,9 @@
 import { Component, OnInit, inject, input, output, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 
 import { describeError } from '../../../../core/api/problem-details';
@@ -16,15 +16,16 @@ import {
 } from '../../../../core/championships/championship.models';
 import { ChampionshipsService } from '../../../../core/championships/championships.service';
 import { RoleLabelPipe } from '../../../../core/championships/role-label.pipe';
+import { AddMemberDialog, AddMemberResult } from './add-member-dialog';
 
 @Component({
   selector: 'app-members-tab',
   imports: [
-    ReactiveFormsModule,
-    MatListModule,
+    MatCardModule,
     MatButtonModule,
+    MatMenuModule,
+    MatDialogModule,
     MatFormFieldModule,
-    MatInputModule,
     MatSelectModule,
     RoleLabelPipe,
   ],
@@ -33,6 +34,7 @@ import { RoleLabelPipe } from '../../../../core/championships/role-label.pipe';
 })
 export class MembersTab implements OnInit {
   private readonly championships = inject(ChampionshipsService);
+  private readonly dialog = inject(MatDialog);
 
   readonly championshipId = input.required<string>();
   readonly callerRole = input.required<ChampionshipRole>();
@@ -43,11 +45,6 @@ export class MembersTab implements OnInit {
   protected readonly members = signal<Member[]>([]);
   protected readonly error = signal<string | null>(null);
   protected readonly busy = signal(false);
-
-  protected readonly addForm = inject(FormBuilder).nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
-    role: ['Player' as ChampionshipRole, [Validators.required]],
-  });
 
   ngOnInit(): void {
     this.load();
@@ -79,33 +76,35 @@ export class MembersTab implements OnInit {
     });
   }
 
-  protected add(): void {
-    if (this.addForm.invalid || this.busy()) {
-      return;
-    }
+  protected openAdd(): void {
+    this.dialog
+      .open(AddMemberDialog, { data: { assignableRoles: this.rolesICanAssign() } })
+      .afterClosed()
+      .subscribe((result: AddMemberResult | undefined) => {
+        if (!result) {
+          return;
+        }
 
-    this.busy.set(true);
-    this.error.set(null);
+        this.busy.set(true);
+        this.error.set(null);
 
-    const { email, role } = this.addForm.getRawValue();
-
-    this.championships.addMember(this.championshipId(), email.trim(), role).subscribe({
-      next: () => {
-        this.busy.set(false);
-        this.addForm.reset({ email: '', role: 'Player' });
-        this.load();
-        this.changed.emit();
-      },
-      error: (err: unknown) => {
-        this.busy.set(false);
-        this.error.set(
-          describeError(
-            err,
-            $localize`:@@members.addFailed:Não foi possível adicionar. Confira se essa pessoa já tem conta.`,
-          ),
-        );
-      },
-    });
+        this.championships.addMember(this.championshipId(), result.email, result.role).subscribe({
+          next: () => {
+            this.busy.set(false);
+            this.load();
+            this.changed.emit();
+          },
+          error: (err: unknown) => {
+            this.busy.set(false);
+            this.error.set(
+              describeError(
+                err,
+                $localize`:@@members.addFailed:Não foi possível adicionar. Confira se essa pessoa já tem conta.`,
+              ),
+            );
+          },
+        });
+      });
   }
 
   protected changeRole(member: Member, role: ChampionshipRole): void {

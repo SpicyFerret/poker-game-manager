@@ -1,4 +1,4 @@
-using Application.Abstractions.Authentication;
+﻿using Application.Abstractions.Authentication;
 using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
@@ -99,6 +99,7 @@ internal sealed class GetTableQueryHandler(
                     DenominationId = d.Id,
                     FaceValue = d.FaceValue,
                     EffectiveValue = d.EffectiveValue,
+                    Colour = d.Colour,
                     Issued = issued.GetValueOrDefault(d.Id),
                     Remaining = Math.Max(d.Quantity - issued.GetValueOrDefault(d.Id), 0)
                 })

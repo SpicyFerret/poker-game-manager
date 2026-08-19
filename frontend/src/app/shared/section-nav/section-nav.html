@@ -1,0 +1,15 @@
+<nav #strip class="strip" role="tablist">
+  @for (section of sections(); track section.id) {
+    <button
+      type="button"
+      role="tab"
+      class="strip__item"
+      [class.strip__item--selected]="selected() === section.id"
+      [attr.aria-selected]="selected() === section.id"
+      [attr.data-section]="section.id"
+      (click)="select(section.id)"
+    >
+      {{ section.label }}
+    </button>
+  }
+</nav>
