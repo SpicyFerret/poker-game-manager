@@ -30,6 +30,7 @@ import { RoleLabelPipe } from '../../../../core/championships/role-label.pipe';
   styleUrl: './invites.scss',
 })
 export class InvitesTab implements OnInit {
+  private readonly formBuilder = inject(FormBuilder);
   private readonly championships = inject(ChampionshipsService);
 
   readonly championshipId = input.required<string>();
@@ -40,10 +41,16 @@ export class InvitesTab implements OnInit {
   protected readonly busy = signal(false);
   protected readonly copied = signal<string | null>(null);
 
-  protected readonly form = inject(FormBuilder).nonNullable.group({
-    role: ['Player' as ChampionshipRole, [Validators.required]],
-    // Blank means unlimited — the usual case for a code pasted in the group chat.
-    maxUses: [''],
+  protected readonly form = this.formBuilder.group({
+    role: this.formBuilder.nonNullable.control<ChampionshipRole>('Player', [Validators.required]),
+    // number | null, not string: the template binds this to <input type="number">,
+    // so Angular's NumberValueAccessor puts a number in the control (or null when
+    // the field is cleared) regardless of what it was initialised with. Typing it
+    // as a string and calling .trim() threw inside the click handler, which meant
+    // the button silently did nothing.
+    // Null is the empty case, and it means unlimited — the usual choice for a code
+    // pasted into the group's chat.
+    maxUses: this.formBuilder.control<number | null>(null),
   });
 
   ngOnInit(): void {
@@ -73,7 +80,7 @@ export class InvitesTab implements OnInit {
     }
 
     const raw = this.form.getRawValue();
-    const maxUses = raw.maxUses.trim() === '' ? null : Number(raw.maxUses);
+    const maxUses = raw.maxUses;
 
     if (maxUses !== null && (!Number.isInteger(maxUses) || maxUses < 1)) {
       this.error.set(
