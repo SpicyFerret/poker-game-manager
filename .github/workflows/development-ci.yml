@@ -1,0 +1,259 @@
+name: Development CI
+
+# Broad quality gate on every push to development — independent of the
+# per-area workflows (backend-ci/frontend-ci/docker-publish/infra-ci), which
+# stay path-filtered and handle build/test/deploy for their own area. This
+# one always runs the baseline checks below regardless of what changed, plus
+# infra lint only when infra/ actually changed.
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  # --- Secret check ----------------------------------------------------------
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # gitleaks needs history, not just the current tree
+
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # --- Security check (SAST) --------------------------------------------------
+  codeql-analysis:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [csharp, javascript-typescript]
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-dotnet@v4
+        if: matrix.language == 'csharp'
+        with:
+          dotnet-version: "10.0.x"
+
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+
+      # autobuild can't reliably pick one project out of this multi-project
+      # repo for csharp, so build explicitly — same NU1903-avoidance scoping
+      # as the other backend jobs (excludes IntegrationTests.csproj).
+      - name: Build (csharp)
+        if: matrix.language == 'csharp'
+        working-directory: backend
+        run: |
+          dotnet build src/Web.Api/Web.Api.csproj
+          dotnet build tests/Application.UnitTests/Application.UnitTests.csproj
+          dotnet build tests/ArchitectureTests/ArchitectureTests.csproj
+
+      - uses: github/codeql-action/autobuild@v4
+        if: matrix.language == 'javascript-typescript'
+
+      - uses: github/codeql-action/analyze@v4
+
+  # --- Security check (dependency audit) --------------------------------------
+  # Scoped to non-test backend projects deliberately: IntegrationTests.csproj
+  # pulls Testcontainers.PostgreSql -> a vulnerable SSH.NET (NU1903), a known,
+  # separately-tracked issue (see .env.example / prior discussion) — auditing
+  # the shipped app's own dependency tree here keeps this job meaningful
+  # without being blocked by that unrelated, test-only advisory.
+  dependency-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: dotnet vulnerable packages (Web.Api and its dependencies only)
+        working-directory: backend
+        run: |
+          dotnet restore src/Web.Api/Web.Api.csproj
+          dotnet list src/Web.Api/Web.Api.csproj package --vulnerable --include-transitive
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: npm audit
+        working-directory: frontend
+        run: npm ci && npm audit --audit-level=high
+
+  # --- Code check --------------------------------------------------------------
+  code-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      # Every project except IntegrationTests.csproj — same NU1903 reason as
+      # dependency-audit/backend-unit-tests above (whole-solution restore
+      # would hit the vulnerable transitive SSH.NET during restore itself).
+      - name: dotnet format (style, per .editorconfig)
+        working-directory: backend
+        run: |
+          for proj in src/Domain/Domain.csproj src/SharedKernel/SharedKernel.csproj \
+                      src/Application/Application.csproj src/Infrastructure/Infrastructure.csproj \
+                      src/Web.Api/Web.Api.csproj tests/Application.UnitTests/Application.UnitTests.csproj \
+                      tests/ArchitectureTests/ArchitectureTests.csproj; do
+            dotnet restore "$proj"
+            dotnet format "$proj" --verify-no-changes --no-restore
+          done
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Angular build (AOT + full type check)
+        working-directory: frontend
+        run: npm ci && npm run build
+
+      - name: Worker typecheck
+        working-directory: frontend
+        run: npm run typecheck:worker
+
+  # --- Unit tests ----------------------------------------------------------
+  backend-unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      # Deliberately excludes IntegrationTests.csproj — same NU1903 reason as
+      # dependency-audit above. Full suite (incl. integration) still runs in
+      # backend-ci.yml.
+      - name: Unit + architecture tests
+        working-directory: backend
+        run: |
+          dotnet test tests/Application.UnitTests/Application.UnitTests.csproj
+          dotnet test tests/ArchitectureTests/ArchitectureTests.csproj
+
+  frontend-unit-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+      - run: npm test -- --watch=false
+
+  # --- Container test (build the real Dockerfile, boot it, smoke + minimal load test) ---
+  container-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: clean-architecture
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build image
+        run: docker build -t web-api:ci -f backend/src/Web.Api/Dockerfile backend
+
+      - name: Run container
+        run: |
+          docker run -d --name web-api-ci --network host \
+            -e ASPNETCORE_ENVIRONMENT=Development \
+            -e ConnectionStrings__Database="Host=localhost;Port=5432;Database=clean-architecture;Username=postgres;Password=postgres" \
+            -e Jwt__Secret="ci-smoke-test-secret-at-least-32-characters-long" \
+            -e Jwt__Issuer="ci" -e Jwt__Audience="ci" -e Jwt__ExpirationInMinutes="60" \
+            web-api:ci
+          # ASPNETCORE_ENVIRONMENT=Development makes Program.cs auto-apply
+          # EF Core migrations on startup, so /health's Postgres check has a
+          # real schema to check against.
+
+      - name: Wait for /health
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8080/health; then exit 0; fi
+            sleep 2
+          done
+          echo "web-api never became healthy"; docker logs web-api-ci; exit 1
+
+      # Minimal smoke-level load test, not a real capacity/perf test — there
+      # are no real application endpoints yet to load-test meaningfully.
+      # Expand this once the poker app has actual traffic-bearing endpoints.
+      - name: Minimal load smoke test (k6)
+        run: |
+          cat > smoke-load-test.js <<'EOF'
+          import http from 'k6/http';
+          import { check, sleep } from 'k6';
+
+          export const options = { vus: 5, duration: '15s' };
+
+          export default function () {
+            const res = http.get('http://localhost:8080/health');
+            check(res, { 'status is 200': (r) => r.status === 200 });
+            sleep(1);
+          }
+          EOF
+          docker run --rm --network host -v "$PWD/smoke-load-test.js:/script.js" grafana/k6 run /script.js
+
+      - name: Container logs (always, for debugging)
+        if: always()
+        run: docker logs web-api-ci || true
+
+      - name: Cleanup
+        if: always()
+        run: docker rm -f web-api-ci || true
+
+  # --- Infra lint, only when infra/ changed ---------------------------------
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      infra: ${{ steps.filter.outputs.infra }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            infra:
+              - 'infra/**'
+
+  infra-lint:
+    needs: changes
+    if: needs.changes.outputs.infra == 'true'
+    uses: ./.github/workflows/infra-fmt-validate.yml

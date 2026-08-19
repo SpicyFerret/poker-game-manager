@@ -50,10 +50,17 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: echo "present=${{ env.CLOUDFLARE_API_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
 
+      - name: Fill in wrangler.jsonc from repo variables
+        if: steps.cf-token.outputs.present == 'true'
+        run: |
+          sed -i "s|__API_TUNNEL_HOSTNAME__|${{ vars.API_TUNNEL_HOSTNAME }}|" wrangler.jsonc
+          sed -i "s|__FRONTEND_DOMAIN__|${{ vars.FRONTEND_DOMAIN }}|" wrangler.jsonc
+
       - name: Deploy to Cloudflare Workers
         if: steps.cf-token.outputs.present == 'true'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: frontend
           command: deploy

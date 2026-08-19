@@ -3,6 +3,17 @@
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+    <!--
+      NU1903: Testcontainers.PostgreSql pulls SSH.NET transitively, which has
+      a disclosed advisory in the SSH-based Docker endpoint feature. This repo
+      only ever talks to Docker over the local socket/named pipe (never
+      Testcontainers' SSH remote-Docker feature), so that code path is never
+      exercised here. No patched Testcontainers release is available yet;
+      revisit and drop this once one ships. Scoped to this test-only project,
+      not suppressed solution-wide.
+    -->
+    <NoWarn>$(NoWarn);NU1903</NoWarn>
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);NU1903</WarningsNotAsErrors>
   </PropertyGroup>
 
   <ItemGroup>

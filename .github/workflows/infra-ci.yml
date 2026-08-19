@@ -2,6 +2,14 @@ name: Infra CI
 
 on:
   workflow_dispatch:
+    inputs:
+      action:
+        description: "tofu action to run on the self-hosted (Pi) runner"
+        type: choice
+        options:
+          - plan
+          - apply
+        default: plan
   pull_request:
     branches:
       - main
@@ -15,41 +23,64 @@ defaults:
 
 jobs:
   fmt-and-validate:
-    runs-on: ubuntu-latest
+    uses: ./.github/workflows/infra-fmt-validate.yml
 
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Setup OpenTofu
-        uses: opentofu/setup-opentofu@v1
-
-      - name: fmt check
-        run: tofu fmt -check -recursive ..
-
-      - name: init (no backend, no real credentials needed)
-        run: tofu init -backend=false
-
-      - name: validate
-        run: tofu validate
-
-  # Real plan/apply needs the Pi cluster's kubeconfig as a secret — run
-  # manually (workflow_dispatch) once that secret exists in the repo.
-  plan:
+  # plan/apply need to reach the k3s API server at 192.168.100.10:6443, a
+  # private LAN address GitHub-hosted runners cannot route to. This job only
+  # runs on the self-hosted runner registered on rb02 (see
+  # infra/kubernetes/README.md for setup) and only on manual dispatch — never
+  # automatically on push, since `apply` changes real infrastructure.
+  plan-or-apply:
     if: github.event_name == 'workflow_dispatch'
     needs: fmt-and-validate
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, arm64, pi]
+    env:
+      # Picked up automatically by the S3-compatible backend (R2) — not
+      # passed via -backend-config, those are the standard AWS SDK env vars.
+      AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      # OpenTofu reads TF_VAR_<name> automatically for the matching input
+      # variable — avoids ever interpolating a secret into a `run:` script
+      # body (a `-var="...${{ secrets.X }}..."` string breaks if the value
+      # contains a shell-special character; this doesn't).
+      TF_VAR_kubeconfig_path: ./kubeconfig
+      TF_VAR_postgres_password: ${{ secrets.POSTGRES_PASSWORD }}
+      TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
 
     steps:
       - uses: actions/checkout@v5
 
       - name: Setup OpenTofu
         uses: opentofu/setup-opentofu@v1
+        with:
+          # The Node.js-based wrapper needs `node` on PATH. GitHub-hosted
+          # runners bundle it; this self-hosted one (bare Debian on rb02)
+          # doesn't. Not needed for our use anyway.
+          tofu_wrapper: false
 
       - name: Write kubeconfig
-        run: echo "${{ secrets.PI_CLUSTER_KUBECONFIG }}" > kubeconfig
+        env:
+          KUBECONFIG_CONTENT: ${{ secrets.PI_CLUSTER_KUBECONFIG }}
+        # Defensive \r strip — harmless either way, doesn't hurt to keep.
+        run: echo "$KUBECONFIG_CONTENT" | tr -d '\r' > kubeconfig
+
+      - name: Write backend config
+        env:
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          cat > backend.hcl <<EOF
+          bucket = "poker-game-manager-tfstate"
+          endpoints = {
+            s3 = "https://${CF_ACCOUNT_ID}.r2.cloudflarestorage.com"
+          }
+          EOF
 
       - name: init
-        run: tofu init
+        run: tofu init -backend-config=backend.hcl
 
       - name: plan
-        run: tofu plan -var="kubeconfig_path=./kubeconfig" -var="postgres_password=${{ secrets.POSTGRES_PASSWORD }}" -var="jwt_secret=${{ secrets.JWT_SECRET }}"
+        run: tofu plan -out=tfplan
+
+      - name: apply
+        if: inputs.action == 'apply'
+        run: tofu apply -auto-approve tfplan

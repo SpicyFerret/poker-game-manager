@@ -1,0 +1,9 @@
+# Copy to backend.hcl (gitignored) and fill in the real account ID.
+# Used via: tofu init -backend-config=backend.hcl
+# Never commit backend.hcl — the account ID isn't wildly sensitive, but
+# there's no reason to put it in the repo either.
+
+bucket = "poker-game-manager-tfstate"
+endpoints = {
+  s3 = "https://CHANGEME_CLOUDFLARE_ACCOUNT_ID.r2.cloudflarestorage.com"
+}

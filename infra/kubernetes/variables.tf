@@ -48,7 +48,7 @@ variable "jwt_secret" {
 variable "image_repository" {
   description = "Container image repository for the API, published by .github/workflows/docker-publish.yml."
   type        = string
-  default     = "ghcr.io/CHANGEME/poker-game-manager-api"
+  default     = "ghcr.io/spicyferret/poker-game-manager-api"
 }
 
 variable "image_tag" {

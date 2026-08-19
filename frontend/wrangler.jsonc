@@ -12,16 +12,18 @@
     "binding": "ASSETS"
   },
 
-  // API_ORIGIN is the public hostname the (already-running) Cloudflare
-  // Tunnel on the Raspberry Pi cluster exposes for the web-api Service.
-  // Fill in the real value once the tunnel hostname is known — see
-  // infra/kubernetes/README.md for what the tunnel should point at.
+  // API_ORIGIN and the route pattern below are placeholders. They're filled
+  // in by .github/workflows/frontend-ci.yml at deploy time from the GitHub
+  // Actions repository VARIABLES API_TUNNEL_HOSTNAME and FRONTEND_DOMAIN
+  // (Settings -> Secrets and variables -> Actions -> Variables tab) — those
+  // are the source of truth, not this file. For a local `wrangler deploy`,
+  // replace the __PLACEHOLDER__ tokens by hand first (see infra/kubernetes/README.md
+  // and .env.example section 5 for what API_TUNNEL_HOSTNAME should be).
   "vars": {
-    "API_ORIGIN": "https://REPLACE_WITH_TUNNEL_HOSTNAME"
-  }
+    "API_ORIGIN": "https://__API_TUNNEL_HOSTNAME__"
+  },
 
-  // Uncomment and set once a domain is attached to this Worker:
-  // "routes": [
-  //   { "pattern": "poker.example.com", "custom_domain": true }
-  // ]
+  "routes": [
+    { "pattern": "__FRONTEND_DOMAIN__", "custom_domain": true }
+  ]
 }
