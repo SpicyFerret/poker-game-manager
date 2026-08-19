@@ -1,5 +1,4 @@
 using Application.Abstractions.Data;
-using Domain.Todos;
 using Domain.Users;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +14,4 @@ public sealed class TestDbContext(DbContextOptions<TestDbContext> options)
     public DbSet<User> Users { get; set; }
 
     public DbSet<RefreshToken> RefreshTokens { get; set; }
-
-    public DbSet<TodoItem> TodoItems { get; set; }
 }

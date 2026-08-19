@@ -1,4 +1,6 @@
-﻿namespace Application.Users.GetById;
+﻿using Domain.Users;
+
+namespace Application.Users.GetById;
 
 public sealed record UserResponse
 {
@@ -9,4 +11,10 @@ public sealed record UserResponse
     public string FirstName { get; init; }
 
     public string LastName { get; init; }
+
+    public string DisplayName { get; init; }
+
+    public PaymentHandleType? PaymentType { get; init; }
+
+    public string? PaymentHandle { get; init; }
 }

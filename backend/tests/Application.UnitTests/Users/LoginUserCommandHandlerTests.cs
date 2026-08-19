@@ -102,6 +102,7 @@ public sealed class LoginUserCommandHandlerTests : BaseHandlerTest
             Email = Email,
             FirstName = "Test",
             LastName = "User",
+            DisplayName = "Test",
             PasswordHash = "hash"
         });
 

@@ -1,4 +1,5 @@
-﻿using Web.Api.Infrastructure;
+﻿using System.Text.Json.Serialization;
+using Web.Api.Infrastructure;
 
 namespace Web.Api;
 
@@ -16,6 +17,12 @@ public static class DependencyInjection
         services.AddProblemDetails();
 
         services.AddCorsInternal(configuration);
+
+        // Enums travel as strings ("Pix", "Running", "InviteOnly") instead of
+        // integers. The client stays readable, and reordering an enum member
+        // stops being a silent breaking change for anyone already deployed.
+        services.ConfigureHttpJsonOptions(options =>
+            options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
         return services;
     }

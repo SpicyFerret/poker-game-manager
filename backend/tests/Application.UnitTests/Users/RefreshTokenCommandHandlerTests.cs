@@ -96,6 +96,7 @@ public sealed class RefreshTokenCommandHandlerTests : BaseHandlerTest
             Email = "test@example.com",
             FirstName = "Test",
             LastName = "User",
+            DisplayName = "Test",
             PasswordHash = "hash"
         };
 
