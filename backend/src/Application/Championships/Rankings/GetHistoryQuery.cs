@@ -16,23 +16,16 @@ public sealed record HistoryRow
     public int PlayerCount { get; init; }
     public string? WinnerDisplayName { get; init; }
 
-    /// <summary>What the winner took home. Negative is possible on a bad night for everyone.</summary>
+    /// <summary>
+    /// What the winner took home: chips counted, less everything they paid in.
+    /// Negative is possible on a night where everyone lost to the one person who
+    /// left early. Note this is balance, not chips held — someone several rebuys
+    /// deep can end holding the biggest pile and still be down on the night.
+    /// </summary>
     public decimal WinnerBalance { get; init; }
 
     /// <summary>Everything paid in across the table: buy-ins and rebuys.</summary>
     public decimal MoneyIn { get; init; }
-
-    /// <summary>
-    /// Who finished holding the most chips.
-    ///
-    /// Not always the winner: balance is chips minus what you paid in, so
-    /// somebody three rebuys deep can end the night with the biggest stack in
-    /// front of them and still be down on the night. Both are worth showing.
-    /// </summary>
-    public string? ChipLeaderDisplayName { get; init; }
-
-    /// <summary>What that stack was worth in money.</summary>
-    public decimal ChipLeaderChips { get; init; }
 }
 
 public sealed record GetHistoryQuery(Guid ChampionshipId) : IQuery<IReadOnlyList<HistoryRow>>;
@@ -81,34 +74,6 @@ internal sealed class GetHistoryQueryHandler(
             .Select(group => new { TableId = group.Key, Count = group.Count() })
             .ToDictionaryAsync(row => row.TableId, row => row.Count, cancellationToken);
 
-        // Chips held at the end, per player, valued at the table's own rate. Read
-        // from the counts rather than from the result, because the result records
-        // balance and balance has the buy-ins already taken off it.
-        var stacks = await context.FinalCounts
-            .Where(count => tableIds.Contains(count.TableId))
-            .Join(
-                context.ChipDenominations,
-                count => count.ChipDenominationId,
-                denomination => denomination.Id,
-                (count, denomination) => new
-                {
-                    count.TableId,
-                    count.TablePlayerId,
-                    Units = count.Quantity * denomination.EffectiveValue
-                })
-            .GroupBy(row => new { row.TableId, row.TablePlayerId })
-            .Select(group => new
-            {
-                group.Key.TableId,
-                group.Key.TablePlayerId,
-                Units = group.Sum(row => row.Units)
-            })
-            .Join(
-                context.TablePlayers,
-                stack => stack.TablePlayerId,
-                player => player.Id,
-                (stack, player) => new { stack.TableId, player.User.DisplayName, stack.Units })
-            .ToListAsync(cancellationToken);
 
         Dictionary<Guid, decimal> moneyIn = await context.LedgerEntries
             .Where(entry =>
@@ -123,11 +88,6 @@ internal sealed class GetHistoryQueryHandler(
             {
                 var winner = winners.SingleOrDefault(w => w.TableId == table.Id);
 
-                var chipLeader = stacks
-                    .Where(stack => stack.TableId == table.Id)
-                    .OrderByDescending(stack => stack.Units)
-                    .FirstOrDefault();
-
                 return new HistoryRow
                 {
                     TableId = table.Id,
@@ -136,9 +96,7 @@ internal sealed class GetHistoryQueryHandler(
                     PlayerCount = playerCounts.GetValueOrDefault(table.Id),
                     WinnerDisplayName = winner?.DisplayName,
                     WinnerBalance = winner?.Balance ?? 0m,
-                    MoneyIn = moneyIn.GetValueOrDefault(table.Id),
-                    ChipLeaderDisplayName = chipLeader?.DisplayName,
-                    ChipLeaderChips = (chipLeader?.Units ?? 0) * table.MoneyPerUnit
+                    MoneyIn = moneyIn.GetValueOrDefault(table.Id)
                 };
             })
             .ToList();
