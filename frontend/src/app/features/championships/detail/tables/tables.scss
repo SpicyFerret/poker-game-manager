@@ -77,16 +77,24 @@
 // Two dashes rather than one: a single arc reads as a line that starts and
 // stops somewhere on the card. Two, evenly spaced by the gap on both sides,
 // read as a pair travelling the loop together — always whole, never a stub.
+//
+// The pattern sums to slightly more than the path's normalised length (101
+// against 100) rather than exactly matching it: an exact match leaves the
+// closing gap ending precisely where the pattern restarts, and rounding
+// there occasionally redraws a sliver of the first dash, showing as a stray
+// third fragment. The 1-unit overrun gets silently truncated off the second
+// gap, which is imperceptible, and removes the seam the browser could round
+// the wrong way on.
 .table-card-glow--idle .table-card-glow__ring rect {
   stroke: #22c55e;
-  stroke-dasharray: 12 38 12 38;
+  stroke-dasharray: 12 38.5 12 38.5;
   filter: drop-shadow(0 0 3px color-mix(in srgb, #22c55e 70%, transparent));
   animation: table-glow-chase 3.5s linear infinite;
 }
 
 .table-card-glow--live .table-card-glow__ring rect {
   stroke: #3b82f6;
-  stroke-dasharray: 12 38 12 38;
+  stroke-dasharray: 12 38.5 12 38.5;
   filter: drop-shadow(0 0 3px color-mix(in srgb, #3b82f6 70%, transparent));
   animation: table-glow-chase 2.2s linear infinite;
 }
