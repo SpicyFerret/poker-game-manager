@@ -149,12 +149,13 @@ Each phase ends with something usable end to end — backend, screen, tests.
 
 - **Phase 0 — Foundation.** *Done.* Sample slice removed; `DisplayName` and payment handle on `User`;
   Angular shell with Material, i18n and the auth screens.
-- **Phase 1 — Championship.** Championships, members and roles, ownership transfer, invites, chip
-  cases and denominations, the points table. Championship-scoped authorization.
-- **Phase 2 — Table in play.** Opening a table, joining, starting with a calculated distribution and
-  stock deduction, rebuys against current stock, purchases between players, blind levels and clock.
-- **Phase 3 — Closing.** Player-reported counts, the live reconciliation panel, the `Reconciled` gate,
-  settlement and table result.
+- **Phase 1 — Championship.** *Done.* Championships, members and roles, ownership transfer, invites,
+  chip cases and denominations, the points table. Championship-scoped authorization.
+- **Phase 2 — Table in play.** *Done.* Opening a table, joining, starting with a calculated
+  distribution and stock deduction, rebuys against current stock, purchases between players, blind
+  levels and a shared clock.
+- **Phase 3 — Closing.** *Done.* Player-reported counts, the live reconciliation panel, the
+  `Reconciled` gate, settlement and table result.
 - **Phase 4 — Rankings.** Both rankings over the championship, table history, personal statement, championship
   statistics.
 

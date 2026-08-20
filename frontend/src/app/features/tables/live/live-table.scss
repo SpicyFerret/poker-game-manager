@@ -161,3 +161,74 @@
 .result__balance {
   font: var(--mat-sys-label-large);
 }
+
+// The clock is read from across the table, sometimes by someone standing up, so
+// it gets the whole width and a size nothing else on the screen competes with.
+.clock {
+  text-align: center;
+
+  p {
+    margin: 0;
+  }
+}
+
+.clock__face {
+  font-size: clamp(3rem, 18vw, 5rem);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.clock__face--untimed {
+  font-size: 1.5rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+// Time is up and nobody has moved the level on. Colour rather than a banner:
+// whoever needs to act is looking at the clock already.
+.clock--over .clock__face {
+  color: var(--mat-sys-error);
+}
+
+.clock__level {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-label-large);
+}
+
+.clock__blinds {
+  font: var(--mat-sys-headline-small);
+}
+
+.clock__ante {
+  margin-left: 0.4rem;
+  font: var(--mat-sys-label-medium);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.ladder {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ladder__level {
+  display: grid;
+  grid-template-columns: 1.6rem 1fr auto;
+  gap: 0.5rem;
+  align-items: baseline;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.ladder__level--current {
+  font-weight: 600;
+}
+
+.ladder__order,
+.ladder__duration {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-label-medium);
+}

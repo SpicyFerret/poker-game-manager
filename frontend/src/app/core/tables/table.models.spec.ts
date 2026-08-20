@@ -1,13 +1,17 @@
 import {
+  TableClock,
   TableStatus,
   TableSummary,
   countUnits,
+  formatDuration,
   isActive,
   issuedUnits,
   offBy,
   remainingUnits,
+  secondsLeft,
   sortForDisplay,
   stacksLeft,
+  suggestLadder,
 } from './table.models';
 
 function summary(name: string, status: TableStatus, createdAtUtc: string): TableSummary {
@@ -136,5 +140,77 @@ describe('counting helpers', () => {
 
   it('should surface only the chips that do not tally', () => {
     expect(offBy(lines).map((line) => line.denominationId)).toEqual(['b']);
+  });
+});
+
+describe('blind clock helpers', () => {
+  const level = { order: 1, smallBlind: 5, bigBlind: 10, ante: 0, durationSeconds: 600 };
+
+  function clock(overrides: Partial<TableClock> = {}): TableClock {
+    return {
+      currentLevel: 1,
+      isPaused: false,
+      elapsedSeconds: 0,
+      serverTimeUtc: '2026-08-20T00:00:00Z',
+      ...overrides,
+    };
+  }
+
+  it('should count down from the sample plus however long ago it landed', () => {
+    expect(secondsLeft(level, clock({ elapsedSeconds: 120 }), 30)).toBe(450);
+  });
+
+  it('should stand still while paused', () => {
+    // The 300 seconds since the sample are a break, so the level keeps its time.
+    expect(secondsLeft(level, clock({ elapsedSeconds: 120, isPaused: true }), 300)).toBe(480);
+  });
+
+  it('should stop at zero rather than going negative', () => {
+    expect(secondsLeft(level, clock({ elapsedSeconds: 900 }), 0)).toBe(0);
+  });
+
+  it('should report nothing to count for a level with no duration', () => {
+    expect(secondsLeft({ ...level, durationSeconds: 0 }, clock(), 40)).toBe(0);
+  });
+
+  it('should report nothing when the level is unknown', () => {
+    expect(secondsLeft(undefined, clock(), 40)).toBe(0);
+  });
+
+  it('should format under an hour as mm:ss', () => {
+    expect(formatDuration(605)).toBe('10:05');
+    expect(formatDuration(9)).toBe('0:09');
+  });
+
+  it('should format an hour or more as h:mm:ss', () => {
+    expect(formatDuration(3661)).toBe('1:01:01');
+  });
+
+  it('should never format a negative remainder', () => {
+    expect(formatDuration(-5)).toBe('0:00');
+  });
+});
+
+describe('suggestLadder', () => {
+  it('should start where the smallest chip in the case allows', () => {
+    expect(suggestLadder(25)[0].smallBlind).toBe(25);
+  });
+
+  it('should keep the big blind at twice the small one', () => {
+    expect(suggestLadder(5).every((level) => level.bigBlind === level.smallBlind * 2)).toBe(true);
+  });
+
+  it('should climb, never sit still or fall back', () => {
+    const ladder = suggestLadder(5, 8);
+
+    expect(
+      ladder.every(
+        (level, index) => index === 0 || level.smallBlind > ladder[index - 1].smallBlind,
+      ),
+    ).toBe(true);
+  });
+
+  it('should not suggest a blind of zero when the case has no chips', () => {
+    expect(suggestLadder(0)[0].smallBlind).toBe(1);
   });
 });

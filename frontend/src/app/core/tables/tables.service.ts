@@ -4,7 +4,10 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import {
+  BlindLevelInput,
+  Blinds,
   ChipCountEntry,
+  ClockAction,
   CreateTableRequest,
   Reconciliation,
   Settlement,
@@ -122,5 +125,22 @@ export class TablesService {
 
   settlement(championshipId: string, tableId: string): Observable<Settlement> {
     return this.http.get<Settlement>(`${this.base(championshipId)}/${tableId}/settlement`);
+  }
+
+  blinds(championshipId: string, tableId: string): Observable<Blinds> {
+    return this.http.get<Blinds>(`${this.base(championshipId)}/${tableId}/blinds`);
+  }
+
+  /** Replaces the whole ladder. An empty list removes it, and with it the clock. */
+  setBlindLevels(
+    championshipId: string,
+    tableId: string,
+    levels: readonly BlindLevelInput[],
+  ): Observable<void> {
+    return this.http.put<void>(`${this.base(championshipId)}/${tableId}/blinds`, { levels });
+  }
+
+  controlClock(championshipId: string, tableId: string, action: ClockAction): Observable<void> {
+    return this.http.post<void>(`${this.base(championshipId)}/${tableId}/clock`, { action });
   }
 }
