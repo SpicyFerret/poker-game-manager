@@ -74,16 +74,19 @@
   margin-bottom: 0;
 }
 
+// Two dashes rather than one: a single arc reads as a line that starts and
+// stops somewhere on the card. Two, evenly spaced by the gap on both sides,
+// read as a pair travelling the loop together — always whole, never a stub.
 .table-card-glow--idle .table-card-glow__ring rect {
   stroke: #22c55e;
-  stroke-dasharray: 12 88;
+  stroke-dasharray: 12 38 12 38;
   filter: drop-shadow(0 0 3px color-mix(in srgb, #22c55e 70%, transparent));
   animation: table-glow-chase 3.5s linear infinite;
 }
 
 .table-card-glow--live .table-card-glow__ring rect {
   stroke: #3b82f6;
-  stroke-dasharray: 12 88;
+  stroke-dasharray: 12 38 12 38;
   filter: drop-shadow(0 0 3px color-mix(in srgb, #3b82f6 70%, transparent));
   animation: table-glow-chase 2.2s linear infinite;
 }
