@@ -1,7 +1,23 @@
+// A card rather than a toolbar: the rest of the app is cards, and a full-bleed
+// bar was the one thing on screen that did not belong to the same set.
 .app-bar {
   position: sticky;
   top: 0;
   z-index: 10;
+  padding: 0.5rem 1rem 0;
+  background: var(--mat-sys-surface);
+}
+
+.app-bar__card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 0.35rem 0.5rem 0.35rem 1rem;
 }
 
 .app-bar__title {
@@ -12,4 +28,20 @@
 
 .app-bar__spacer {
   flex: 1 1 auto;
+}
+
+// Circular and tinted, so it reads as "you" rather than as another action.
+.app-bar__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+  border-radius: 50%;
+}
+
+// A label, not a choice: it names whose account this is and does nothing.
+.account-menu__who {
+  font: var(--mat-sys-label-large);
+  opacity: 1;
 }
