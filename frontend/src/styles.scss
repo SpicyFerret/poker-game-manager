@@ -95,3 +95,20 @@ body {
 .form-field-full {
   width: 100%;
 }
+
+// Every card lets a little of the carpet show through its own background,
+// rather than sitting on it as an opaque slab — the felt-table intent again:
+// a card resting on the floor, not a panel floating in front of it.
+//
+// Material drives a card's background from one of two tokens depending on
+// its appearance — surface-container-low for the default (elevated) variant,
+// surface for outlined — so both are covered. color-mix keeps whatever the
+// token already resolves to (which differs by light/dark) and only touches
+// its opacity, rather than replacing the colour outright.
+mat-card.mat-mdc-card {
+  background-color: color-mix(in srgb, var(--mat-sys-surface-container-low) 80%, transparent);
+}
+
+mat-card.mat-mdc-card-outlined {
+  background-color: color-mix(in srgb, var(--mat-sys-surface) 80%, transparent);
+}
