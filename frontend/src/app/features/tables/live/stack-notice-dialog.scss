@@ -1,0 +1,39 @@
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+// The same round chip as everywhere else, but the quantity leads: the question
+// here is how many of each, not what they are worth.
+.chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 5rem;
+  padding: 0.6rem 0.5rem;
+  border: 2px dashed rgb(255 255 255 / 45%);
+  border-radius: 50%;
+  aspect-ratio: 1;
+  text-align: center;
+}
+
+.chip__count {
+  font: var(--mat-sys-title-medium);
+  line-height: 1.1;
+}
+
+.chip__face,
+.chip__worth {
+  font-size: 0.65rem;
+  line-height: 1.2;
+  opacity: 0.85;
+}
+
+.total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 0.75rem 0 0;
+}

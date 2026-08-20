@@ -76,6 +76,8 @@ internal sealed class GetTableQueryHandler(
             })
         ];
 
+        Guid? myPlayerId = players.SingleOrDefault(p => p.UserId == userContext.UserId)?.Id;
+
         return new TableDetailResponse
         {
             Id = table.Id,
@@ -106,9 +108,55 @@ internal sealed class GetTableQueryHandler(
             ],
             TotalPaidIn = playerResponses.Sum(p => p.PaidIn),
             CanManage = canManage,
-            MyPlayerId = players.SingleOrDefault(p => p.UserId == userContext.UserId)?.Id
+            MyPlayerId = myPlayerId,
+            // Only while the table is live. A notice about a night that has
+            // already been counted and settled is noise, not a check.
+            PendingStacks = myPlayerId is null || table.Status is not (TableStatus.Open or TableStatus.Running)
+                ? []
+                : PendingFor(byPlayer[myPlayerId.Value], denominations)
         };
     }
+
+    /// <summary>
+    /// The caller's own unacknowledged stacks, oldest first. Only entries that
+    /// actually took chips out of the case: there is nothing to count for a trade
+    /// between two players, since those chips were already on the table.
+    /// </summary>
+    private static List<PendingStackResponse> PendingFor(
+        IEnumerable<LedgerEntry> entries,
+        List<ChipDenomination> denominations) =>
+    [
+        .. entries
+            .Where(entry =>
+                entry.AcknowledgedAtUtc is null &&
+                entry.Chips.Count > 0 &&
+                entry.Type is LedgerEntryType.BuyIn or LedgerEntryType.Rebuy)
+            .OrderBy(entry => entry.CreatedAtUtc)
+            .Select(entry => new PendingStackResponse
+            {
+                LedgerEntryId = entry.Id,
+                IsRebuy = entry.Type == LedgerEntryType.Rebuy,
+                Money = entry.MoneyAmount,
+                Chips =
+                [
+                    // Biggest first, which is how anyone stacks chips to count them.
+                    .. entry.Chips
+                        .Join(
+                            denominations,
+                            chip => chip.ChipDenominationId,
+                            denomination => denomination.Id,
+                            (chip, denomination) => new StackPreviewChip
+                            {
+                                DenominationId = denomination.Id,
+                                FaceValue = denomination.FaceValue,
+                                EffectiveValue = denomination.EffectiveValue,
+                                Colour = denomination.Colour,
+                                Quantity = chip.Quantity
+                            })
+                        .OrderByDescending(chip => chip.EffectiveValue)
+                ]
+            })
+    ];
 
     /// <summary>
     /// PaidIn = buy-ins + rebuys + chips bought off others, less anything credited

@@ -96,4 +96,45 @@ describe('ChampionshipsService', () => {
     });
     request.flush('"id"');
   });
+
+  it('should read the two rankings from one call', () => {
+    service.rankings(championshipId).subscribe();
+
+    const request = http.expectOne(
+      `${environment.apiUrl}/championships/${championshipId}/rankings`,
+    );
+    expect(request.request.method).toBe('GET');
+    request.flush({ byPoints: [], byBalance: [], tablesCounted: 0 });
+  });
+
+  it('should read the history', () => {
+    service.history(championshipId).subscribe();
+
+    http.expectOne(`${environment.apiUrl}/championships/${championshipId}/history`).flush([]);
+  });
+
+  /** No user id in the URL: the API answers for whoever is holding the token. */
+  it('should ask for the statement without naming a player', () => {
+    service.statement(championshipId).subscribe();
+
+    const request = http.expectOne(
+      `${environment.apiUrl}/championships/${championshipId}/statement`,
+    );
+    expect(request.request.method).toBe('GET');
+    request.flush({ rows: [], totalBalance: 0, totalPaidIn: 0, totalPoints: 0, wins: 0 });
+  });
+
+  it('should read the statistics', () => {
+    service.statistics(championshipId).subscribe();
+
+    http.expectOne(`${environment.apiUrl}/championships/${championshipId}/statistics`).flush({
+      tablesPlayed: 0,
+      distinctPlayers: 0,
+      moneyIn: 0,
+      rebuys: 0,
+      averageMoneyPerTable: 0,
+      biggestWin: null,
+      biggestLoss: null,
+    });
+  });
 });

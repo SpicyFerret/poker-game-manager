@@ -88,6 +88,25 @@ public sealed record TableDetailResponse
 
     /// <summary>The caller's own seat, when they are at this table.</summary>
     public Guid? MyPlayerId { get; init; }
+
+    /// <summary>
+    /// Stacks handed to the caller that they have not confirmed receiving yet,
+    /// oldest first. Carried on the table itself rather than fetched separately,
+    /// so the notice is waiting the moment someone opens the screen.
+    /// </summary>
+    public IReadOnlyList<PendingStackResponse> PendingStacks { get; init; } = [];
+}
+
+/// <summary>
+/// "Here is what you should have been handed" — the chips of one buy-in or
+/// rebuy, for the player to count against what is actually in front of them.
+/// </summary>
+public sealed record PendingStackResponse
+{
+    public Guid LedgerEntryId { get; init; }
+    public bool IsRebuy { get; init; }
+    public decimal Money { get; init; }
+    public IReadOnlyList<StackPreviewChip> Chips { get; init; } = [];
 }
 
 /// <summary>

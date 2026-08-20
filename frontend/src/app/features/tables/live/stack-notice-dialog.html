@@ -1,0 +1,42 @@
+<h2 mat-dialog-title>
+  @if (data.isRebuy) {
+    <span i18n="@@notice.rebuyHeading">Seu rebuy</span>
+  } @else {
+    <span i18n="@@notice.buyInHeading">Suas fichas</span>
+  }
+</h2>
+
+<mat-dialog-content>
+  <p i18n="@@notice.explanation">
+    Confira o que está na sua frente. Se não bater, fale com quem está cuidando da maleta antes de
+    confirmar.
+  </p>
+
+  <div class="chips">
+    @for (chip of data.chips; track chip.denominationId) {
+      @let colour = colourOf(chip.colour);
+      <div
+        class="chip"
+        [style.background]="colour?.swatch ?? 'var(--mat-sys-surface-container-high)'"
+        [style.color]="colour?.ink ?? 'var(--mat-sys-on-surface)'"
+      >
+        <span class="chip__count">{{ chip.quantity }}x</span>
+        <span class="chip__face">{{ chip.faceValue }}</span>
+        @if (chip.effectiveValue !== chip.faceValue) {
+          <span class="chip__worth" i18n="@@notice.chipWorth">vale {{ chip.effectiveValue }}</span>
+        }
+      </div>
+    }
+  </div>
+
+  <p class="total">
+    <span i18n="@@notice.total">Total</span>
+    <strong>R$ {{ data.money | number: '1.2-2' }}</strong>
+  </p>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button matButton="filled" type="button" (click)="confirm()" i18n="@@notice.confirm">
+    Conferi, está certo
+  </button>
+</mat-dialog-actions>

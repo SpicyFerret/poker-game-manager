@@ -94,3 +94,76 @@ export interface ChipDenominationInput {
   quantity: number;
   colour: string | null;
 }
+
+export interface RankingRow {
+  userId: string;
+  displayName: string;
+  /** Place in this ranking. The two rankings order the same people differently. */
+  position: number;
+  points: number;
+  balance: number;
+  tablesPlayed: number;
+  wins: number;
+  bestPosition: number;
+}
+
+export interface Rankings {
+  byPoints: RankingRow[];
+  byBalance: RankingRow[];
+  tablesCounted: number;
+}
+
+export interface HistoryRow {
+  tableId: string;
+  name: string;
+  closedAtUtc: string | null;
+  playerCount: number;
+  winnerDisplayName: string | null;
+  winnerBalance: number;
+  /** Buy-ins and rebuys across the whole table. */
+  moneyIn: number;
+
+  /**
+   * Who finished holding the most chips. Not always the winner: balance takes
+   * off what you paid in, so three rebuys deep you can hold the biggest stack
+   * and still be down on the night.
+   */
+  chipLeaderDisplayName: string | null;
+  chipLeaderChips: number;
+}
+
+export interface StatementRow {
+  tableId: string;
+  tableName: string;
+  closedAtUtc: string | null;
+  position: number;
+  points: number;
+  balance: number;
+  paidIn: number;
+  rebuys: number;
+}
+
+export interface Statement {
+  rows: StatementRow[];
+  totalBalance: number;
+  totalPaidIn: number;
+  totalPoints: number;
+  wins: number;
+}
+
+export interface NightRecord {
+  displayName: string;
+  tableName: string;
+  balance: number;
+}
+
+export interface Statistics {
+  tablesPlayed: number;
+  distinctPlayers: number;
+  moneyIn: number;
+  rebuys: number;
+  averageMoneyPerTable: number;
+  /** Null until something has been settled. */
+  biggestWin: NightRecord | null;
+  biggestLoss: NightRecord | null;
+}
