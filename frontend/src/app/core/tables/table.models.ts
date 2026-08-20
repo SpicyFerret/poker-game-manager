@@ -201,3 +201,99 @@ export interface ChipCountEntry {
   denominationId: string;
   quantity: number;
 }
+
+export interface BlindLevel {
+  order: number;
+  smallBlind: number;
+  bigBlind: number;
+  ante: number;
+  durationSeconds: number;
+}
+
+/**
+ * The clock as the server keeps it: time already played, never a countdown. Each
+ * phone works the remainder out itself, so every device agrees and a poll that
+ * arrives late does not make the clock wrong.
+ */
+export interface TableClock {
+  currentLevel: number;
+  isPaused: boolean;
+  elapsedSeconds: number;
+  serverTimeUtc: string;
+}
+
+export interface Blinds {
+  levels: BlindLevel[];
+  /** Null when the table has no clock, which is the common case. */
+  clock: TableClock | null;
+}
+
+export interface BlindLevelInput {
+  smallBlind: number;
+  bigBlind: number;
+  ante: number;
+  durationSeconds: number;
+}
+
+export type ClockAction = 'Start' | 'Pause' | 'NextLevel' | 'PreviousLevel';
+
+/**
+ * Seconds still to play in the current level.
+ *
+ * Reads from the sample the server sent plus however long ago that arrived,
+ * rather than counting down from a number, so the ticking stays honest between
+ * polls and the level never jumps when one lands. A paused clock stands still.
+ *
+ * A level with no duration runs until the manager moves it on, and reports zero.
+ */
+export function secondsLeft(
+  level: BlindLevel | undefined,
+  clock: TableClock,
+  sinceSampleSeconds: number,
+): number {
+  if (!level || level.durationSeconds <= 0) {
+    return 0;
+  }
+
+  const elapsed = clock.elapsedSeconds + (clock.isPaused ? 0 : sinceSampleSeconds);
+
+  return Math.max(level.durationSeconds - Math.floor(elapsed), 0);
+}
+
+/** mm:ss, and h:mm:ss once a level runs past an hour. */
+export function formatDuration(totalSeconds: number): string {
+  const seconds = Math.max(Math.floor(totalSeconds), 0);
+  const minutes = Math.floor(seconds / 60);
+  const pad = (value: number): string => String(value).padStart(2, '0');
+
+  return minutes >= 60
+    ? `${Math.floor(minutes / 60)}:${pad(minutes % 60)}:${pad(seconds % 60)}`
+    : `${minutes}:${pad(seconds % 60)}`;
+}
+
+/**
+ * A ladder that starts where the table can actually bet: the smallest chip in
+ * the case is the least anyone can post, so anything below it is unplayable.
+ * Each level roughly doubles, which is the shape home games settle on anyway.
+ *
+ * Only a starting point — every value stays editable.
+ */
+export function suggestLadder(smallestChip: number, levelCount = 8): BlindLevelInput[] {
+  const start = Math.max(smallestChip, 1);
+  const levels: BlindLevelInput[] = [];
+
+  for (let index = 0; index < levelCount; index++) {
+    // Doubling every level alone gets silly fast; every other level takes the
+    // gentler step, which is what printed structures do.
+    const smallBlind = start * Math.round(2 ** (index / 1.5));
+
+    levels.push({
+      smallBlind,
+      bigBlind: smallBlind * 2,
+      ante: 0,
+      durationSeconds: 20 * 60,
+    });
+  }
+
+  return levels;
+}

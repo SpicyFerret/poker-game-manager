@@ -1127,6 +1127,126 @@
         <source>Não foi possível fechar a conta.</source>
         <target>The table could not be settled.</target>
       </trans-unit>
+      <trans-unit id="blinds.editHeading" datatype="html">
+        <source>Estrutura de blinds</source>
+        <target>Blind structure</target>
+      </trans-unit>
+      <trans-unit id="blinds.editExplanation" datatype="html">
+        <source> Os valores são em fichas. Salvar sem nenhum nível desliga o cronômetro da mesa. </source>
+        <target> The values are in chips. Saving with no levels turns the table&apos;s clock off. </target>
+      </trans-unit>
+      <trans-unit id="blinds.smallBlind" datatype="html">
+        <source>SB</source>
+        <target>SB</target>
+      </trans-unit>
+      <trans-unit id="blinds.bigBlind" datatype="html">
+        <source>BB</source>
+        <target>BB</target>
+      </trans-unit>
+      <trans-unit id="blinds.ante" datatype="html">
+        <source>Ante</source>
+        <target>Ante</target>
+      </trans-unit>
+      <trans-unit id="blinds.minutes" datatype="html">
+        <source>Min</source>
+        <target>Min</target>
+      </trans-unit>
+      <trans-unit id="blinds.removeLevel" datatype="html">
+        <source>Remover nível</source>
+        <target>Remove level</target>
+      </trans-unit>
+      <trans-unit id="blinds.noLevels" datatype="html">
+        <source>Sem níveis. A mesa fica sem cronômetro.</source>
+        <target>No levels. The table runs without a clock.</target>
+      </trans-unit>
+      <trans-unit id="blinds.addLevel" datatype="html">
+        <source> Adicionar nível </source>
+        <target> Add level </target>
+      </trans-unit>
+      <trans-unit id="blinds.suggest" datatype="html">
+        <source> Sugerir escada </source>
+        <target> Suggest a ladder </target>
+      </trans-unit>
+      <trans-unit id="blinds.untimed" datatype="html">
+        <source>sem tempo</source>
+        <target>untimed</target>
+      </trans-unit>
+      <trans-unit id="blinds.level" datatype="html">
+        <source>Nível <x id="INTERPOLATION" equiv-text="{{ level.order }}"/></source>
+        <target>Level <x id="INTERPOLATION" equiv-text="{{ level.order }}"/></target>
+      </trans-unit>
+      <trans-unit id="blinds.paused" datatype="html">
+        <source>pausado</source>
+        <target>paused</target>
+      </trans-unit>
+      <trans-unit id="blinds.anteOf" datatype="html">
+        <source>ante <x id="INTERPOLATION" equiv-text="{{ level.ante }}"/></source>
+        <target>ante <x id="INTERPOLATION" equiv-text="{{ level.ante }}"/></target>
+      </trans-unit>
+      <trans-unit id="blinds.next" datatype="html">
+        <source> Próximo: <x id="INTERPOLATION" equiv-text="{{ next.smallBlind }}"/> / <x id="INTERPOLATION_1" equiv-text="{{ next.bigBlind }}"/> </source>
+        <target> Next: <x id="INTERPOLATION" equiv-text="{{ next.smallBlind }}"/> / <x id="INTERPOLATION_1" equiv-text="{{ next.bigBlind }}"/> </target>
+      </trans-unit>
+      <trans-unit id="blinds.lastLevel" datatype="html">
+        <source>Último nível.</source>
+        <target>Last level.</target>
+      </trans-unit>
+      <trans-unit id="blinds.notStarted" datatype="html">
+        <source> A estrutura está pronta. O cronômetro começa quando o gerente iniciar. </source>
+        <target> The structure is ready. The clock starts when the manager starts it. </target>
+      </trans-unit>
+      <trans-unit id="blinds.none" datatype="html">
+        <source>Esta mesa não tem estrutura de blinds.</source>
+        <target>This table has no blind structure.</target>
+      </trans-unit>
+      <trans-unit id="blinds.pause" datatype="html">
+        <source> Pausar </source>
+        <target> Pause </target>
+      </trans-unit>
+      <trans-unit id="blinds.start" datatype="html">
+        <source> Iniciar </source>
+        <target> Start </target>
+      </trans-unit>
+      <trans-unit id="blinds.previous" datatype="html">
+        <source> Nível anterior </source>
+        <target> Previous level </target>
+      </trans-unit>
+      <trans-unit id="blinds.nextLevel" datatype="html">
+        <source> Próximo nível </source>
+        <target> Next level </target>
+      </trans-unit>
+      <trans-unit id="blinds.edit" datatype="html">
+        <source> Editar estrutura </source>
+        <target> Edit structure </target>
+      </trans-unit>
+      <trans-unit id="tableSection.blinds" datatype="html">
+        <source>Blinds</source>
+        <target>Blinds</target>
+      </trans-unit>
+      <trans-unit id="blinds.clockFailed" datatype="html">
+        <source>Não foi possível controlar o cronômetro.</source>
+        <target>The clock could not be controlled.</target>
+      </trans-unit>
+      <trans-unit id="confirm.blindsTitle" datatype="html">
+        <source>Salvar a estrutura de blinds?</source>
+        <target>Save this blind structure?</target>
+      </trans-unit>
+      <trans-unit id="confirm.blindsOffTitle" datatype="html">
+        <source>Desligar o cronômetro?</source>
+        <target>Turn the clock off?</target>
+      </trans-unit>
+      <trans-unit id="confirm.blindsMessage" datatype="html">
+        <source>Substitui a estrutura atual e reinicia o cronômetro no primeiro nível.</source>
+        <target>Replaces the current structure and restarts the clock at the first level.</target>
+      </trans-unit>
+      <trans-unit id="confirm.blindsOffMessage" datatype="html">
+        <source>A mesa fica sem níveis e sem cronômetro.</source>
+        <target>The table is left with no levels and no clock.</target>
+      </trans-unit>
+      <trans-unit id="blinds.saveFailed" datatype="html">
+        <source>Não foi possível salvar a estrutura de blinds.</source>
+        <target>The blind structure could not be saved.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

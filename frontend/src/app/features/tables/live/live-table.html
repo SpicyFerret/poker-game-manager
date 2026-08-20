@@ -160,6 +160,129 @@
         }
       }
 
+      @case ('blinds') {
+        <mat-card class="panel">
+          <mat-card-content>
+            @if (currentLevel(); as level) {
+              <div class="clock" [class.clock--over]="isOver()">
+                @if (isTimed()) {
+                  <p class="clock__face">{{ clockFace() }}</p>
+                } @else {
+                  <p class="clock__face clock__face--untimed" i18n="@@blinds.untimed">sem tempo</p>
+                }
+
+                <p class="clock__level">
+                  <span i18n="@@blinds.level">Nível {{ level.order }}</span>
+                  @if (blinds()?.clock?.isPaused) {
+                    · <span i18n="@@blinds.paused">pausado</span>
+                  }
+                </p>
+
+                <p class="clock__blinds">
+                  {{ level.smallBlind }} / {{ level.bigBlind }}
+                  @if (level.ante > 0) {
+                    <span class="clock__ante" i18n="@@blinds.anteOf">ante {{ level.ante }}</span>
+                  }
+                </p>
+
+                @if (nextLevel(); as next) {
+                  <p class="muted" i18n="@@blinds.next">
+                    Próximo: {{ next.smallBlind }} / {{ next.bigBlind }}
+                  </p>
+                } @else {
+                  <p class="muted" i18n="@@blinds.lastLevel">Último nível.</p>
+                }
+              </div>
+            } @else if (blinds()?.levels?.length) {
+              <p i18n="@@blinds.notStarted">
+                A estrutura está pronta. O cronômetro começa quando o gerente iniciar.
+              </p>
+            } @else {
+              <p i18n="@@blinds.none">Esta mesa não tem estrutura de blinds.</p>
+            }
+          </mat-card-content>
+
+          @if (table.canManage) {
+            <mat-card-actions>
+              @if (blinds()?.levels?.length) {
+                @if (blinds()?.clock?.isPaused === false) {
+                  <button
+                    matButton
+                    type="button"
+                    [disabled]="busy()"
+                    (click)="controlClock('Pause')"
+                    i18n="@@blinds.pause"
+                  >
+                    Pausar
+                  </button>
+                } @else {
+                  <button
+                    matButton="filled"
+                    type="button"
+                    [disabled]="busy()"
+                    (click)="controlClock('Start')"
+                    i18n="@@blinds.start"
+                  >
+                    Iniciar
+                  </button>
+                }
+                <button
+                  matButton
+                  type="button"
+                  [disabled]="busy()"
+                  (click)="controlClock('PreviousLevel')"
+                  i18n="@@blinds.previous"
+                >
+                  Nível anterior
+                </button>
+                <button
+                  matButton
+                  type="button"
+                  [disabled]="busy()"
+                  (click)="controlClock('NextLevel')"
+                  i18n="@@blinds.nextLevel"
+                >
+                  Próximo nível
+                </button>
+              }
+              <button
+                matButton
+                type="button"
+                [disabled]="busy()"
+                (click)="editLevels()"
+                i18n="@@blinds.edit"
+              >
+                Editar estrutura
+              </button>
+            </mat-card-actions>
+          }
+        </mat-card>
+
+        @if (blinds()?.levels?.length) {
+          <mat-card class="panel">
+            <mat-card-content>
+              <ol class="ladder">
+                @for (level of blinds()?.levels ?? []; track level.order) {
+                  <li
+                    class="ladder__level"
+                    [class.ladder__level--current]="level.order === blinds()?.clock?.currentLevel"
+                  >
+                    <span class="ladder__order">{{ level.order }}</span>
+                    <span class="ladder__blinds">
+                      {{ level.smallBlind }} / {{ level.bigBlind }}
+                      @if (level.ante > 0) {
+                        <span class="muted" i18n="@@blinds.anteOf">ante {{ level.ante }}</span>
+                      }
+                    </span>
+                    <span class="ladder__duration">{{ level.durationSeconds / 60 }} min</span>
+                  </li>
+                }
+              </ol>
+            </mat-card-content>
+          </mat-card>
+        }
+      }
+
       @case ('counting') {
         @if (reconciliation(); as reconciliation) {
           <mat-card class="panel">
