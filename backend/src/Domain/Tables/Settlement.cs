@@ -24,7 +24,7 @@ public sealed class SettlementTransfer
 }
 
 /// <summary>
-/// One player's night, frozen at close. The season rankings are sums over these
+/// One player's night, frozen at close. The championship rankings are sums over these
 /// rows — nothing is recomputed from the ledger to show a ranking.
 /// </summary>
 public sealed class TableResult

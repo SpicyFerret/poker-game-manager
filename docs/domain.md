@@ -7,7 +7,7 @@ survives; update it when a decision changes.
 
 Amateur poker nights are organised on paper and in group chats. A buy-in and rebuy amount get agreed,
 someone decides what a chip is worth in real money, rebuys are remembered out loud, and at the end
-everyone counts chips, works out who owes whom, and sends the money. One person keeps a season
+everyone counts chips, works out who owes whom, and sends the money. One person keeps the
 ranking by hand.
 
 Three things hurt:
@@ -16,7 +16,7 @@ Three things hurt:
    denominations always run out first.
 2. **Closing the table.** Making the final count actually reconcile against what left the case, then
    settling up in as few payments as possible.
-3. **The ranking.** Keeping it fair across a season without a spreadsheet.
+3. **The ranking.** Keeping it fair across a whole year without a spreadsheet.
 
 The system does not deal cards or run betting rounds. It is the bookkeeper.
 
@@ -38,7 +38,11 @@ has to react.
   its own operation, Owner to Admin.
 - **`Invite`** — a 6-character code from an alphabet without `0/O/1/I`, with expiry and a use count.
   No email is involved, so no SMTP to provision.
-- **`Season`** — the ranking window. Without it, "accumulates over the year" has nothing to reset.
+- **The championship is the season.** A new year means a new championship, so the
+  ranking window needs no separate concept: it is simply everything played in
+  this championship. A `Season` entity existed briefly and was removed — it
+  carried a date range, an overlap rule and a screen, all to express something
+  the championship boundary already expressed.
 
 ### Chip case
 
@@ -116,8 +120,8 @@ transfers — genuinely optimal. Beyond that: greedy largest-debtor to largest-c
 transfers. One person paying several others is expected and correct.
 
 **`TableResultCalculator`** — orders by balance descending (ties broken by lower `PaidIn`, then join
-time), applies the championship's points table, writes `TableResult`. Two rankings per season: total
-points, and total balance.
+time), applies the championship's points table, writes `TableResult`. Two rankings over the
+championship: total points, and total balance.
 
 ## Authorization
 
@@ -146,12 +150,12 @@ Each phase ends with something usable end to end — backend, screen, tests.
 - **Phase 0 — Foundation.** *Done.* Sample slice removed; `DisplayName` and payment handle on `User`;
   Angular shell with Material, i18n and the auth screens.
 - **Phase 1 — Championship.** Championships, members and roles, ownership transfer, invites, chip
-  cases and denominations, seasons and the points table. Championship-scoped authorization.
+  cases and denominations, the points table. Championship-scoped authorization.
 - **Phase 2 — Table in play.** Opening a table, joining, starting with a calculated distribution and
   stock deduction, rebuys against current stock, purchases between players, blind levels and clock.
 - **Phase 3 — Closing.** Player-reported counts, the live reconciliation panel, the `Reconciled` gate,
   settlement and table result.
-- **Phase 4 — Rankings.** Both rankings per season, table history, personal statement, championship
+- **Phase 4 — Rankings.** Both rankings over the championship, table history, personal statement, championship
   statistics.
 
 ## Open, not blocking

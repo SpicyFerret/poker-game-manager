@@ -26,7 +26,7 @@ export interface ConfirmData {
   /**
    * When set, the exact text has to be typed before confirming. Reserved for the
    * genuinely irreversible — a yes/no prompt is far too easy to answer wrong at
-   * 2am, and these take a night's bookkeeping or a whole season with them.
+   * 2am, and these take a night's bookkeeping or a whole championship with them.
    */
   requireTyped?: string;
   requireTypedLabel?: string;

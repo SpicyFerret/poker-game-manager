@@ -25,7 +25,7 @@ public enum TableStatus
     /// <summary>Who pays whom has been worked out.</summary>
     Settled = 5,
 
-    /// <summary>Done. Results counted towards the season.</summary>
+    /// <summary>Done. Results counted towards the championship rankings.</summary>
     Closed = 6,
 
     /// <summary>Called off. Anything issued is void.</summary>
