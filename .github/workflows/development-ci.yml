@@ -1,14 +1,28 @@
 name: Development CI
 
-# Broad quality gate on every push to development — independent of the
-# per-area workflows (backend-ci/frontend-ci/docker-publish/infra-ci), which
-# stay path-filtered and handle build/test/deploy for their own area. This
-# one always runs the baseline checks below regardless of what changed, plus
-# infra lint only when infra/ actually changed.
+# Broad quality gate on every push to any branch — independent of the per-area
+# workflows (backend-ci/frontend-ci/docker-publish/infra-ci), which stay
+# path-filtered and handle build/test/deploy for their own area. This one always
+# runs the baseline checks below regardless of what changed, plus infra lint only
+# when infra/ actually changed.
+#
+# Every branch, not just development: a feature branch is where a secret or a
+# formatting slip is cheapest to catch, and waiting for the promote to
+# development means finding it after the review rather than before.
+#
+# main is excluded on purpose. Code only reaches it through a pull request, and
+# those already ran this workflow on the branch behind them — running it again on
+# the merge commit would only repeat work.
 on:
   push:
-    branches:
-      - development
+    branches-ignore:
+      - main
+
+# One run per branch. Pushing again while a run is going cancels it: the older
+# result is about code nobody has any more.
+concurrency:
+  group: development-ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   # --- Secret check ----------------------------------------------------------

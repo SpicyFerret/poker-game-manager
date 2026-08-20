@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { CreateTableRequest, TableDetail, TableSummary } from './table.models';
+import { CreateTableRequest, StackPreview, TableDetail, TableSummary } from './table.models';
 
 @Injectable({ providedIn: 'root' })
 export class TablesService {
@@ -27,6 +27,24 @@ export class TablesService {
 
   join(championshipId: string, tableId: string, code: string | null): Observable<void> {
     return this.http.post<void>(`${this.base(championshipId)}/${tableId}/join`, { code });
+  }
+
+  /** What chips a buy-in or rebuy would hand over, without handing them over. */
+  stackPreview(
+    championshipId: string,
+    tableId: string,
+    isRebuy: boolean,
+  ): Observable<StackPreview> {
+    return this.http.get<StackPreview>(
+      `${this.base(championshipId)}/${tableId}/stack-preview?isRebuy=${isRebuy}`,
+    );
+  }
+
+  /** The name must match the table's exactly; the API refuses otherwise. */
+  delete(championshipId: string, tableId: string, confirmName: string): Observable<void> {
+    return this.http.delete<void>(`${this.base(championshipId)}/${tableId}`, {
+      body: { confirmName },
+    });
   }
 
   start(championshipId: string, tableId: string): Observable<void> {

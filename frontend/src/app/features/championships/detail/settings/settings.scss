@@ -7,3 +7,14 @@
   padding-top: 1rem;
   border-top: 1px solid var(--mat-sys-outline-variant);
 }
+
+// Set apart, below everything else, so it is never the thing under your thumb.
+.danger-zone {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--mat-sys-error);
+}
+
+.danger {
+  --mat-button-text-label-text-color: var(--mat-sys-error);
+}

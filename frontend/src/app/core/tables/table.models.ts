@@ -109,3 +109,21 @@ export function issuedUnits(stock: readonly ChipStock[]): number {
 export function stacksLeft(stock: readonly ChipStock[], buyInUnits: number): number {
   return buyInUnits <= 0 ? 0 : Math.floor(remainingUnits(stock) / buyInUnits);
 }
+
+export interface StackPreviewChip {
+  denominationId: string;
+  faceValue: number;
+  effectiveValue: number;
+  colour: string | null;
+  quantity: number;
+}
+
+/** What a buy-in or rebuy would hand over, worked out before committing. */
+export interface StackPreview {
+  chips: StackPreviewChip[];
+  money: number;
+  units: number;
+  /** Non-zero means the case cannot make this stack; the API would refuse it. */
+  shortfallUnits: number;
+  isPossible: boolean;
+}

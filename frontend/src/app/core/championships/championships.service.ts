@@ -36,6 +36,11 @@ export class ChampionshipsService {
     return this.http.put<void>(`${this.base}/${championshipId}`, settings);
   }
 
+  /** The name must match the championship's exactly; the API refuses otherwise. */
+  delete(championshipId: string, confirmName: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/${championshipId}`, { body: { confirmName } });
+  }
+
   transferOwnership(championshipId: string, newOwnerId: string): Observable<void> {
     return this.http.post<void>(`${this.base}/${championshipId}/transfer-ownership`, {
       newOwnerId,

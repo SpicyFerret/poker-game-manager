@@ -1,0 +1,43 @@
+.details {
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.detail {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.25rem 0;
+}
+
+// The chip count reads as the chip itself, so someone counting out of the case
+// is matching a colour rather than parsing a line of text.
+.detail__chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.6rem;
+  height: 2.6rem;
+  border: 2px dashed rgb(255 255 255 / 45%);
+  border-radius: 50%;
+  font: var(--mat-sys-label-large);
+}
+
+.detail__value {
+  min-width: 2.6rem;
+  font: var(--mat-sys-title-small);
+}
+
+.detail__label {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.blocked {
+  color: var(--mat-sys-error);
+}
+
+.destructive {
+  --mat-button-filled-container-color: var(--mat-sys-error);
+  --mat-button-filled-label-text-color: var(--mat-sys-on-error);
+}

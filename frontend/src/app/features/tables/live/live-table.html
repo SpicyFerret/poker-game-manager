@@ -64,6 +64,18 @@
             Iniciar mesa
           </button>
         }
+        @if (table.canManage) {
+          <button
+            matButton
+            type="button"
+            class="danger"
+            [disabled]="busy()"
+            (click)="deleteTable()"
+            i18n="@@table.delete"
+          >
+            Excluir mesa
+          </button>
+        }
       </mat-card-actions>
     </mat-card>
 

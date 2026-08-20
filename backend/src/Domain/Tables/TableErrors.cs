@@ -102,4 +102,12 @@ public static class TableErrors
     public static readonly Error NoBlindLevels = Error.Problem(
         "Tables.NoBlindLevels",
         "This table has no blind levels, so it has no clock. Add levels first");
+
+    /// <summary>
+    /// Typing the name is the only thing between a misplaced tap and a night's
+    /// bookkeeping. A yes/no prompt is too easy to answer wrong at 2am.
+    /// </summary>
+    public static readonly Error ConfirmationDoesNotMatch = Error.Problem(
+        "Tables.ConfirmationDoesNotMatch",
+        "Type the table's name exactly to confirm");
 }

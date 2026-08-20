@@ -1,5 +1,7 @@
-using Application.Abstractions.Messaging;
+﻿using Application.Abstractions.Messaging;
+using Application.Championships.Delete;
 using Application.Championships.UpdateSettings;
+using Microsoft.AspNetCore.Mvc;
 using SharedKernel;
 using Web.Api.Extensions;
 using Web.Api.Infrastructure;
@@ -8,6 +10,8 @@ namespace Web.Api.Endpoints.Championships;
 
 internal sealed class UpdateSettings : IEndpoint
 {
+    public sealed record DeleteRequest(string ConfirmName);
+
     public sealed record Request(
         string Name,
         string? Description,
@@ -36,6 +40,21 @@ internal sealed class UpdateSettings : IEndpoint
                 request.PointsByPosition);
 
             Result result = await handler.Handle(command, cancellationToken);
+
+            return result.Match(Results.NoContent, CustomResults.Problem);
+        })
+        .WithTags(Tags.Championships)
+        .RequireAuthorization();
+
+        app.MapDelete("championships/{championshipId:guid}", async (
+            Guid championshipId,
+            [FromBody] DeleteRequest request,
+            ICommandHandler<DeleteChampionshipCommand> handler,
+            CancellationToken cancellationToken) =>
+        {
+            Result result = await handler.Handle(
+                new DeleteChampionshipCommand(championshipId, request.ConfirmName),
+                cancellationToken);
 
             return result.Match(Results.NoContent, CustomResults.Problem);
         })

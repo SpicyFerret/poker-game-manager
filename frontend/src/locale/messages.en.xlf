@@ -796,6 +796,214 @@
         <source>Cinza</source>
         <target>Grey</target>
       </trans-unit>
+      <trans-unit id="confirm.createChampionshipTitle" datatype="html">
+        <source>Criar o campeonato?</source>
+        <target>Create the championship?</target>
+      </trans-unit>
+      <trans-unit id="confirm.chipSetCreateTitle" datatype="html">
+        <source>Criar esta maleta?</source>
+        <target>Create this chip case?</target>
+      </trans-unit>
+      <trans-unit id="confirm.chipSetSaveTitle" datatype="html">
+        <source>Salvar a maleta?</source>
+        <target>Save the chip case?</target>
+      </trans-unit>
+      <trans-unit id="confirm.chipSetDenominations" datatype="html">
+        <source>tipos de ficha</source>
+        <target>chip types</target>
+      </trans-unit>
+      <trans-unit id="confirm.chipSetDeleteTitle" datatype="html">
+        <source>Excluir esta maleta?</source>
+        <target>Delete this chip case?</target>
+      </trans-unit>
+      <trans-unit id="confirm.chipSetDeleteMessage" datatype="html">
+        <source>Maleta usada por alguma mesa não pode ser excluída — o histórico delas depende dela.</source>
+        <target>A case used by any table cannot be deleted - their history depends on it.</target>
+      </trans-unit>
+      <trans-unit id="confirm.inviteTitle" datatype="html">
+        <source>Gerar este convite?</source>
+        <target>Generate this invite?</target>
+      </trans-unit>
+      <trans-unit id="confirm.inviteMessage" datatype="html">
+        <source>Quem tiver o código entra no campeonato com esse cargo.</source>
+        <target>Anyone with the code joins the championship with that role.</target>
+      </trans-unit>
+      <trans-unit id="confirm.unlimited" datatype="html">
+        <source>ilimitado</source>
+        <target>unlimited</target>
+      </trans-unit>
+      <trans-unit id="confirm.revokeTitle" datatype="html">
+        <source>Revogar este convite?</source>
+        <target>Revoke this invite?</target>
+      </trans-unit>
+      <trans-unit id="confirm.revokeMessage" datatype="html">
+        <source>Quem já entrou continua no campeonato. O código para de funcionar e não volta.</source>
+        <target>Whoever already joined stays. The code stops working and does not come back.</target>
+      </trans-unit>
+      <trans-unit id="confirm.code" datatype="html">
+        <source>código</source>
+        <target>code</target>
+      </trans-unit>
+      <trans-unit id="confirm.addMemberTitle" datatype="html">
+        <source>Adicionar ao campeonato?</source>
+        <target>Add to the championship?</target>
+      </trans-unit>
+      <trans-unit id="confirm.roleTitle" datatype="html">
+        <source>Alterar o cargo?</source>
+        <target>Change the role?</target>
+      </trans-unit>
+      <trans-unit id="confirm.roleWho" datatype="html">
+        <source>membro</source>
+        <target>member</target>
+      </trans-unit>
+      <trans-unit id="confirm.roleNew" datatype="html">
+        <source>novo cargo</source>
+        <target>new role</target>
+      </trans-unit>
+      <trans-unit id="confirm.removeMemberTitle" datatype="html">
+        <source>Remover do campeonato?</source>
+        <target>Remove from the championship?</target>
+      </trans-unit>
+      <trans-unit id="confirm.removeMemberMessage" datatype="html">
+        <source>As mesas que essa pessoa já jogou continuam registradas.</source>
+        <target>The tables this person already played stay on record.</target>
+      </trans-unit>
+      <trans-unit id="confirm.seasonTitle" datatype="html">
+        <source>Criar esta temporada?</source>
+        <target>Create this season?</target>
+      </trans-unit>
+      <trans-unit id="confirm.seasonMessage" datatype="html">
+        <source>Os rankings passam a somar por esta janela de datas.</source>
+        <target>Rankings will add up over this date range.</target>
+      </trans-unit>
+      <trans-unit id="settings.dangerHeading" datatype="html">
+        <source>Excluir campeonato</source>
+        <target>Delete championship</target>
+      </trans-unit>
+      <trans-unit id="settings.dangerWarning" datatype="html">
+        <source> Some tudo: membros, convites, maletas, temporadas, todas as mesas já jogadas e os rankings. Não dá para desfazer. </source>
+        <target> Everything goes: members, invites, chip cases, seasons, every table ever played and the rankings. This cannot be undone. </target>
+      </trans-unit>
+      <trans-unit id="confirm.deleteChampionshipTitle" datatype="html">
+        <source>Excluir o campeonato?</source>
+        <target>Delete the championship?</target>
+      </trans-unit>
+      <trans-unit id="confirm.deleteChampionshipMessage" datatype="html">
+        <source>Some tudo: membros, convites, maletas, temporadas, todas as mesas já jogadas e os rankings. Não dá para desfazer.</source>
+        <target>Everything goes: members, invites, chip cases, seasons, every table ever played and the rankings. This cannot be undone.</target>
+      </trans-unit>
+      <trans-unit id="confirm.typeChampionshipName" datatype="html">
+        <source>Digite o nome do campeonato</source>
+        <target>Type the championship's name</target>
+      </trans-unit>
+      <trans-unit id="settings.deleteFailed" datatype="html">
+        <source>Não foi possível excluir o campeonato.</source>
+        <target>The championship could not be deleted.</target>
+      </trans-unit>
+      <trans-unit id="confirm.settingsTitle" datatype="html">
+        <source>Salvar as configurações?</source>
+        <target>Save the settings?</target>
+      </trans-unit>
+      <trans-unit id="confirm.settingsMessage" datatype="html">
+        <source>Vale para as próximas mesas. As já abertas guardam os valores com que foram criadas.</source>
+        <target>Applies to future tables. Ones already open keep the values they were created with.</target>
+      </trans-unit>
+      <trans-unit id="confirm.transferTitle" datatype="html">
+        <source>Transferir a propriedade?</source>
+        <target>Transfer ownership?</target>
+      </trans-unit>
+      <trans-unit id="confirm.createTableTitle" datatype="html">
+        <source>Abrir esta mesa?</source>
+        <target>Open this table?</target>
+      </trans-unit>
+      <trans-unit id="confirm.createTableMessage" datatype="html">
+        <source>Nenhuma ficha sai da maleta agora — só quando a mesa for iniciada.</source>
+        <target>No chips leave the case yet - only when the table is started.</target>
+      </trans-unit>
+      <trans-unit id="confirm.championshipDefault" datatype="html">
+        <source>padrão do campeonato</source>
+        <target>championship's default</target>
+      </trans-unit>
+      <trans-unit id="table.delete" datatype="html">
+        <source> Excluir mesa </source>
+        <target> Delete table </target>
+      </trans-unit>
+      <trans-unit id="confirm.startTitle" datatype="html">
+        <source>Iniciar a mesa?</source>
+        <target>Start the table?</target>
+      </trans-unit>
+      <trans-unit id="confirm.startMessage" datatype="html">
+        <source>Cada jogador recebe um stack e as fichas saem da maleta. Se ela não cobrir todos, nada é entregue.</source>
+        <target>Each player gets a stack and the chips leave the case. If it cannot cover everyone, nothing is dealt.</target>
+      </trans-unit>
+      <trans-unit id="confirm.startPlayers" datatype="html">
+        <source>jogadores aguardando</source>
+        <target>players waiting</target>
+      </trans-unit>
+      <trans-unit id="confirm.startBuyIn" datatype="html">
+        <source>buy-in cada</source>
+        <target>buy-in each</target>
+      </trans-unit>
+      <trans-unit id="confirm.joinTitle" datatype="html">
+        <source>Entrar nesta mesa?</source>
+        <target>Join this table?</target>
+      </trans-unit>
+      <trans-unit id="confirm.joinMessage" datatype="html">
+        <source>Você entra aguardando. As fichas só saem quando o gerente iniciar ou te distribuir.</source>
+        <target>You join as waiting. Chips only leave the case when the manager starts the table or deals you in.</target>
+      </trans-unit>
+      <trans-unit id="confirm.chipOf" datatype="html">
+        <source>ficha <x id="VALUE" equiv-text="chip.faceValue"/></source>
+        <target><x id="VALUE" equiv-text="chip.faceValue"/> chip</target>
+      </trans-unit>
+      <trans-unit id="confirm.rebuyTitle" datatype="html">
+        <source>Rebuy de <x id="NAME" equiv-text="player.displayName"/>?</source>
+        <target>Rebuy for <x id="NAME" equiv-text="player.displayName"/>?</target>
+      </trans-unit>
+      <trans-unit id="confirm.dealInTitle" datatype="html">
+        <source>Dar fichas para <x id="NAME" equiv-text="player.displayName"/>?</source>
+        <target>Give chips to <x id="NAME" equiv-text="player.displayName"/>?</target>
+      </trans-unit>
+      <trans-unit id="confirm.stackMessage" datatype="html">
+        <source>Entregue exatamente estas fichas da maleta:</source>
+        <target>Hand over exactly these chips from the case:</target>
+      </trans-unit>
+      <trans-unit id="confirm.stackConfirm" datatype="html">
+        <source>Entreguei as fichas</source>
+        <target>Chips handed over</target>
+      </trans-unit>
+      <trans-unit id="confirm.stackBlocked" datatype="html">
+        <source>A maleta não fecha este stack: faltam <x id="UNITS" equiv-text="preview.shortfallUnits"/> unidades.</source>
+        <target>The case cannot make this stack: <x id="UNITS" equiv-text="preview.shortfallUnits"/> units short.</target>
+      </trans-unit>
+      <trans-unit id="table.previewFailed" datatype="html">
+        <source>Não foi possível calcular as fichas deste stack.</source>
+        <target>The chips for this stack could not be worked out.</target>
+      </trans-unit>
+      <trans-unit id="confirm.tradeTitle" datatype="html">
+        <source>Registrar a compra de fichas?</source>
+        <target>Record the chip purchase?</target>
+      </trans-unit>
+      <trans-unit id="confirm.tradeMessage" datatype="html">
+        <source>Nenhuma ficha sai da maleta. Quem vende é creditado no mesmo valor.</source>
+        <target>No chips leave the case. Whoever sells is credited the same amount.</target>
+      </trans-unit>
+      <trans-unit id="confirm.deleteTableTitle" datatype="html">
+        <source>Excluir a mesa?</source>
+        <target>Delete the table?</target>
+      </trans-unit>
+      <trans-unit id="confirm.deleteTableMessage" datatype="html">
+        <source>Some tudo desta noite: jogadores, lançamentos, contagens e o acerto. Não dá para desfazer.</source>
+        <target>Everything from this night goes: players, ledger, counts and the settlement. This cannot be undone.</target>
+      </trans-unit>
+      <trans-unit id="confirm.typeTableName" datatype="html">
+        <source>Digite o nome da mesa</source>
+        <target>Type the table's name</target>
+      </trans-unit>
+      <trans-unit id="table.deleteFailed" datatype="html">
+        <source>Não foi possível excluir a mesa.</source>
+        <target>The table could not be deleted.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
