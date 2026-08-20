@@ -42,3 +42,68 @@
 .alert {
   color: var(--mat-sys-error);
 }
+
+// --- Table status colour + a moving neon ring on the live ones -------------
+//
+// The ring is a rotating conic-gradient sitting behind the card, inset so only
+// a sliver shows around the edge — the card's own opaque background covers the
+// centre. Done tables get a plain grey border with no motion: nothing more is
+// going to happen at them, so nothing on screen should suggest otherwise.
+
+.table-card-glow {
+  position: relative;
+  border-radius: 16px;
+  margin-bottom: 0.75rem;
+}
+
+.table-card-glow::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  z-index: 0;
+}
+
+.table-card-glow > .table-card {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 0;
+}
+
+.table-card-glow--idle::before {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    color-mix(in srgb, #22c55e 85%, transparent) 12%,
+    transparent 28%
+  );
+  animation: table-glow-spin 4s linear infinite;
+}
+
+.table-card-glow--live::before {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    color-mix(in srgb, #3b82f6 85%, transparent) 12%,
+    transparent 28%
+  );
+  animation: table-glow-spin 2.5s linear infinite;
+}
+
+.table-card-glow--done::before {
+  background: var(--mat-sys-outline-variant);
+  opacity: 0.6;
+}
+
+@keyframes table-glow-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .table-card-glow--idle::before,
+  .table-card-glow--live::before {
+    animation: none;
+  }
+}

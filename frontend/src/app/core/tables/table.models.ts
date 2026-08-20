@@ -105,6 +105,22 @@ export function sortForDisplay(tables: readonly TableSummary[]): TableSummary[] 
   });
 }
 
+/**
+ * The card colour for a table: green before anyone has sat down, blue once play
+ * has started (through to the counting and settling that follow it), grey once
+ * the table is closed for good. A `Cancelled` table is grey for the same
+ * reason — nothing more will happen at it.
+ */
+export type TableMood = 'idle' | 'live' | 'done';
+
+export function tableMood(status: TableStatus): TableMood {
+  if (!isActive(status)) {
+    return 'done';
+  }
+
+  return status === 'Draft' || status === 'Open' ? 'idle' : 'live';
+}
+
 /** Chips still in the case, counted in play units. */
 export function remainingUnits(stock: readonly ChipStock[]): number {
   return stock.reduce((total, s) => total + s.remaining * s.effectiveValue, 0);
