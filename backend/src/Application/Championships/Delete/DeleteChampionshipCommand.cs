@@ -10,11 +10,12 @@ namespace Application.Championships.Delete;
 
 /// <summary>
 /// Removes a championship and everything in it: members, invites, chip cases,
-/// seasons, every table ever played and their results.
+/// every table ever played and their results.
 ///
 /// Owner only, and the name has to be typed. This is the most destructive thing
-/// in the system — it takes a season's rankings with it — so the confirmation is
-/// deliberately something you cannot do by accident.
+/// in the system — the championship is the ranking window, so this takes a whole
+/// year of rankings with it — and the confirmation is deliberately something you
+/// cannot do by accident.
 /// </summary>
 public sealed record DeleteChampionshipCommand(Guid ChampionshipId, string ConfirmName) : ICommand;
 

@@ -54,9 +54,6 @@
         @case ('chipSets') {
           <app-chip-sets-tab [championshipId]="championshipId()" [callerRole]="championship.role" />
         }
-        @case ('seasons') {
-          <app-seasons-tab [championshipId]="championshipId()" [callerRole]="championship.role" />
-        }
         @case ('settings') {
           <app-settings-tab [championship]="championship" (saved)="load()" />
         }

@@ -94,10 +94,3 @@ export interface ChipDenominationInput {
   quantity: number;
   colour: string | null;
 }
-
-export interface Season {
-  id: string;
-  name: string;
-  startsOn: string;
-  endsOn: string | null;
-}

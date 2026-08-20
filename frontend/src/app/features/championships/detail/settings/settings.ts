@@ -79,7 +79,7 @@ export class SettingsTab implements OnInit {
     this.confirm
       .ask({
         title: $localize`:@@confirm.deleteChampionshipTitle:Excluir o campeonato?`,
-        message: $localize`:@@confirm.deleteChampionshipMessage:Some tudo: membros, convites, maletas, temporadas, todas as mesas já jogadas e os rankings. Não dá para desfazer.`,
+        message: $localize`:@@confirm.deleteChampionshipMessage:Some tudo: membros, convites, maletas, todas as mesas já jogadas e os rankings. Não dá para desfazer.`,
         destructive: true,
         requireTyped: championship.name,
         requireTypedLabel: $localize`:@@confirm.typeChampionshipName:Digite o nome do campeonato`,
