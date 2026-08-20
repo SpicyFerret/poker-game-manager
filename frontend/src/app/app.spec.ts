@@ -39,4 +39,20 @@ describe('App', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('button')).not.toBeNull();
   });
+
+  /**
+   * The name left the bar when the button became a figure, so the only thing
+   * naming the account is the label a screen reader reads.
+   */
+  it('should name the account on the avatar button', async () => {
+    const auth = TestBed.inject(AuthService);
+    auth.setTokens({ accessToken: 'access', refreshToken: 'refresh' });
+
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+
+    const button = (fixture.nativeElement as HTMLElement).querySelector('.app-bar__avatar');
+
+    expect(button?.getAttribute('aria-label')).toBeTruthy();
+  });
 });

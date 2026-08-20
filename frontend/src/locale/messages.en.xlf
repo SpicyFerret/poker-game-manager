@@ -1451,6 +1451,14 @@
         <source><x id="INTERPOLATION" equiv-text="{{ championship.leaderPoints }}"/> pts</source>
         <target><x id="INTERPOLATION" equiv-text="{{ championship.leaderPoints }}"/> pts</target>
       </trans-unit>
+      <trans-unit id="app.accountOf" datatype="html">
+        <source>Conta de <x id="NAME" equiv-text="name"/></source>
+        <target><x id="NAME" equiv-text="name"/>&apos;s account</target>
+      </trans-unit>
+      <trans-unit id="app.account" datatype="html">
+        <source>Sua conta</source>
+        <target>Your account</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
