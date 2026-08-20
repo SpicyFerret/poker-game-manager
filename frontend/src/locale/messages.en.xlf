@@ -1459,6 +1459,10 @@
         <source>Revogar código <x id="INTERPOLATION" equiv-text="{{ invite.code }}"/></source>
         <target>Revoke code <x id="INTERPOLATION" equiv-text="{{ invite.code }}"/></target>
       </trans-unit>
+      <trans-unit id="table.manageOthersToggle" datatype="html">
+        <source>Fazer rebuy e comprar fichas em nome de outros jogadores</source>
+        <target>Rebuy and buy chips on behalf of other players</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

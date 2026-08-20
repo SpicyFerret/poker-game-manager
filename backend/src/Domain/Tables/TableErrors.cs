@@ -123,4 +123,18 @@ public static class TableErrors
     public static readonly Error CannotAcknowledgeSomeoneElsesStack = Error.Forbidden(
         "Tables.CannotAcknowledgeSomeoneElsesStack",
         "Only the player themselves can confirm they received these chips");
+
+    /// <summary>A rebuy is self-service; dealing someone else in, or rebuying for someone else, is not.</summary>
+    public static readonly Error CannotRebuySomeoneElse = Error.Forbidden(
+        "Tables.CannotRebuySomeoneElse",
+        "You can only rebuy for yourself. A table manager can rebuy for anyone");
+
+    public static readonly Error CannotDealInSomeoneElse = Error.Forbidden(
+        "Tables.CannotDealInSomeoneElse",
+        "Only a table manager can deal a player in");
+
+    /// <summary>Buying chips off another player is self-service; recording that purchase for someone else is not.</summary>
+    public static readonly Error CannotBuyChipsForSomeoneElse = Error.Forbidden(
+        "Tables.CannotBuyChipsForSomeoneElse",
+        "You can only record a purchase where you are the buyer. A table manager can record one for anyone");
 }

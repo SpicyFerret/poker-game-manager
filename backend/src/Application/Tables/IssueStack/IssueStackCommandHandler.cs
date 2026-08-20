@@ -19,9 +19,12 @@ internal sealed class IssueStackCommandHandler(
 {
     public async Task<Result> Handle(IssueStackCommand command, CancellationToken cancellationToken)
     {
+        // Player, not TableManager: a rebuy for yourself needs nobody's
+        // permission but your own. Dealing someone in, or rebuying for someone
+        // else, is checked explicitly below once we know who "someone" is.
         Result<ChampionshipRole> caller = await championshipContext.RequireRoleAsync(
             command.ChampionshipId,
-            ChampionshipRole.TableManager,
+            ChampionshipRole.Player,
             cancellationToken);
 
         if (caller.IsFailure)
@@ -50,6 +53,20 @@ internal sealed class IssueStackCommandHandler(
         if (player is null)
         {
             return Result.Failure(TableErrors.NotAPlayer);
+        }
+
+        bool isOwnStack = player.UserId == userContext.UserId;
+
+        if (command.IsRebuy)
+        {
+            if (!isOwnStack && caller.Value < ChampionshipRole.TableManager)
+            {
+                return Result.Failure(TableErrors.CannotRebuySomeoneElse);
+            }
+        }
+        else if (caller.Value < ChampionshipRole.TableManager)
+        {
+            return Result.Failure(TableErrors.CannotDealInSomeoneElse);
         }
 
         // A rebuy tops up someone already in; a buy-in deals in someone who is
