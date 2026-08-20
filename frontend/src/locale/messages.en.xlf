@@ -1247,6 +1247,218 @@
         <source>Não foi possível salvar a estrutura de blinds.</source>
         <target>The blind structure could not be saved.</target>
       </trans-unit>
+      <trans-unit id="championship.seeRanking" datatype="html">
+        <source> Ver ranking </source>
+        <target> See ranking </target>
+      </trans-unit>
+      <trans-unit id="view.tables" datatype="html">
+        <source>Mesas</source>
+        <target>Tables</target>
+      </trans-unit>
+      <trans-unit id="view.rankings" datatype="html">
+        <source>Ranking</source>
+        <target>Ranking</target>
+      </trans-unit>
+      <trans-unit id="view.history" datatype="html">
+        <source>Histórico</source>
+        <target>History</target>
+      </trans-unit>
+      <trans-unit id="view.statement" datatype="html">
+        <source>Meu extrato</source>
+        <target>My statement</target>
+      </trans-unit>
+      <trans-unit id="history.players" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ row.playerCount }}"/> jogador(es)</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ row.playerCount }}"/> player(s)</target>
+      </trans-unit>
+      <trans-unit id="history.winner" datatype="html">
+        <source>Ganhou a noite</source>
+        <target>Won the night</target>
+      </trans-unit>
+      <trans-unit id="history.winnerBalance" datatype="html">
+        <source>Saldo</source>
+        <target>Balance</target>
+      </trans-unit>
+      <trans-unit id="history.chipLeader" datatype="html">
+        <source>Chip leader</source>
+        <target>Chip leader</target>
+      </trans-unit>
+      <trans-unit id="history.chipLeaderChips" datatype="html">
+        <source>Fichas na mão</source>
+        <target>Chips held</target>
+      </trans-unit>
+      <trans-unit id="history.moneyIn" datatype="html">
+        <source>Total jogado</source>
+        <target>Total played</target>
+      </trans-unit>
+      <trans-unit id="history.empty" datatype="html">
+        <source>Nenhuma mesa fechada ainda.</source>
+        <target>No table has been closed yet.</target>
+      </trans-unit>
+      <trans-unit id="history.loadFailed" datatype="html">
+        <source>Não foi possível carregar o histórico.</source>
+        <target>The history could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="stats.heading" datatype="html">
+        <source>Números do campeonato</source>
+        <target>Championship numbers</target>
+      </trans-unit>
+      <trans-unit id="stats.tables" datatype="html">
+        <source>Mesas jogadas</source>
+        <target>Tables played</target>
+      </trans-unit>
+      <trans-unit id="stats.players" datatype="html">
+        <source>Jogadores</source>
+        <target>Players</target>
+      </trans-unit>
+      <trans-unit id="stats.moneyIn" datatype="html">
+        <source>Total jogado</source>
+        <target>Total played</target>
+      </trans-unit>
+      <trans-unit id="stats.average" datatype="html">
+        <source>Média por mesa</source>
+        <target>Average per table</target>
+      </trans-unit>
+      <trans-unit id="stats.rebuys" datatype="html">
+        <source>Rebuys</source>
+        <target>Rebuys</target>
+      </trans-unit>
+      <trans-unit id="stats.biggestWin" datatype="html">
+        <source>Maior noite</source>
+        <target>Best night</target>
+      </trans-unit>
+      <trans-unit id="stats.biggestLoss" datatype="html">
+        <source>Pior noite</source>
+        <target>Worst night</target>
+      </trans-unit>
+      <trans-unit id="rankings.heading" datatype="html">
+        <source>Ranking</source>
+        <target>Ranking</target>
+      </trans-unit>
+      <trans-unit id="rankings.tablesCounted" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ rankings.tablesCounted }}"/> mesa(s) fechada(s)</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ rankings.tablesCounted }}"/> table(s) closed</target>
+      </trans-unit>
+      <trans-unit id="rankings.byPoints" datatype="html">
+        <source> Por pontos </source>
+        <target> By points </target>
+      </trans-unit>
+      <trans-unit id="rankings.byBalance" datatype="html">
+        <source> Por saldo </source>
+        <target> By balance </target>
+      </trans-unit>
+      <trans-unit id="rankings.playedCount" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ row.tablesPlayed }}"/> mesa(s)</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ row.tablesPlayed }}"/> table(s)</target>
+      </trans-unit>
+      <trans-unit id="rankings.points" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ row.points }}"/> pts</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ row.points }}"/> pts</target>
+      </trans-unit>
+      <trans-unit id="rankings.empty" datatype="html">
+        <source> Ainda não há ranking. Ele aparece assim que a primeira mesa for fechada. </source>
+        <target> No ranking yet. It appears as soon as the first table is closed. </target>
+      </trans-unit>
+      <trans-unit id="rankings.loadFailed" datatype="html">
+        <source>Não foi possível carregar o ranking.</source>
+        <target>The ranking could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="statement.heading" datatype="html">
+        <source>Meu extrato</source>
+        <target>My statement</target>
+      </trans-unit>
+      <trans-unit id="statement.totalBalance" datatype="html">
+        <source>Saldo acumulado</source>
+        <target>Balance to date</target>
+      </trans-unit>
+      <trans-unit id="statement.totalPaidIn" datatype="html">
+        <source>Total investido</source>
+        <target>Total put in</target>
+      </trans-unit>
+      <trans-unit id="statement.totalPoints" datatype="html">
+        <source>Pontos</source>
+        <target>Points</target>
+      </trans-unit>
+      <trans-unit id="statement.wins" datatype="html">
+        <source>Vitórias</source>
+        <target>Wins</target>
+      </trans-unit>
+      <trans-unit id="statement.position" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ row.position }}"/>º lugar</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ row.position }}"/>th place</target>
+      </trans-unit>
+      <trans-unit id="statement.rebuys" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ row.rebuys }}"/> rebuy(s)</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ row.rebuys }}"/> rebuy(s)</target>
+      </trans-unit>
+      <trans-unit id="statement.rowBalance" datatype="html">
+        <source>Saldo</source>
+        <target>Balance</target>
+      </trans-unit>
+      <trans-unit id="statement.rowPaidIn" datatype="html">
+        <source>Investido</source>
+        <target>Put in</target>
+      </trans-unit>
+      <trans-unit id="statement.rowPoints" datatype="html">
+        <source>Pontos</source>
+        <target>Points</target>
+      </trans-unit>
+      <trans-unit id="statement.empty" datatype="html">
+        <source>Você ainda não jogou nenhuma mesa fechada aqui.</source>
+        <target>You have not played a closed table here yet.</target>
+      </trans-unit>
+      <trans-unit id="statement.loadFailed" datatype="html">
+        <source>Não foi possível carregar o seu extrato.</source>
+        <target>Your statement could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="notice.ackFailed" datatype="html">
+        <source>Não foi possível confirmar o recebimento das fichas.</source>
+        <target>The chips could not be confirmed as received.</target>
+      </trans-unit>
+      <trans-unit id="notice.rebuyHeading" datatype="html">
+        <source>Seu rebuy</source>
+        <target>Your rebuy</target>
+      </trans-unit>
+      <trans-unit id="notice.buyInHeading" datatype="html">
+        <source>Suas fichas</source>
+        <target>Your chips</target>
+      </trans-unit>
+      <trans-unit id="notice.explanation" datatype="html">
+        <source> Confira o que está na sua frente. Se não bater, fale com quem está cuidando da maleta antes de confirmar. </source>
+        <target> Check what is in front of you. If it does not match, speak to whoever is looking after the case before confirming. </target>
+      </trans-unit>
+      <trans-unit id="notice.chipWorth" datatype="html">
+        <source>vale <x id="INTERPOLATION" equiv-text="{{ chip.effectiveValue }}"/></source>
+        <target>worth <x id="INTERPOLATION" equiv-text="{{ chip.effectiveValue }}"/></target>
+      </trans-unit>
+      <trans-unit id="notice.total" datatype="html">
+        <source>Total</source>
+        <target>Total</target>
+      </trans-unit>
+      <trans-unit id="notice.confirm" datatype="html">
+        <source> Conferi, está certo </source>
+        <target> Counted, it is right </target>
+      </trans-unit>
+      <trans-unit id="championships.leaderPoints" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ championship.leaderPoints }}"/> pts</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ championship.leaderPoints }}"/> pts</target>
+      </trans-unit>
+      <trans-unit id="championship.leading" datatype="html">
+        <source>Liderando</source>
+        <target>Leading</target>
+      </trans-unit>
+      <trans-unit id="championship.leaderPoints" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ championship.leaderPoints }}"/> pts</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ championship.leaderPoints }}"/> pts</target>
+      </trans-unit>
+      <trans-unit id="app.accountOf" datatype="html">
+        <source>Conta de <x id="NAME" equiv-text="name"/></source>
+        <target><x id="NAME" equiv-text="name"/>&apos;s account</target>
+      </trans-unit>
+      <trans-unit id="app.account" datatype="html">
+        <source>Sua conta</source>
+        <target>Your account</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

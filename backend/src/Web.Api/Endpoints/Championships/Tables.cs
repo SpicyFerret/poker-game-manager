@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Tables;
+using Application.Tables.Acknowledge;
 using Application.Tables.Blinds;
 using Application.Tables.BuyChips;
 using Application.Tables.Counting;
@@ -257,6 +258,20 @@ internal sealed class Tables : IEndpoint
         {
             Result result = await handler.Handle(
                 new ControlClockCommand(championshipId, tableId, request.Action),
+                cancellationToken);
+
+            return result.Match(Results.NoContent, CustomResults.Problem);
+        });
+
+        group.MapPost("{tableId:guid}/stacks/{ledgerEntryId:guid}/acknowledge", async (
+            Guid championshipId,
+            Guid tableId,
+            Guid ledgerEntryId,
+            ICommandHandler<AcknowledgeStackCommand> handler,
+            CancellationToken cancellationToken) =>
+        {
+            Result result = await handler.Handle(
+                new AcknowledgeStackCommand(championshipId, tableId, ledgerEntryId),
                 cancellationToken);
 
             return result.Match(Results.NoContent, CustomResults.Problem);

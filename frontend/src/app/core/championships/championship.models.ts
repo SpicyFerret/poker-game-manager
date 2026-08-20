@@ -30,6 +30,13 @@ export interface ChampionshipSummary {
   description: string | null;
   role: ChampionshipRole;
   memberCount: number;
+
+  /**
+   * Top of the points ranking. Null until a table has been settled — a card that
+   * claims a leader before anyone has played would be a lie, not an empty state.
+   */
+  leaderDisplayName: string | null;
+  leaderPoints: number;
 }
 
 export interface Championship {
@@ -43,6 +50,13 @@ export interface Championship {
   moneyPerUnit: number;
   pointsByPosition: number[];
   role: ChampionshipRole;
+
+  /**
+   * Top of the points ranking. Null until a table has been settled — a card that
+   * claims a leader before anyone has played would be a lie, not an empty state.
+   */
+  leaderDisplayName: string | null;
+  leaderPoints: number;
 }
 
 export interface ChampionshipSettings {
@@ -93,4 +107,77 @@ export interface ChipDenominationInput {
   effectiveValue: number;
   quantity: number;
   colour: string | null;
+}
+
+export interface RankingRow {
+  userId: string;
+  displayName: string;
+  /** Place in this ranking. The two rankings order the same people differently. */
+  position: number;
+  points: number;
+  balance: number;
+  tablesPlayed: number;
+  wins: number;
+  bestPosition: number;
+}
+
+export interface Rankings {
+  byPoints: RankingRow[];
+  byBalance: RankingRow[];
+  tablesCounted: number;
+}
+
+export interface HistoryRow {
+  tableId: string;
+  name: string;
+  closedAtUtc: string | null;
+  playerCount: number;
+  winnerDisplayName: string | null;
+  winnerBalance: number;
+  /** Buy-ins and rebuys across the whole table. */
+  moneyIn: number;
+
+  /**
+   * Who finished holding the most chips. Not always the winner: balance takes
+   * off what you paid in, so three rebuys deep you can hold the biggest stack
+   * and still be down on the night.
+   */
+  chipLeaderDisplayName: string | null;
+  chipLeaderChips: number;
+}
+
+export interface StatementRow {
+  tableId: string;
+  tableName: string;
+  closedAtUtc: string | null;
+  position: number;
+  points: number;
+  balance: number;
+  paidIn: number;
+  rebuys: number;
+}
+
+export interface Statement {
+  rows: StatementRow[];
+  totalBalance: number;
+  totalPaidIn: number;
+  totalPoints: number;
+  wins: number;
+}
+
+export interface NightRecord {
+  displayName: string;
+  tableName: string;
+  balance: number;
+}
+
+export interface Statistics {
+  tablesPlayed: number;
+  distinctPlayers: number;
+  moneyIn: number;
+  rebuys: number;
+  averageMoneyPerTable: number;
+  /** Null until something has been settled. */
+  biggestWin: NightRecord | null;
+  biggestLoss: NightRecord | null;
 }

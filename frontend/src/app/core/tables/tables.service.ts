@@ -143,4 +143,16 @@ export class TablesService {
   controlClock(championshipId: string, tableId: string, action: ClockAction): Observable<void> {
     return this.http.post<void>(`${this.base(championshipId)}/${tableId}/clock`, { action });
   }
+
+  /** "I have these chips in front of me." Only the player themselves may say it. */
+  acknowledgeStack(
+    championshipId: string,
+    tableId: string,
+    ledgerEntryId: string,
+  ): Observable<void> {
+    return this.http.post<void>(
+      `${this.base(championshipId)}/${tableId}/stacks/${ledgerEntryId}/acknowledge`,
+      {},
+    );
+  }
 }

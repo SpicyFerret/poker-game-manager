@@ -1,0 +1,112 @@
+@if (error(); as message) {
+  <p role="alert" class="alert">{{ message }}</p>
+}
+
+@if (statistics(); as statistics) {
+  <mat-card class="panel">
+    <mat-card-header>
+      <mat-card-title i18n="@@stats.heading">Números do campeonato</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <dl class="figures">
+        <div>
+          <dt i18n="@@stats.tables">Mesas jogadas</dt>
+          <dd>{{ statistics.tablesPlayed }}</dd>
+        </div>
+        <div>
+          <dt i18n="@@stats.players">Jogadores</dt>
+          <dd>{{ statistics.distinctPlayers }}</dd>
+        </div>
+        <div>
+          <dt i18n="@@stats.moneyIn">Total jogado</dt>
+          <dd>R$ {{ statistics.moneyIn | number: '1.2-2' }}</dd>
+        </div>
+        <div>
+          <dt i18n="@@stats.average">Média por mesa</dt>
+          <dd>R$ {{ statistics.averageMoneyPerTable | number: '1.2-2' }}</dd>
+        </div>
+        <div>
+          <dt i18n="@@stats.rebuys">Rebuys</dt>
+          <dd>{{ statistics.rebuys }}</dd>
+        </div>
+      </dl>
+
+      @if (statistics.biggestWin; as win) {
+        <p class="record">
+          <span class="muted" i18n="@@stats.biggestWin">Maior noite</span>
+          <strong>{{ win.displayName }}</strong>
+          <span class="record__value">R$ {{ win.balance | number: '1.2-2' }}</span>
+          <span class="muted">{{ win.tableName }}</span>
+        </p>
+      }
+      @if (statistics.biggestLoss; as loss) {
+        <p class="record">
+          <span class="muted" i18n="@@stats.biggestLoss">Pior noite</span>
+          <strong>{{ loss.displayName }}</strong>
+          <span class="record__value alert">R$ {{ loss.balance | number: '1.2-2' }}</span>
+          <span class="muted">{{ loss.tableName }}</span>
+        </p>
+      }
+    </mat-card-content>
+  </mat-card>
+}
+
+<mat-card class="panel">
+  <mat-card-header>
+    <mat-card-title i18n="@@rankings.heading">Ranking</mat-card-title>
+    @if (rankings(); as rankings) {
+      <mat-card-subtitle i18n="@@rankings.tablesCounted"
+        >{{ rankings.tablesCounted }} mesa(s) fechada(s)</mat-card-subtitle
+      >
+    }
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="basis">
+      <button
+        matButton
+        type="button"
+        [class.basis--on]="basis() === 'points'"
+        (click)="show('points')"
+        i18n="@@rankings.byPoints"
+      >
+        Por pontos
+      </button>
+      <button
+        matButton
+        type="button"
+        [class.basis--on]="basis() === 'balance'"
+        (click)="show('balance')"
+        i18n="@@rankings.byBalance"
+      >
+        Por saldo
+      </button>
+    </div>
+
+    <ol class="ranking">
+      @for (row of rows(); track row.userId) {
+        <li class="rank">
+          <span class="rank__position">{{ row.position }}º</span>
+          <span class="rank__name">
+            {{ row.displayName }}
+            <span class="muted" i18n="@@rankings.playedCount">{{ row.tablesPlayed }} mesa(s)</span>
+          </span>
+          @if (basis() === 'points') {
+            <span class="rank__figure" i18n="@@rankings.points">{{ row.points }} pts</span>
+          } @else {
+            <span class="rank__figure" [class.alert]="row.balance < 0"
+              >R$ {{ row.balance | number: '1.2-2' }}</span
+            >
+          }
+        </li>
+      } @empty {
+        @if (!loading()) {
+          <p i18n="@@rankings.empty">
+            Ainda não há ranking. Ele aparece assim que a primeira mesa for fechada.
+          </p>
+        }
+      }
+    </ol>
+  </mat-card-content>
+</mat-card>

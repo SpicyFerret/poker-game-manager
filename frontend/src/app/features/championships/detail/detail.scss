@@ -20,3 +20,17 @@
 .setup {
   margin-top: 0.75rem;
 }
+
+// The crown carries the meaning at a glance; the name is what people read.
+.leader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin: 0.25rem 0 0;
+}
+
+.muted {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-label-small);
+}

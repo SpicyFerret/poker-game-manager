@@ -10,8 +10,12 @@ import {
   ChampionshipSummary,
   ChipDenominationInput,
   ChipSet,
+  HistoryRow,
   Invite,
   Member,
+  Rankings,
+  Statement,
+  Statistics,
 } from './championship.models';
 
 @Injectable({ providedIn: 'root' })
@@ -126,5 +130,24 @@ export class ChampionshipsService {
 
   deleteChipSet(championshipId: string, chipSetId: string): Observable<void> {
     return this.http.delete<void>(`${this.base}/${championshipId}/chip-sets/${chipSetId}`);
+  }
+
+  // --- Read-back: rankings, history, statement, statistics ------------------
+
+  rankings(championshipId: string): Observable<Rankings> {
+    return this.http.get<Rankings>(`${this.base}/${championshipId}/rankings`);
+  }
+
+  history(championshipId: string): Observable<HistoryRow[]> {
+    return this.http.get<HistoryRow[]>(`${this.base}/${championshipId}/history`);
+  }
+
+  /** The caller's own nights. The API never returns anyone else's. */
+  statement(championshipId: string): Observable<Statement> {
+    return this.http.get<Statement>(`${this.base}/${championshipId}/statement`);
+  }
+
+  statistics(championshipId: string): Observable<Statistics> {
+    return this.http.get<Statistics>(`${this.base}/${championshipId}/statistics`);
   }
 }

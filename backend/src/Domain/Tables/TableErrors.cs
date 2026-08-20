@@ -110,4 +110,17 @@ public static class TableErrors
     public static readonly Error ConfirmationDoesNotMatch = Error.Problem(
         "Tables.ConfirmationDoesNotMatch",
         "Type the table's name exactly to confirm");
+
+    public static readonly Error StackNotFound = Error.NotFound(
+        "Tables.StackNotFound",
+        "That stack does not belong to this table");
+
+    /// <summary>
+    /// The point of the notice is that a second person counted the chips. A
+    /// manager confirming for the player would be the same pair of eyes that
+    /// counted them out of the case.
+    /// </summary>
+    public static readonly Error CannotAcknowledgeSomeoneElsesStack = Error.Forbidden(
+        "Tables.CannotAcknowledgeSomeoneElsesStack",
+        "Only the player themselves can confirm they received these chips");
 }

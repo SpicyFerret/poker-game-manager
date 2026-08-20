@@ -30,11 +30,29 @@
         }
       </div>
 
-      @if (championship.description) {
+      @if (championship.description || championship.leaderDisplayName) {
         <mat-card-content>
-          <p>{{ championship.description }}</p>
+          @if (championship.description) {
+            <p>{{ championship.description }}</p>
+          }
+          @if (championship.leaderDisplayName; as leader) {
+            <p class="leader">
+              <span aria-hidden="true">&#9819;</span>
+              <span i18n="@@championship.leading">Liderando</span>
+              <strong>{{ leader }}</strong>
+              <span class="muted" i18n="@@championship.leaderPoints"
+                >{{ championship.leaderPoints }} pts</span
+              >
+            </p>
+          }
         </mat-card-content>
       }
+
+      <mat-card-actions>
+        <button matButton type="button" (click)="showRanking()" i18n="@@championship.seeRanking">
+          Ver ranking
+        </button>
+      </mat-card-actions>
     </mat-card>
 
     @if (setupOpen()) {
@@ -60,6 +78,21 @@
       }
     }
 
-    <app-tables-tab [championshipId]="championshipId()" [callerRole]="championship.role" />
+    <app-section-nav [sections]="views()" [(selected)]="view" />
+
+    @switch (view()) {
+      @case ('tables') {
+        <app-tables-tab [championshipId]="championshipId()" [callerRole]="championship.role" />
+      }
+      @case ('rankings') {
+        <app-rankings-tab [championshipId]="championshipId()" />
+      }
+      @case ('history') {
+        <app-history-tab [championshipId]="championshipId()" />
+      }
+      @case ('statement') {
+        <app-statement-tab [championshipId]="championshipId()" />
+      }
+    }
   }
 </div>

@@ -1,20 +1,40 @@
-<mat-toolbar color="primary" class="app-bar">
-  <a routerLink="/" class="app-bar__title" i18n="@@app.title">Poker Manager</a>
+<header class="app-bar">
+  <mat-card class="app-bar__card" appearance="outlined">
+    <a routerLink="/" class="app-bar__title" i18n="@@app.title">Poker Manager</a>
 
-  <span class="app-bar__spacer"></span>
+    <span class="app-bar__spacer"></span>
 
-  @if (auth.isAuthenticated()) {
-    <button mat-button [matMenuTriggerFor]="accountMenu">
-      {{ auth.user()?.displayName ?? '' }}
-      <span aria-hidden="true">&#9662;</span>
-    </button>
+    @if (auth.isAuthenticated()) {
+      <button
+        matIconButton
+        type="button"
+        class="app-bar__avatar"
+        [matMenuTriggerFor]="accountMenu"
+        [attr.aria-label]="accountLabel()"
+      >
+        <!--
+          Drawn rather than an emoji: this follows currentColor, so it sits right
+          in both themes and looks the same on every phone.
+        -->
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
+          <path
+            fill="currentColor"
+            d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v1a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1c0-2.76-3.58-5-8-5Z"
+          />
+        </svg>
+      </button>
 
-    <mat-menu #accountMenu="matMenu">
-      <a mat-menu-item routerLink="/profile" i18n="@@app.profile">Meu perfil</a>
-      <button mat-menu-item (click)="logout()" i18n="@@app.logout">Sair</button>
-    </mat-menu>
-  }
-</mat-toolbar>
+      <mat-menu #accountMenu="matMenu">
+        <!-- The name left the bar with the icon, so the menu is where it lives now. -->
+        <div class="account-menu__who" mat-menu-item disabled>
+          {{ auth.user()?.displayName ?? '' }}
+        </div>
+        <a mat-menu-item routerLink="/profile" i18n="@@app.profile">Meu perfil</a>
+        <button mat-menu-item (click)="logout()" i18n="@@app.logout">Sair</button>
+      </mat-menu>
+    }
+  </mat-card>
+</header>
 
 <main>
   <router-outlet />

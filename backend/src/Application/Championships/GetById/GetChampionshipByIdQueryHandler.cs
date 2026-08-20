@@ -1,6 +1,7 @@
 using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Championships.Rankings;
 using Domain.Championships;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
@@ -44,8 +45,19 @@ internal sealed class GetChampionshipByIdQueryHandler(
             })
             .SingleOrDefaultAsync(cancellationToken);
 
-        return championship is null
-            ? Result.Failure<ChampionshipResponse>(ChampionshipErrors.NotFound(query.ChampionshipId))
+        if (championship is null)
+        {
+            return Result.Failure<ChampionshipResponse>(
+                ChampionshipErrors.NotFound(query.ChampionshipId));
+        }
+
+        Dictionary<Guid, ChampionshipLeader> leaders = await ChampionshipLeaders.ForAsync(
+            context,
+            [championship.Id],
+            cancellationToken);
+
+        return leaders.TryGetValue(championship.Id, out ChampionshipLeader? leader)
+            ? championship with { LeaderDisplayName = leader.DisplayName, LeaderPoints = leader.Points }
             : championship;
     }
 }

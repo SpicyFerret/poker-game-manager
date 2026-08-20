@@ -1,0 +1,74 @@
+@if (error(); as message) {
+  <p role="alert" class="alert">{{ message }}</p>
+}
+
+@if (statement(); as statement) {
+  <mat-card class="panel">
+    <mat-card-header>
+      <mat-card-title i18n="@@statement.heading">Meu extrato</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <dl class="figures">
+        <div>
+          <dt i18n="@@statement.totalBalance">Saldo acumulado</dt>
+          <dd [class.alert]="statement.totalBalance < 0">
+            R$ {{ statement.totalBalance | number: '1.2-2' }}
+          </dd>
+        </div>
+        <div>
+          <dt i18n="@@statement.totalPaidIn">Total investido</dt>
+          <dd>R$ {{ statement.totalPaidIn | number: '1.2-2' }}</dd>
+        </div>
+        <div>
+          <dt i18n="@@statement.totalPoints">Pontos</dt>
+          <dd>{{ statement.totalPoints }}</dd>
+        </div>
+        <div>
+          <dt i18n="@@statement.wins">Vitórias</dt>
+          <dd>{{ statement.wins }}</dd>
+        </div>
+      </dl>
+    </mat-card-content>
+  </mat-card>
+
+  @for (row of statement.rows; track row.tableId) {
+    <a class="card-link" [routerLink]="['/championships', championshipId(), 'tables', row.tableId]">
+      <mat-card class="night">
+        <mat-card-header>
+          <mat-card-title>{{ row.tableName }}</mat-card-title>
+          <mat-card-subtitle>
+            @if (row.closedAtUtc) {
+              {{ row.closedAtUtc | date: 'dd/MM/yyyy' }} ·
+            }
+            <span i18n="@@statement.position">{{ row.position }}º lugar</span>
+            @if (row.rebuys > 0) {
+              · <span i18n="@@statement.rebuys">{{ row.rebuys }} rebuy(s)</span>
+            }
+          </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <dl class="figures">
+            <div>
+              <dt i18n="@@statement.rowBalance">Saldo</dt>
+              <dd [class.alert]="row.balance < 0">R$ {{ row.balance | number: '1.2-2' }}</dd>
+            </div>
+            <div>
+              <dt i18n="@@statement.rowPaidIn">Investido</dt>
+              <dd>R$ {{ row.paidIn | number: '1.2-2' }}</dd>
+            </div>
+            <div>
+              <dt i18n="@@statement.rowPoints">Pontos</dt>
+              <dd>{{ row.points }}</dd>
+            </div>
+          </dl>
+        </mat-card-content>
+      </mat-card>
+    </a>
+  } @empty {
+    @if (!loading()) {
+      <p i18n="@@statement.empty">Você ainda não jogou nenhuma mesa fechada aqui.</p>
+    }
+  }
+}
