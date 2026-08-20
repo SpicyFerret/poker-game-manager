@@ -105,3 +105,23 @@
     </section>
   }
 </div>
+
+@if (isOwner()) {
+  <section class="danger-zone">
+    <h3 i18n="@@settings.dangerHeading">Excluir campeonato</h3>
+    <p i18n="@@settings.dangerWarning">
+      Some tudo: membros, convites, maletas, temporadas, todas as mesas já jogadas e os rankings.
+      Não dá para desfazer.
+    </p>
+    <button
+      matButton
+      type="button"
+      class="danger"
+      [disabled]="busy()"
+      (click)="deleteChampionship()"
+      i18n="@@common.delete"
+    >
+      Excluir
+    </button>
+  </section>
+}

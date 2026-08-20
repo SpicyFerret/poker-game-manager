@@ -11,6 +11,7 @@ import {
 } from '../../../../core/championships/championship.models';
 import { ChampionshipsService } from '../../../../core/championships/championships.service';
 import { RoleLabelPipe } from '../../../../core/championships/role-label.pipe';
+import { Confirm } from '../../../../shared/confirm/confirm.service';
 import { CreateInviteDialog, CreateInviteResult } from './create-invite-dialog';
 
 @Component({
@@ -22,6 +23,7 @@ import { CreateInviteDialog, CreateInviteResult } from './create-invite-dialog';
 export class InvitesTab implements OnInit {
   private readonly championships = inject(ChampionshipsService);
   private readonly dialog = inject(MatDialog);
+  private readonly confirm = inject(Confirm);
 
   readonly championshipId = input.required<string>();
   readonly callerRole = input.required<ChampionshipRole>();
@@ -57,34 +59,68 @@ export class InvitesTab implements OnInit {
       .open(CreateInviteDialog, { data: { assignableRoles: this.rolesICanInvite() } })
       .afterClosed()
       .subscribe((result: CreateInviteResult | undefined) => {
-        if (!result) {
-          return;
+        if (result) {
+          this.confirmCreate(result);
         }
+      });
+  }
 
-        this.busy.set(true);
-        this.error.set(null);
+  private confirmCreate(result: CreateInviteResult): void {
+    this.confirm
+      .ask({
+        title: $localize`:@@confirm.inviteTitle:Gerar este convite?`,
+        message: $localize`:@@confirm.inviteMessage:Quem tiver o código entra no campeonato com esse cargo.`,
+        details: [
+          { label: $localize`:@@field.role:Cargo`, value: result.role },
+          {
+            label: $localize`:@@field.maxUses:Limite de usos`,
+            value:
+              result.maxUses === null
+                ? $localize`:@@confirm.unlimited:ilimitado`
+                : String(result.maxUses),
+          },
+        ],
+        confirmLabel: $localize`:@@invites.create:Gerar convite`,
+      })
+      .subscribe(() => this.create(result));
+  }
 
-        this.championships
-          .createInvite(this.championshipId(), result.role, result.maxUses, null)
-          .subscribe({
-            next: () => {
-              this.busy.set(false);
-              this.load();
-            },
-            error: (err: unknown) => {
-              this.busy.set(false);
-              this.error.set(
-                describeError(
-                  err,
-                  $localize`:@@invites.createFailed:Não foi possível criar o convite.`,
-                ),
-              );
-            },
-          });
+  private create(result: CreateInviteResult): void {
+    this.busy.set(true);
+    this.error.set(null);
+
+    this.championships
+      .createInvite(this.championshipId(), result.role, result.maxUses, null)
+      .subscribe({
+        next: () => {
+          this.busy.set(false);
+          this.load();
+        },
+        error: (err: unknown) => {
+          this.busy.set(false);
+          this.error.set(
+            describeError(
+              err,
+              $localize`:@@invites.createFailed:Não foi possível criar o convite.`,
+            ),
+          );
+        },
       });
   }
 
   protected revoke(invite: Invite): void {
+    this.confirm
+      .ask({
+        title: $localize`:@@confirm.revokeTitle:Revogar este convite?`,
+        message: $localize`:@@confirm.revokeMessage:Quem já entrou continua no campeonato. O código para de funcionar e não volta.`,
+        details: [{ label: $localize`:@@confirm.code:código`, value: invite.code }],
+        destructive: true,
+        confirmLabel: $localize`:@@invites.revoke:Revogar`,
+      })
+      .subscribe(() => this.revokeConfirmed(invite));
+  }
+
+  private revokeConfirmed(invite: Invite): void {
     this.busy.set(true);
     this.error.set(null);
 
@@ -105,9 +141,9 @@ export class InvitesTab implements OnInit {
     });
   }
 
+  /** Inert, so no confirmation: the code is already on screen. */
   protected copy(code: string): void {
     // Best effort: clipboard access needs a secure context and can be refused.
-    // The code is on screen either way, so a failure is not worth an error.
     void navigator.clipboard
       ?.writeText(code)
       .then(() => this.copied.set(code))

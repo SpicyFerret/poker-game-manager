@@ -12,6 +12,7 @@ import {
   atLeast,
 } from '../../../../core/championships/championship.models';
 import { ChampionshipsService } from '../../../../core/championships/championships.service';
+import { Confirm } from '../../../../shared/confirm/confirm.service';
 
 @Component({
   selector: 'app-seasons-tab',
@@ -27,6 +28,7 @@ import { ChampionshipsService } from '../../../../core/championships/championshi
 })
 export class SeasonsTab implements OnInit {
   private readonly championships = inject(ChampionshipsService);
+  private readonly confirm = inject(Confirm);
 
   readonly championshipId = input.required<string>();
   readonly callerRole = input.required<ChampionshipRole>();
@@ -70,16 +72,29 @@ export class SeasonsTab implements OnInit {
 
     const value = this.form.getRawValue();
 
+    this.confirm
+      .ask({
+        title: $localize`:@@confirm.seasonTitle:Criar esta temporada?`,
+        message: $localize`:@@confirm.seasonMessage:Os rankings passam a somar por esta janela de datas.`,
+        details: [
+          { label: $localize`:@@field.seasonName:Nome da temporada`, value: value.name.trim() },
+          { label: $localize`:@@field.startsOn:Começa em`, value: value.startsOn },
+          {
+            label: $localize`:@@field.endsOn:Termina em`,
+            value: value.endsOn === '' ? $localize`:@@seasons.open:— em aberto` : value.endsOn,
+          },
+        ],
+        confirmLabel: $localize`:@@seasons.create:Criar temporada`,
+      })
+      .subscribe(() => this.persist(value.name.trim(), value.startsOn, value.endsOn));
+  }
+
+  private persist(name: string, startsOn: string, endsOn: string): void {
     this.busy.set(true);
     this.error.set(null);
 
     this.championships
-      .createSeason(
-        this.championshipId(),
-        value.name.trim(),
-        value.startsOn,
-        value.endsOn === '' ? null : value.endsOn,
-      )
+      .createSeason(this.championshipId(), name, startsOn, endsOn === '' ? null : endsOn)
       .subscribe({
         next: () => {
           this.busy.set(false);

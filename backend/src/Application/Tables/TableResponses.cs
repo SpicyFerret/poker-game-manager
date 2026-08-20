@@ -89,3 +89,34 @@ public sealed record TableDetailResponse
     /// <summary>The caller's own seat, when they are at this table.</summary>
     public Guid? MyPlayerId { get; init; }
 }
+
+/// <summary>
+/// The chips a stack would be made of. Shown before a buy-in or rebuy is
+/// confirmed, because the person tapping the button is also the person who has
+/// to physically count those chips out of the case.
+/// </summary>
+public sealed record StackPreviewResponse
+{
+    public IReadOnlyList<StackPreviewChip> Chips { get; init; } = [];
+
+    public decimal Money { get; init; }
+
+    public long Units { get; init; }
+
+    /// <summary>
+    /// Units the case cannot cover. Non-zero means the buy-in would be refused,
+    /// and the preview says so before anyone taps anything.
+    /// </summary>
+    public long ShortfallUnits { get; init; }
+
+    public bool IsPossible => ShortfallUnits == 0;
+}
+
+public sealed record StackPreviewChip
+{
+    public Guid DenominationId { get; init; }
+    public int FaceValue { get; init; }
+    public int EffectiveValue { get; init; }
+    public string? Colour { get; init; }
+    public int Quantity { get; init; }
+}

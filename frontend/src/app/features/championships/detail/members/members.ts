@@ -16,6 +16,7 @@ import {
 } from '../../../../core/championships/championship.models';
 import { ChampionshipsService } from '../../../../core/championships/championships.service';
 import { RoleLabelPipe } from '../../../../core/championships/role-label.pipe';
+import { Confirm } from '../../../../shared/confirm/confirm.service';
 import { AddMemberDialog, AddMemberResult } from './add-member-dialog';
 
 @Component({
@@ -35,6 +36,7 @@ import { AddMemberDialog, AddMemberResult } from './add-member-dialog';
 export class MembersTab implements OnInit {
   private readonly championships = inject(ChampionshipsService);
   private readonly dialog = inject(MatDialog);
+  private readonly confirm = inject(Confirm);
 
   readonly championshipId = input.required<string>();
   readonly callerRole = input.required<ChampionshipRole>();
@@ -81,30 +83,45 @@ export class MembersTab implements OnInit {
       .open(AddMemberDialog, { data: { assignableRoles: this.rolesICanAssign() } })
       .afterClosed()
       .subscribe((result: AddMemberResult | undefined) => {
-        if (!result) {
-          return;
+        if (result) {
+          this.confirmAdd(result);
         }
-
-        this.busy.set(true);
-        this.error.set(null);
-
-        this.championships.addMember(this.championshipId(), result.email, result.role).subscribe({
-          next: () => {
-            this.busy.set(false);
-            this.load();
-            this.changed.emit();
-          },
-          error: (err: unknown) => {
-            this.busy.set(false);
-            this.error.set(
-              describeError(
-                err,
-                $localize`:@@members.addFailed:Não foi possível adicionar. Confira se essa pessoa já tem conta.`,
-              ),
-            );
-          },
-        });
       });
+  }
+
+  private confirmAdd(result: AddMemberResult): void {
+    this.confirm
+      .ask({
+        title: $localize`:@@confirm.addMemberTitle:Adicionar ao campeonato?`,
+        details: [
+          { label: $localize`:@@field.email:E-mail`, value: result.email },
+          { label: $localize`:@@field.role:Cargo`, value: result.role },
+        ],
+        confirmLabel: $localize`:@@members.add:Adicionar`,
+      })
+      .subscribe(() => this.add(result));
+  }
+
+  private add(result: AddMemberResult): void {
+    this.busy.set(true);
+    this.error.set(null);
+
+    this.championships.addMember(this.championshipId(), result.email, result.role).subscribe({
+      next: () => {
+        this.busy.set(false);
+        this.load();
+        this.changed.emit();
+      },
+      error: (err: unknown) => {
+        this.busy.set(false);
+        this.error.set(
+          describeError(
+            err,
+            $localize`:@@members.addFailed:Não foi possível adicionar. Confira se essa pessoa já tem conta.`,
+          ),
+        );
+      },
+    });
   }
 
   protected changeRole(member: Member, role: ChampionshipRole): void {
@@ -112,6 +129,24 @@ export class MembersTab implements OnInit {
       return;
     }
 
+    this.confirm
+      .ask({
+        title: $localize`:@@confirm.roleTitle:Alterar o cargo?`,
+        details: [
+          { label: $localize`:@@confirm.roleWho:membro`, value: member.displayName },
+          { label: $localize`:@@confirm.roleNew:novo cargo`, value: role },
+        ],
+        confirmLabel: $localize`:@@common.save:Salvar`,
+      })
+      .subscribe({
+        next: () => this.applyRole(member, role),
+        // Reloads whether or not it was confirmed: dismissing would otherwise
+        // leave the select showing a role the server never accepted.
+        complete: () => this.load(),
+      });
+  }
+
+  private applyRole(member: Member, role: ChampionshipRole): void {
     this.busy.set(true);
     this.error.set(null);
 
@@ -126,13 +161,24 @@ export class MembersTab implements OnInit {
         this.error.set(
           describeError(err, $localize`:@@members.roleFailed:Não foi possível alterar o cargo.`),
         );
-        // Puts the select back to what the server still believes.
         this.load();
       },
     });
   }
 
   protected remove(member: Member): void {
+    this.confirm
+      .ask({
+        title: $localize`:@@confirm.removeMemberTitle:Remover do campeonato?`,
+        message: $localize`:@@confirm.removeMemberMessage:As mesas que essa pessoa já jogou continuam registradas.`,
+        details: [{ label: $localize`:@@confirm.roleWho:membro`, value: member.displayName }],
+        destructive: true,
+        confirmLabel: $localize`:@@members.remove:Remover`,
+      })
+      .subscribe(() => this.removeConfirmed(member));
+  }
+
+  private removeConfirmed(member: Member): void {
     this.busy.set(true);
     this.error.set(null);
 
