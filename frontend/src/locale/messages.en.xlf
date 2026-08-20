@@ -1279,14 +1279,6 @@
         <source>Saldo</source>
         <target>Balance</target>
       </trans-unit>
-      <trans-unit id="history.chipLeader" datatype="html">
-        <source>Chip leader</source>
-        <target>Chip leader</target>
-      </trans-unit>
-      <trans-unit id="history.chipLeaderChips" datatype="html">
-        <source>Fichas na mão</source>
-        <target>Chips held</target>
-      </trans-unit>
       <trans-unit id="history.moneyIn" datatype="html">
         <source>Total jogado</source>
         <target>Total played</target>

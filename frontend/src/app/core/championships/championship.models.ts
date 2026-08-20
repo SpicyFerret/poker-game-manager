@@ -136,14 +136,6 @@ export interface HistoryRow {
   winnerBalance: number;
   /** Buy-ins and rebuys across the whole table. */
   moneyIn: number;
-
-  /**
-   * Who finished holding the most chips. Not always the winner: balance takes
-   * off what you paid in, so three rebuys deep you can hold the biggest stack
-   * and still be down on the night.
-   */
-  chipLeaderDisplayName: string | null;
-  chipLeaderChips: number;
 }
 
 export interface StatementRow {

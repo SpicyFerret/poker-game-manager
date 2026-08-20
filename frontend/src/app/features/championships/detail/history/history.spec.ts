@@ -37,8 +37,8 @@ describe('HistoryTab', () => {
 
   afterEach(() => http.verify());
 
-  /** The case the card exists for: the biggest stack was not the best night. */
-  it('should show the chip leader as well as the winner', async () => {
+  /** The winner is by balance, which is what "won the night" has to mean. */
+  it('should show who won the night and by how much', async () => {
     await load([
       {
         tableId: 't1',
@@ -48,14 +48,11 @@ describe('HistoryTab', () => {
         winnerDisplayName: 'Amigo',
         winnerBalance: 20,
         moneyIn: 150,
-        chipLeaderDisplayName: 'Dono',
-        chipLeaderChips: 80,
       },
     ]);
 
     expect(text()).toContain('Amigo');
-    expect(text()).toContain('Dono');
-    expect(text()).toContain('80,00');
+    expect(text()).toContain('20,00');
   });
 
   it('should cope with a table nobody won', async () => {
@@ -68,8 +65,6 @@ describe('HistoryTab', () => {
         winnerDisplayName: null,
         winnerBalance: 0,
         moneyIn: 0,
-        chipLeaderDisplayName: null,
-        chipLeaderChips: 0,
       },
     ]);
 
