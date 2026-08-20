@@ -108,7 +108,14 @@ describe('chip unit helpers', () => {
 
 describe('counting helpers', () => {
   const lines = [
-    { denominationId: 'a', faceValue: 5, effectiveValue: 5, issued: 40, counted: 40, difference: 0 },
+    {
+      denominationId: 'a',
+      faceValue: 5,
+      effectiveValue: 5,
+      issued: 40,
+      counted: 40,
+      difference: 0,
+    },
     {
       denominationId: 'b',
       faceValue: 25,

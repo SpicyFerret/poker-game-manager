@@ -109,12 +109,13 @@ export class TablesService {
   }
 
   reconciliation(championshipId: string, tableId: string): Observable<Reconciliation> {
-    return this.http.get<Reconciliation>(
-      `${this.base(championshipId)}/${tableId}/reconciliation`,
-    );
+    return this.http.get<Reconciliation>(`${this.base(championshipId)}/${tableId}/reconciliation`);
   }
 
-  /** Works out who pays whom and what everyone scored. Only once, and only once the count balances. */
+  /**
+   * Works out who pays whom and where everyone finished. Once only, and only
+   * once the count balances against what left the case.
+   */
   settle(championshipId: string, tableId: string): Observable<void> {
     return this.http.post<void>(`${this.base(championshipId)}/${tableId}/settlement`, {});
   }
