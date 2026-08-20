@@ -168,7 +168,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
-          <context context-type="linenumber">97</context>
+          <context context-type="linenumber">93</context>
         </context-group>
       </trans-unit>
       <trans-unit id="field.password" datatype="html">
@@ -557,7 +557,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
-          <context context-type="linenumber">139</context>
+          <context context-type="linenumber">135</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.html</context>
@@ -822,12 +822,8 @@
           <context context-type="linenumber">12,13</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/championships/detail/members/members.html</context>
-          <context context-type="linenumber">39,40</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
-          <context context-type="linenumber">98</context>
+          <context context-type="linenumber">94</context>
         </context-group>
       </trans-unit>
       <trans-unit id="field.maxUses" datatype="html">
@@ -874,46 +870,42 @@
         <source>revogado</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.html</context>
-          <context context-type="linenumber">28,29</context>
+          <context context-type="linenumber">29,30</context>
         </context-group>
       </trans-unit>
       <trans-unit id="invites.usesUnlimited" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{ invite.uses }}"/> usos</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.html</context>
-          <context context-type="linenumber">30,31</context>
+          <context context-type="linenumber">31,32</context>
         </context-group>
       </trans-unit>
       <trans-unit id="invites.usesLimited" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{ invite.uses }}"/> de <x id="INTERPOLATION_1" equiv-text="{{ invite.maxUses }}"/> usos</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.html</context>
-          <context context-type="linenumber">32,33</context>
+          <context context-type="linenumber">34,35</context>
         </context-group>
       </trans-unit>
       <trans-unit id="invites.copied" datatype="html">
         <source>· copiado</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.html</context>
-          <context context-type="linenumber">35,37</context>
+          <context context-type="linenumber">38,40</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="common.copy" datatype="html">
-        <source> Copiar </source>
+      <trans-unit id="invites.copyFor" datatype="html">
+        <source>Copiar código <x id="INTERPOLATION" equiv-text="{{ invite.code }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.html</context>
-          <context context-type="linenumber">42,43</context>
+          <context context-type="linenumber">49,51</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="invites.revoke" datatype="html">
-        <source> Revogar </source>
+      <trans-unit id="invites.revokeFor" datatype="html">
+        <source>Revogar código <x id="INTERPOLATION" equiv-text="{{ invite.code }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.html</context>
-          <context context-type="linenumber">52,53</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.ts</context>
-          <context context-type="linenumber">118</context>
+          <context context-type="linenumber">67,69</context>
         </context-group>
       </trans-unit>
       <trans-unit id="invites.loadFailed" datatype="html">
@@ -972,6 +964,13 @@
           <context context-type="linenumber">116</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="invites.revoke" datatype="html">
+        <source>Revogar</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.ts</context>
+          <context context-type="linenumber">118</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="invites.revokeFailed" datatype="html">
         <source>Não foi possível revogar o convite.</source>
         <context-group purpose="location">
@@ -1012,99 +1011,109 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
-          <context context-type="linenumber">100</context>
+          <context context-type="linenumber">96</context>
         </context-group>
       </trans-unit>
       <trans-unit id="members.noPaymentHandle" datatype="html">
         <source>· sem chave de recebimento</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.html</context>
-          <context context-type="linenumber">26,28</context>
+          <context context-type="linenumber">28,31</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="members.remove" datatype="html">
-        <source> Remover </source>
+      <trans-unit id="members.changeRoleFor" datatype="html">
+        <source>Cargo de <x id="INTERPOLATION" equiv-text="{{ member.displayName }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.html</context>
-          <context context-type="linenumber">60,61</context>
+          <context context-type="linenumber">42,44</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="members.removeFor" datatype="html">
+        <source>Remover <x id="INTERPOLATION" equiv-text="{{ member.displayName }}"/></source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
-          <context context-type="linenumber">176</context>
+          <context context-type="sourcefile">src/app/features/championships/detail/members/members.html</context>
+          <context context-type="linenumber">67,69</context>
         </context-group>
       </trans-unit>
       <trans-unit id="members.loadFailed" datatype="html">
         <source>Não foi possível carregar os membros.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
-          <context context-type="linenumber">75</context>
+          <context context-type="linenumber">71</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.addMemberTitle" datatype="html">
         <source>Adicionar ao campeonato?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
-          <context context-type="linenumber">95</context>
+          <context context-type="linenumber">91</context>
         </context-group>
       </trans-unit>
       <trans-unit id="members.addFailed" datatype="html">
         <source>Não foi possível adicionar. Confira se essa pessoa já tem conta.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
-          <context context-type="linenumber">120</context>
+          <context context-type="linenumber">116</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.roleTitle" datatype="html">
         <source>Alterar o cargo?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
-          <context context-type="linenumber">134</context>
+          <context context-type="linenumber">130</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.roleWho" datatype="html">
         <source>membro</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
-          <context context-type="linenumber">136</context>
+          <context context-type="linenumber">132</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
-          <context context-type="linenumber">174</context>
+          <context context-type="linenumber">170</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.roleNew" datatype="html">
         <source>novo cargo</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
-          <context context-type="linenumber">137</context>
+          <context context-type="linenumber">133</context>
         </context-group>
       </trans-unit>
       <trans-unit id="members.roleFailed" datatype="html">
         <source>Não foi possível alterar o cargo.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
-          <context context-type="linenumber">162</context>
+          <context context-type="linenumber">158</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.removeMemberTitle" datatype="html">
         <source>Remover do campeonato?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
-          <context context-type="linenumber">172</context>
+          <context context-type="linenumber">168</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.removeMemberMessage" datatype="html">
         <source>As mesas que essa pessoa já jogou continuam registradas.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
-          <context context-type="linenumber">173</context>
+          <context context-type="linenumber">169</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="members.remove" datatype="html">
+        <source>Remover</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
+          <context context-type="linenumber">172</context>
         </context-group>
       </trans-unit>
       <trans-unit id="members.removeFailed" datatype="html">
         <source>Não foi possível remover o membro.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
-          <context context-type="linenumber">194</context>
+          <context context-type="linenumber">190</context>
         </context-group>
       </trans-unit>
       <trans-unit id="stats.heading" datatype="html">

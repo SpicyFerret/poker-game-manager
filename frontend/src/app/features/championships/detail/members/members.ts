@@ -2,9 +2,7 @@ import { Component, OnInit, inject, input, output, signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatSelectModule } from '@angular/material/select';
 
 import { describeError } from '../../../../core/api/problem-details';
 import {
@@ -21,15 +19,7 @@ import { AddMemberDialog, AddMemberResult } from './add-member-dialog';
 
 @Component({
   selector: 'app-members-tab',
-  imports: [
-    MatCardModule,
-    MatButtonModule,
-    MatMenuModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    RoleLabelPipe,
-  ],
+  imports: [MatCardModule, MatButtonModule, MatMenuModule, MatDialogModule, RoleLabelPipe],
   templateUrl: './members.html',
   styleUrl: './members.scss',
 })

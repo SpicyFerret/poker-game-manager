@@ -20,39 +20,62 @@
 
   @for (invite of invites(); track invite.id) {
     <mat-card class="invite" [class.invite--revoked]="invite.isRevoked">
-      <mat-card-header>
-        <mat-card-title class="code">{{ invite.code }}</mat-card-title>
-        <mat-card-subtitle>
-          {{ invite.role | roleLabel }} ·
-          @if (invite.isRevoked) {
-            <span class="alert" i18n="@@invites.revoked">revogado</span>
-          } @else if (invite.maxUses === null) {
-            <span i18n="@@invites.usesUnlimited">{{ invite.uses }} usos</span>
-          } @else {
-            <span i18n="@@invites.usesLimited">{{ invite.uses }} de {{ invite.maxUses }} usos</span>
-          }
-          @if (copied() === invite.code) {
-            <span i18n="@@invites.copied">· copiado</span>
-          }
-        </mat-card-subtitle>
-      </mat-card-header>
+      <div class="invite-row">
+        <mat-card-header class="invite-row__text">
+          <mat-card-title class="code">{{ invite.code }}</mat-card-title>
+          <mat-card-subtitle>
+            {{ invite.role | roleLabel }} ·
+            @if (invite.isRevoked) {
+              <span class="alert" i18n="@@invites.revoked">revogado</span>
+            } @else if (invite.maxUses === null) {
+              <span i18n="@@invites.usesUnlimited">{{ invite.uses }} usos</span>
+            } @else {
+              <span i18n="@@invites.usesLimited"
+                >{{ invite.uses }} de {{ invite.maxUses }} usos</span
+              >
+            }
+            @if (copied() === invite.code) {
+              <span i18n="@@invites.copied">· copiado</span>
+            }
+          </mat-card-subtitle>
+        </mat-card-header>
 
-      <mat-card-actions align="end">
-        <button matButton type="button" (click)="copy(invite.code)" i18n="@@common.copy">
-          Copiar
-        </button>
-        @if (!invite.isRevoked) {
+        <div class="invite-row__actions">
           <button
-            matButton
+            matIconButton
             type="button"
-            [disabled]="busy()"
-            (click)="revoke(invite)"
-            i18n="@@invites.revoke"
+            (click)="copy(invite.code)"
+            i18n-aria-label="@@invites.copyFor"
+            aria-label="Copiar código {{ invite.code }}"
           >
-            Revogar
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+              <path
+                fill="currentColor"
+                d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1Zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Zm0 16H8V7h11v14Z"
+              />
+            </svg>
           </button>
-        }
-      </mat-card-actions>
+
+          @if (!invite.isRevoked) {
+            <button
+              matIconButton
+              type="button"
+              class="invite-row__danger"
+              [disabled]="busy()"
+              (click)="revoke(invite)"
+              i18n-aria-label="@@invites.revokeFor"
+              aria-label="Revogar código {{ invite.code }}"
+            >
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+                <path
+                  fill="currentColor"
+                  d="M9 3a1 1 0 0 0-1 1v1H4v2h1v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7h1V5h-4V4a1 1 0 0 0-1-1H9Zm-1 6h2v9H8V9Zm4 0h2v9h-2V9Z"
+                />
+              </svg>
+            </button>
+          }
+        </div>
+      </div>
     </mat-card>
   }
 </section>

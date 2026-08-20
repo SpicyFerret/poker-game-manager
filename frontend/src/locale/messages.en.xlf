@@ -310,10 +310,6 @@
         <source>· copiado</source>
         <target>&#183; copied</target>
       </trans-unit>
-      <trans-unit id="common.copy" datatype="html">
-        <source> Copiar </source>
-        <target> Copy </target>
-      </trans-unit>
       <trans-unit id="invites.revoke" datatype="html">
         <source> Revogar </source>
         <target> Revoke </target>
@@ -1446,6 +1442,22 @@
       <trans-unit id="championship.rankingsToggle" datatype="html">
         <source>Ranking do campeonato</source>
         <target>Championship ranking</target>
+      </trans-unit>
+      <trans-unit id="invites.copyFor" datatype="html">
+        <source>Copiar código <x id="INTERPOLATION" equiv-text="{{ invite.code }}"/></source>
+        <target>Copy code <x id="INTERPOLATION" equiv-text="{{ invite.code }}"/></target>
+      </trans-unit>
+      <trans-unit id="members.changeRoleFor" datatype="html">
+        <source>Cargo de <x id="INTERPOLATION" equiv-text="{{ member.displayName }}"/></source>
+        <target>Role of <x id="INTERPOLATION" equiv-text="{{ member.displayName }}"/></target>
+      </trans-unit>
+      <trans-unit id="members.removeFor" datatype="html">
+        <source>Remover <x id="INTERPOLATION" equiv-text="{{ member.displayName }}"/></source>
+        <target>Remove <x id="INTERPOLATION" equiv-text="{{ member.displayName }}"/></target>
+      </trans-unit>
+      <trans-unit id="invites.revokeFor" datatype="html">
+        <source>Revogar código <x id="INTERPOLATION" equiv-text="{{ invite.code }}"/></source>
+        <target>Revoke code <x id="INTERPOLATION" equiv-text="{{ invite.code }}"/></target>
       </trans-unit>
     </body>
   </file>
