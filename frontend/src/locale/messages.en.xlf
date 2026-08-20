@@ -959,6 +959,294 @@
         <source>Não foi possível excluir a mesa.</source>
         <target>The table could not be deleted.</target>
       </trans-unit>
+      <trans-unit id="count.heading" datatype="html">
+        <source>Contagem de <x id="INTERPOLATION" equiv-text="{{ data.playerName }}"/></source>
+        <target>Count for <x id="INTERPOLATION" equiv-text="{{ data.playerName }}"/></target>
+      </trans-unit>
+      <trans-unit id="count.explanation" datatype="html">
+        <source> Conte as fichas que sobraram na sua frente e informe quantas de cada. Deixe em branco o que você não tem. </source>
+        <target> Count the chips left in front of you and enter how many of each. Leave blank whatever you do not have. </target>
+      </trans-unit>
+      <trans-unit id="count.chipWorth" datatype="html">
+        <source>Ficha <x id="INTERPOLATION" equiv-text="{{ chip.faceValue }}"/> (vale <x id="INTERPOLATION_1" equiv-text="{{ chip.effectiveValue }}"/>)</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ chip.faceValue }}"/> chip (worth <x id="INTERPOLATION_1" equiv-text="{{ chip.effectiveValue }}"/>)</target>
+      </trans-unit>
+      <trans-unit id="count.chip" datatype="html">
+        <source>Ficha <x id="INTERPOLATION" equiv-text="{{ chip.faceValue }}"/></source>
+        <target><x id="INTERPOLATION" equiv-text="{{ chip.faceValue }}"/> chip</target>
+      </trans-unit>
+      <trans-unit id="count.totalUnits" datatype="html">
+        <source>Total em fichas</source>
+        <target>Total in chips</target>
+      </trans-unit>
+      <trans-unit id="count.totalMoney" datatype="html">
+        <source>Equivale a</source>
+        <target>Comes to</target>
+      </trans-unit>
+      <trans-unit id="count.confirm" datatype="html">
+        <source> Informar contagem </source>
+        <target> Report count </target>
+      </trans-unit>
+      <trans-unit id="table.startCounting" datatype="html">
+        <source> Encerrar e contar </source>
+        <target> End play and count </target>
+      </trans-unit>
+      <trans-unit id="table.settle" datatype="html">
+        <source> Fechar a conta </source>
+        <target> Settle up </target>
+      </trans-unit>
+      <trans-unit id="counting.heading" datatype="html">
+        <source>Conferência</source>
+        <target>Reconciliation</target>
+      </trans-unit>
+      <trans-unit id="counting.balances" datatype="html">
+        <source>Bate com o que saiu da maleta.</source>
+        <target>Matches what left the case.</target>
+      </trans-unit>
+      <trans-unit id="counting.waiting" datatype="html">
+        <source>Faltam <x id="INTERPOLATION" equiv-text="{{ reconciliation.awaitingCountFrom.length }}"/> contagem(ns).</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ reconciliation.awaitingCountFrom.length }}"/> count(s) still to come.</target>
+      </trans-unit>
+      <trans-unit id="counting.doesNotBalance" datatype="html">
+        <source>A contagem não bate com o que saiu da maleta.</source>
+        <target>The count does not match what left the case.</target>
+      </trans-unit>
+      <trans-unit id="counting.awaitingFrom" datatype="html">
+        <source>Ainda não informaram:</source>
+        <target>Still to report:</target>
+      </trans-unit>
+      <trans-unit id="counting.offBy" datatype="html">
+        <source>Fichas que não fecham:</source>
+        <target>Chips that do not tally:</target>
+      </trans-unit>
+      <trans-unit id="counting.chipLine" datatype="html">
+        <source>Ficha <x id="INTERPOLATION" equiv-text="{{ line.faceValue }}"/></source>
+        <target><x id="INTERPOLATION" equiv-text="{{ line.faceValue }}"/> chip</target>
+      </trans-unit>
+      <trans-unit id="counting.difference" datatype="html">
+        <source> <x id="INTERPOLATION" equiv-text="{{ line.counted }}"/> de <x id="INTERPOLATION_1" equiv-text="{{ line.issued }}"/> </source>
+        <target> <x id="INTERPOLATION" equiv-text="{{ line.counted }}"/> of <x id="INTERPOLATION_1" equiv-text="{{ line.issued }}"/> </target>
+      </trans-unit>
+      <trans-unit id="counting.allTally" datatype="html">
+        <source>Todas as fichas fecham.</source>
+        <target>Every chip tallies.</target>
+      </trans-unit>
+      <trans-unit id="counting.counted" datatype="html">
+        <source>contagem informada</source>
+        <target>count reported</target>
+      </trans-unit>
+      <trans-unit id="counting.notCounted" datatype="html">
+        <source>ainda não contou</source>
+        <target>has not counted yet</target>
+      </trans-unit>
+      <trans-unit id="counting.report" datatype="html">
+        <source> Informar contagem </source>
+        <target> Report count </target>
+      </trans-unit>
+      <trans-unit id="settlement.heading" datatype="html">
+        <source>Quem paga quem</source>
+        <target>Who pays whom</target>
+      </trans-unit>
+      <trans-unit id="settlement.transferCount" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ settlement.transfers.length }}"/> transferência(s)</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ settlement.transfers.length }}"/> transfer(s)</target>
+      </trans-unit>
+      <trans-unit id="settlement.copied" datatype="html">
+        <source>copiado</source>
+        <target>copied</target>
+      </trans-unit>
+      <trans-unit id="settlement.noHandle" datatype="html">
+        <source> sem chave cadastrada — combine com <x id="INTERPOLATION" equiv-text="{{ transfer.toDisplayName }}"/> </source>
+        <target> no payment key on file &#8212; sort it out with <x id="INTERPOLATION" equiv-text="{{ transfer.toDisplayName }}"/> </target>
+      </trans-unit>
+      <trans-unit id="settlement.nothingToPay" datatype="html">
+        <source>Ninguém deve nada a ninguém.</source>
+        <target>Nobody owes anybody anything.</target>
+      </trans-unit>
+      <trans-unit id="settlement.resultsHeading" datatype="html">
+        <source>Resultado</source>
+        <target>Result</target>
+      </trans-unit>
+      <trans-unit id="settlement.points" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ result.points }}"/> pts</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ result.points }}"/> pts</target>
+      </trans-unit>
+      <trans-unit id="tableSection.counting" datatype="html">
+        <source>Contagem</source>
+        <target>Counting</target>
+      </trans-unit>
+      <trans-unit id="tableSection.settlement" datatype="html">
+        <source>Acerto</source>
+        <target>Settlement</target>
+      </trans-unit>
+      <trans-unit id="confirm.countingTitle" datatype="html">
+        <source>Encerrar o jogo e contar?</source>
+        <target>End play and start counting?</target>
+      </trans-unit>
+      <trans-unit id="confirm.countingMessage" datatype="html">
+        <source>Ninguém mais compra fichas. Cada jogador conta o que tem na frente e informa aqui.</source>
+        <target>Nobody buys any more chips. Each player counts what is in front of them and reports it here.</target>
+      </trans-unit>
+      <trans-unit id="table.countingFailed" datatype="html">
+        <source>Não foi possível encerrar o jogo.</source>
+        <target>Play could not be ended.</target>
+      </trans-unit>
+      <trans-unit id="confirm.countTitle" datatype="html">
+        <source>Confirmar a contagem?</source>
+        <target>Confirm this count?</target>
+      </trans-unit>
+      <trans-unit id="confirm.countMessage" datatype="html">
+        <source>É com isto que o acerto vai ser calculado. Dá para corrigir enquanto a mesa não fecha.</source>
+        <target>This is what the settlement will be worked out from. It can be corrected until the table closes.</target>
+      </trans-unit>
+      <trans-unit id="confirm.countEmptyMessage" datatype="html">
+        <source>Você está informando que não sobrou nenhuma ficha.</source>
+        <target>You are reporting that you have no chips left.</target>
+      </trans-unit>
+      <trans-unit id="table.countFailed" datatype="html">
+        <source>Não foi possível informar a contagem.</source>
+        <target>The count could not be reported.</target>
+      </trans-unit>
+      <trans-unit id="confirm.settleTitle" datatype="html">
+        <source>Fechar a conta da mesa?</source>
+        <target>Settle the table?</target>
+      </trans-unit>
+      <trans-unit id="confirm.settleMessage" datatype="html">
+        <source>Calcula quem paga quem, com o menor número de Pix, e a posição de cada um. É feito uma vez só.</source>
+        <target>Works out who pays whom, in as few payments as possible, and where everyone finished. Done once only.</target>
+      </trans-unit>
+      <trans-unit id="confirm.settleWaiting" datatype="html">
+        <source>Ainda falta gente informar a contagem.</source>
+        <target>Some people still have to report their count.</target>
+      </trans-unit>
+      <trans-unit id="confirm.settleUnbalanced" datatype="html">
+        <source>A contagem não bate com o que saiu da maleta.</source>
+        <target>The count does not match what left the case.</target>
+      </trans-unit>
+      <trans-unit id="table.settleFailed" datatype="html">
+        <source>Não foi possível fechar a conta.</source>
+        <target>The table could not be settled.</target>
+      </trans-unit>
+      <trans-unit id="blinds.editHeading" datatype="html">
+        <source>Estrutura de blinds</source>
+        <target>Blind structure</target>
+      </trans-unit>
+      <trans-unit id="blinds.editExplanation" datatype="html">
+        <source> Os valores são em fichas. Salvar sem nenhum nível desliga o cronômetro da mesa. </source>
+        <target> The values are in chips. Saving with no levels turns the table&apos;s clock off. </target>
+      </trans-unit>
+      <trans-unit id="blinds.smallBlind" datatype="html">
+        <source>SB</source>
+        <target>SB</target>
+      </trans-unit>
+      <trans-unit id="blinds.bigBlind" datatype="html">
+        <source>BB</source>
+        <target>BB</target>
+      </trans-unit>
+      <trans-unit id="blinds.ante" datatype="html">
+        <source>Ante</source>
+        <target>Ante</target>
+      </trans-unit>
+      <trans-unit id="blinds.minutes" datatype="html">
+        <source>Min</source>
+        <target>Min</target>
+      </trans-unit>
+      <trans-unit id="blinds.removeLevel" datatype="html">
+        <source>Remover nível</source>
+        <target>Remove level</target>
+      </trans-unit>
+      <trans-unit id="blinds.noLevels" datatype="html">
+        <source>Sem níveis. A mesa fica sem cronômetro.</source>
+        <target>No levels. The table runs without a clock.</target>
+      </trans-unit>
+      <trans-unit id="blinds.addLevel" datatype="html">
+        <source> Adicionar nível </source>
+        <target> Add level </target>
+      </trans-unit>
+      <trans-unit id="blinds.suggest" datatype="html">
+        <source> Sugerir escada </source>
+        <target> Suggest a ladder </target>
+      </trans-unit>
+      <trans-unit id="blinds.untimed" datatype="html">
+        <source>sem tempo</source>
+        <target>untimed</target>
+      </trans-unit>
+      <trans-unit id="blinds.level" datatype="html">
+        <source>Nível <x id="INTERPOLATION" equiv-text="{{ level.order }}"/></source>
+        <target>Level <x id="INTERPOLATION" equiv-text="{{ level.order }}"/></target>
+      </trans-unit>
+      <trans-unit id="blinds.paused" datatype="html">
+        <source>pausado</source>
+        <target>paused</target>
+      </trans-unit>
+      <trans-unit id="blinds.anteOf" datatype="html">
+        <source>ante <x id="INTERPOLATION" equiv-text="{{ level.ante }}"/></source>
+        <target>ante <x id="INTERPOLATION" equiv-text="{{ level.ante }}"/></target>
+      </trans-unit>
+      <trans-unit id="blinds.next" datatype="html">
+        <source> Próximo: <x id="INTERPOLATION" equiv-text="{{ next.smallBlind }}"/> / <x id="INTERPOLATION_1" equiv-text="{{ next.bigBlind }}"/> </source>
+        <target> Next: <x id="INTERPOLATION" equiv-text="{{ next.smallBlind }}"/> / <x id="INTERPOLATION_1" equiv-text="{{ next.bigBlind }}"/> </target>
+      </trans-unit>
+      <trans-unit id="blinds.lastLevel" datatype="html">
+        <source>Último nível.</source>
+        <target>Last level.</target>
+      </trans-unit>
+      <trans-unit id="blinds.notStarted" datatype="html">
+        <source> A estrutura está pronta. O cronômetro começa quando o gerente iniciar. </source>
+        <target> The structure is ready. The clock starts when the manager starts it. </target>
+      </trans-unit>
+      <trans-unit id="blinds.none" datatype="html">
+        <source>Esta mesa não tem estrutura de blinds.</source>
+        <target>This table has no blind structure.</target>
+      </trans-unit>
+      <trans-unit id="blinds.pause" datatype="html">
+        <source> Pausar </source>
+        <target> Pause </target>
+      </trans-unit>
+      <trans-unit id="blinds.start" datatype="html">
+        <source> Iniciar </source>
+        <target> Start </target>
+      </trans-unit>
+      <trans-unit id="blinds.previous" datatype="html">
+        <source> Nível anterior </source>
+        <target> Previous level </target>
+      </trans-unit>
+      <trans-unit id="blinds.nextLevel" datatype="html">
+        <source> Próximo nível </source>
+        <target> Next level </target>
+      </trans-unit>
+      <trans-unit id="blinds.edit" datatype="html">
+        <source> Editar estrutura </source>
+        <target> Edit structure </target>
+      </trans-unit>
+      <trans-unit id="tableSection.blinds" datatype="html">
+        <source>Blinds</source>
+        <target>Blinds</target>
+      </trans-unit>
+      <trans-unit id="blinds.clockFailed" datatype="html">
+        <source>Não foi possível controlar o cronômetro.</source>
+        <target>The clock could not be controlled.</target>
+      </trans-unit>
+      <trans-unit id="confirm.blindsTitle" datatype="html">
+        <source>Salvar a estrutura de blinds?</source>
+        <target>Save this blind structure?</target>
+      </trans-unit>
+      <trans-unit id="confirm.blindsOffTitle" datatype="html">
+        <source>Desligar o cronômetro?</source>
+        <target>Turn the clock off?</target>
+      </trans-unit>
+      <trans-unit id="confirm.blindsMessage" datatype="html">
+        <source>Substitui a estrutura atual e reinicia o cronômetro no primeiro nível.</source>
+        <target>Replaces the current structure and restarts the clock at the first level.</target>
+      </trans-unit>
+      <trans-unit id="confirm.blindsOffMessage" datatype="html">
+        <source>A mesa fica sem níveis e sem cronômetro.</source>
+        <target>The table is left with no levels and no clock.</target>
+      </trans-unit>
+      <trans-unit id="blinds.saveFailed" datatype="html">
+        <source>Não foi possível salvar a estrutura de blinds.</source>
+        <target>The blind structure could not be saved.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

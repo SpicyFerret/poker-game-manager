@@ -1,0 +1,98 @@
+<h2 mat-dialog-title i18n="@@blinds.editHeading">Estrutura de blinds</h2>
+
+<mat-dialog-content>
+  <p i18n="@@blinds.editExplanation">
+    Os valores são em fichas. Salvar sem nenhum nível desliga o cronômetro da mesa.
+  </p>
+
+  <div class="levels">
+    @for (row of rows(); track $index) {
+      <div class="level">
+        <span class="level__order">{{ $index + 1 }}</span>
+
+        <mat-form-field class="level__field">
+          <mat-label i18n="@@blinds.smallBlind">SB</mat-label>
+          <input
+            matInput
+            type="number"
+            inputmode="numeric"
+            min="1"
+            [ngModel]="row.smallBlind"
+            (ngModelChange)="set($index, 'smallBlind', $event)"
+          />
+        </mat-form-field>
+
+        <mat-form-field class="level__field">
+          <mat-label i18n="@@blinds.bigBlind">BB</mat-label>
+          <input
+            matInput
+            type="number"
+            inputmode="numeric"
+            min="1"
+            [ngModel]="row.bigBlind"
+            (ngModelChange)="set($index, 'bigBlind', $event)"
+          />
+        </mat-form-field>
+
+        <mat-form-field class="level__field">
+          <mat-label i18n="@@blinds.ante">Ante</mat-label>
+          <input
+            matInput
+            type="number"
+            inputmode="numeric"
+            min="0"
+            [ngModel]="row.ante"
+            (ngModelChange)="set($index, 'ante', $event)"
+          />
+        </mat-form-field>
+
+        <mat-form-field class="level__field">
+          <mat-label i18n="@@blinds.minutes">Min</mat-label>
+          <input
+            matInput
+            type="number"
+            inputmode="numeric"
+            min="0"
+            [ngModel]="row.minutes"
+            (ngModelChange)="set($index, 'minutes', $event)"
+          />
+        </mat-form-field>
+
+        <button
+          matIconButton
+          type="button"
+          class="level__remove"
+          (click)="remove($index)"
+          i18n-aria-label="@@blinds.removeLevel"
+          aria-label="Remover nível"
+        >
+          &times;
+        </button>
+      </div>
+    } @empty {
+      <p class="muted" i18n="@@blinds.noLevels">Sem níveis. A mesa fica sem cronômetro.</p>
+    }
+  </div>
+
+  <div class="ladder-actions">
+    <button matButton type="button" (click)="add()" i18n="@@blinds.addLevel">
+      Adicionar nível
+    </button>
+    <button matButton type="button" (click)="suggest()" i18n="@@blinds.suggest">
+      Sugerir escada
+    </button>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button matButton mat-dialog-close type="button" i18n="@@common.cancel">Cancelar</button>
+  <button
+    matButton="filled"
+    type="button"
+    [disabled]="!isValid()"
+    (click)="save()"
+    i18n="@@common.save"
+  >
+    Salvar
+  </button>
+</mat-dialog-actions>

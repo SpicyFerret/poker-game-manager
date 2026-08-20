@@ -1,3 +1,4 @@
+import { DecimalPipe } from '@angular/common';
 import { DestroyRef, Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,10 +10,20 @@ import { Observable, Subject, merge, switchMap, timer } from 'rxjs';
 
 import { describeError } from '../../../core/api/problem-details';
 import {
+  BlindLevel,
+  BlindLevelInput,
+  Blinds,
+  ChipCountEntry,
+  ClockAction,
+  Reconciliation,
+  Settlement,
   TableDetail,
   TablePlayer,
+  formatDuration,
   issuedUnits,
+  offBy,
   remainingUnits,
+  secondsLeft,
   stacksLeft,
 } from '../../../core/tables/table.models';
 import {
@@ -24,7 +35,9 @@ import { ChipColour, chipColour } from '../../../shared/chip-colours';
 import { ConfirmDetail } from '../../../shared/confirm/confirm-dialog';
 import { Confirm } from '../../../shared/confirm/confirm.service';
 import { NavSection, SectionNav } from '../../../shared/section-nav/section-nav';
+import { BlindLevelsDialog } from './blind-levels-dialog';
 import { ChipTradeDialog, ChipTradeResult } from './chip-trade-dialog';
+import { CountDialog } from './count-dialog';
 
 /**
  * Refresh interval while a table is live. Deliberately unhurried: the events
@@ -33,9 +46,17 @@ import { ChipTradeDialog, ChipTradeResult } from './chip-trade-dialog';
  */
 const POLL_MS = 5000;
 
+/**
+ * How often the clock face redraws. Local only — it re-reads the last sample the
+ * server sent rather than asking again, so a smooth second hand costs nothing on
+ * the network.
+ */
+const TICK_MS = 1000;
+
 @Component({
   selector: 'app-live-table',
   imports: [
+    DecimalPipe,
     MatCardModule,
     MatButtonModule,
     MatProgressBarModule,
@@ -65,12 +86,52 @@ export class LiveTable implements OnInit {
   protected readonly busy = signal(false);
   protected readonly loading = signal(true);
 
+  protected readonly copiedHandle = signal<string | null>(null);
+
+  protected readonly blinds = signal<Blinds | null>(null);
+
+  /**
+   * When the clock sample in `blinds` reached this phone. The remaining time is
+   * worked out from the sample plus however long ago it landed, so it keeps
+   * ticking between polls without drifting away from everyone else's screen.
+   */
+  private sampledAt = 0;
+
+  /** Drives the redraw. Its value is the local time, not anything from the server. */
+  private readonly tick = signal(0);
+
+  protected readonly reconciliation = signal<Reconciliation | null>(null);
+  protected readonly settlement = signal<Settlement | null>(null);
+
   protected readonly section = signal('players');
 
-  protected readonly sections = computed<NavSection[]>(() => [
-    { id: 'players', label: $localize`:@@tableSection.players:Jogadores` },
-    { id: 'case', label: $localize`:@@tableSection.case:Maleta` },
-  ]);
+  protected readonly sections = computed<NavSection[]>(() => {
+    const status = this.table()?.status;
+
+    const sections: NavSection[] = [
+      { id: 'players', label: $localize`:@@tableSection.players:Jogadores` },
+      { id: 'case', label: $localize`:@@tableSection.case:Maleta` },
+    ];
+
+    // Only where there is something to show or set up: a table with no ladder
+    // and nobody able to add one has no use for the section.
+    if (this.blinds()?.levels.length || this.table()?.canManage) {
+      sections.push({ id: 'blinds', label: $localize`:@@tableSection.blinds:Blinds` });
+    }
+
+    if (status === 'Counting') {
+      sections.push({ id: 'counting', label: $localize`:@@tableSection.counting:Contagem` });
+    }
+
+    if (status === 'Settled' || status === 'Closed') {
+      sections.push({ id: 'settlement', label: $localize`:@@tableSection.settlement:Acerto` });
+    }
+
+    return sections;
+  });
+
+  /** The chips whose count does not tally — the only ones worth recounting. */
+  protected readonly offBy = computed(() => offBy(this.reconciliation()?.lines ?? []));
 
   protected readonly remainingUnits = computed(() => {
     const table = this.table();
@@ -91,12 +152,77 @@ export class LiveTable implements OnInit {
     () => this.table()?.players.filter((p) => p.status === 'Playing') ?? [],
   );
 
+  protected readonly currentLevel = computed<BlindLevel | undefined>(() => {
+    const blinds = this.blinds();
+
+    return blinds?.levels.find((level) => level.order === blinds.clock?.currentLevel);
+  });
+
+  protected readonly nextLevel = computed<BlindLevel | undefined>(() => {
+    const blinds = this.blinds();
+
+    return blinds?.levels.find((level) => level.order === (blinds.clock?.currentLevel ?? 0) + 1);
+  });
+
+  protected readonly remaining = computed(() => {
+    const blinds = this.blinds();
+
+    if (!blinds?.clock) {
+      return 0;
+    }
+
+    // Reading the tick is what subscribes this to the redraw.
+    const now = this.tick() || Date.now();
+
+    return secondsLeft(this.currentLevel(), blinds.clock, (now - this.sampledAt) / 1000);
+  });
+
+  protected readonly clockFace = computed(() => formatDuration(this.remaining()));
+
+  /** A level with no duration runs until someone moves it on, so there is nothing to count. */
+  protected isTimed(): boolean {
+    return (this.currentLevel()?.durationSeconds ?? 0) > 0;
+  }
+
+  protected isOver(): boolean {
+    return this.isTimed() && this.remaining() === 0;
+  }
+
+  /**
+   * Everyone who owes a count: anyone who was ever dealt in, including whoever
+   * has already gone home. Their chips left the case just the same, and the
+   * table cannot balance until those are accounted for.
+   */
+  protected readonly countable = computed(
+    () => this.table()?.players.filter((p) => p.status !== 'Standby') ?? [],
+  );
+
+  protected hasCounted(player: TablePlayer): boolean {
+    const reconciliation = this.reconciliation();
+
+    return (
+      reconciliation !== null &&
+      !reconciliation.awaitingCountFrom.some((p) => p.tablePlayerId === player.tablePlayerId)
+    );
+  }
+
+  /** Your own stack, or anyone's if you run the table. Mirrors the API rule. */
+  protected canCountFor(player: TablePlayer): boolean {
+    const table = this.table();
+
+    return table !== null && (table.canManage || table.myPlayerId === player.tablePlayerId);
+  }
+
   /** Resolves a stored colour token, or null for anything unrecognised. */
   protected colourOf(token: string | null | undefined): ChipColour | null {
     return chipColour(token);
   }
 
   ngOnInit(): void {
+    timer(0, TICK_MS)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.tick.set(Date.now()));
+
     merge(timer(0, POLL_MS), this.refreshNow)
       .pipe(
         // switchMap, so a slow response is dropped rather than queued behind the
@@ -109,6 +235,9 @@ export class LiveTable implements OnInit {
           this.table.set(table);
           this.loading.set(false);
           this.error.set(null);
+          this.refreshClosing(table);
+          this.refreshBlinds();
+          this.followStatus();
         },
         error: (err: unknown) => {
           this.loading.set(false);
@@ -324,6 +453,219 @@ export class LiveTable implements OnInit {
             );
           });
       });
+  }
+
+  /**
+   * Pulls whichever closing view the table has reached. Kept on the same tick as
+   * the table itself so the panel and the status can never disagree on screen.
+   */
+  private refreshClosing(table: TableDetail): void {
+    if (table.status === 'Counting') {
+      this.tables
+        .reconciliation(this.championshipId(), this.tableId())
+        .subscribe({ next: (value) => this.reconciliation.set(value) });
+
+      return;
+    }
+
+    if (table.status === 'Settled' || table.status === 'Closed') {
+      this.tables
+        .settlement(this.championshipId(), this.tableId())
+        .subscribe({ next: (value) => this.settlement.set(value) });
+    }
+  }
+
+  private refreshBlinds(): void {
+    this.tables.blinds(this.championshipId(), this.tableId()).subscribe({
+      next: (blinds) => {
+        this.blinds.set(blinds);
+        this.sampledAt = Date.now();
+      },
+    });
+  }
+
+  protected controlClock(action: ClockAction): void {
+    // Running the clock is banal and happens mid-hand: no confirmation. Getting
+    // it wrong costs one more tap, and asking every time would be unbearable.
+    this.run(this.tables.controlClock(this.championshipId(), this.tableId(), action), {
+      fallback: $localize`:@@blinds.clockFailed:Não foi possível controlar o cronômetro.`,
+    });
+  }
+
+  protected editLevels(): void {
+    const table = this.table();
+
+    if (!table) {
+      return;
+    }
+
+    this.dialog
+      .open(BlindLevelsDialog, {
+        data: {
+          levels: this.blinds()?.levels ?? [],
+          smallestChip: this.smallestChip(table),
+        },
+      })
+      .afterClosed()
+      .subscribe((levels: BlindLevelInput[] | undefined) => {
+        if (levels) {
+          this.confirmLevels(levels);
+        }
+      });
+  }
+
+  private confirmLevels(levels: readonly BlindLevelInput[]): void {
+    this.confirm
+      .ask({
+        title: levels.length
+          ? $localize`:@@confirm.blindsTitle:Salvar a estrutura de blinds?`
+          : $localize`:@@confirm.blindsOffTitle:Desligar o cronômetro?`,
+        message: levels.length
+          ? $localize`:@@confirm.blindsMessage:Substitui a estrutura atual e reinicia o cronômetro no primeiro nível.`
+          : $localize`:@@confirm.blindsOffMessage:A mesa fica sem níveis e sem cronômetro.`,
+        destructive: levels.length === 0,
+        confirmLabel: $localize`:@@common.save:Salvar`,
+      })
+      .subscribe(() => {
+        this.run(this.tables.setBlindLevels(this.championshipId(), this.tableId(), levels), {
+          fallback: $localize`:@@blinds.saveFailed:Não foi possível salvar a estrutura de blinds.`,
+        });
+      });
+  }
+
+  /**
+   * The least anyone can post. Taken from the case rather than guessed: a blind
+   * below the smallest chip cannot be paid.
+   */
+  private smallestChip(table: TableDetail): number {
+    return table.stock.reduce(
+      (smallest, chip) => Math.min(smallest, chip.effectiveValue),
+      table.stock[0]?.effectiveValue ?? 1,
+    );
+  }
+
+  /**
+   * Carries everyone forward when the table moves on. Whoever is looking at the
+   * players list when counting starts wants the counting panel, and nobody
+   * should have to be told to tap a tab that only just appeared.
+   */
+  private followStatus(): void {
+    const available = this.sections().map((s) => s.id);
+
+    if (!available.includes(this.section())) {
+      this.section.set(available[available.length - 1]);
+    }
+  }
+
+  protected startCounting(): void {
+    this.confirm
+      .ask({
+        title: $localize`:@@confirm.countingTitle:Encerrar o jogo e contar?`,
+        message: $localize`:@@confirm.countingMessage:Ninguém mais compra fichas. Cada jogador conta o que tem na frente e informa aqui.`,
+        confirmLabel: $localize`:@@table.startCounting:Encerrar e contar`,
+      })
+      .subscribe(() => {
+        this.run(this.tables.startCounting(this.championshipId(), this.tableId()), {
+          fallback: $localize`:@@table.countingFailed:Não foi possível encerrar o jogo.`,
+        });
+      });
+  }
+
+  /** Own stack by default; a manager can count for whoever has already gone home. */
+  protected reportCount(player: TablePlayer): void {
+    const table = this.table();
+
+    if (!table) {
+      return;
+    }
+
+    this.dialog
+      .open(CountDialog, {
+        data: {
+          playerName: player.displayName,
+          chips: table.stock,
+          moneyPerUnit: table.moneyPerUnit,
+        },
+      })
+      .afterClosed()
+      .subscribe((counts: ChipCountEntry[] | undefined) => {
+        if (counts) {
+          this.confirmCount(player, counts, table);
+        }
+      });
+  }
+
+  private confirmCount(
+    player: TablePlayer,
+    counts: readonly ChipCountEntry[],
+    table: TableDetail,
+  ): void {
+    const held = counts.filter((c) => c.quantity > 0);
+
+    const details: ConfirmDetail[] = held.map((count) => {
+      const chip = table.stock.find((s) => s.denominationId === count.denominationId);
+      const colour = this.colourOf(chip?.colour);
+
+      return {
+        label: $localize`:@@confirm.chipOf:ficha ${chip?.faceValue ?? ''}:VALUE:`,
+        value: `${count.quantity}x`,
+        swatch: colour?.swatch,
+        ink: colour?.ink,
+      };
+    });
+
+    this.confirm
+      .ask({
+        title: $localize`:@@confirm.countTitle:Confirmar a contagem?`,
+        message: held.length
+          ? $localize`:@@confirm.countMessage:É com isto que o acerto vai ser calculado. Dá para corrigir enquanto a mesa não fecha.`
+          : $localize`:@@confirm.countEmptyMessage:Você está informando que não sobrou nenhuma ficha.`,
+        details,
+        confirmLabel: $localize`:@@count.confirm:Informar contagem`,
+      })
+      .subscribe(() => {
+        this.run(
+          this.tables.reportCount(
+            this.championshipId(),
+            this.tableId(),
+            player.tablePlayerId,
+            counts,
+          ),
+          { fallback: $localize`:@@table.countFailed:Não foi possível informar a contagem.` },
+        );
+      });
+  }
+
+  protected settle(): void {
+    const reconciliation = this.reconciliation();
+
+    this.confirm
+      .ask({
+        title: $localize`:@@confirm.settleTitle:Fechar a conta da mesa?`,
+        message: $localize`:@@confirm.settleMessage:Calcula quem paga quem, com o menor número de Pix, e a posição de cada um. É feito uma vez só.`,
+        // The API refuses this anyway; saying which half is missing saves the
+        // manager tapping a button that was never going to work.
+        blockedReason: reconciliation?.canSettle
+          ? undefined
+          : !reconciliation?.everyoneHasCounted
+            ? $localize`:@@confirm.settleWaiting:Ainda falta gente informar a contagem.`
+            : $localize`:@@confirm.settleUnbalanced:A contagem não bate com o que saiu da maleta.`,
+        confirmLabel: $localize`:@@table.settle:Fechar a conta`,
+      })
+      .subscribe(() => {
+        this.run(this.tables.settle(this.championshipId(), this.tableId()), {
+          fallback: $localize`:@@table.settleFailed:Não foi possível fechar a conta.`,
+        });
+      });
+  }
+
+  /** Inert, so no confirmation: the key is already on screen. */
+  protected copyHandle(handle: string): void {
+    // Best effort: clipboard access needs a secure context and can be refused.
+    void navigator.clipboard
+      ?.writeText(handle)
+      .then(() => this.copiedHandle.set(handle))
+      .catch(() => undefined);
   }
 
   protected deleteTable(): void {

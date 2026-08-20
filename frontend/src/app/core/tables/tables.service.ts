@@ -3,7 +3,18 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { CreateTableRequest, StackPreview, TableDetail, TableSummary } from './table.models';
+import {
+  BlindLevelInput,
+  Blinds,
+  ChipCountEntry,
+  ClockAction,
+  CreateTableRequest,
+  Reconciliation,
+  Settlement,
+  StackPreview,
+  TableDetail,
+  TableSummary,
+} from './table.models';
 
 @Injectable({ providedIn: 'root' })
 export class TablesService {
@@ -76,5 +87,60 @@ export class TablesService {
       sellerPlayerId,
       amount,
     });
+  }
+
+  /** Play is over. Everyone starts counting what they are holding. */
+  startCounting(championshipId: string, tableId: string): Observable<void> {
+    return this.http.post<void>(`${this.base(championshipId)}/${tableId}/counting`, {});
+  }
+
+  /**
+   * One player's whole stack, replacing whatever they reported before. Sent
+   * whole rather than chip by chip so a correction overwrites the mistake
+   * instead of adding to it.
+   */
+  reportCount(
+    championshipId: string,
+    tableId: string,
+    tablePlayerId: string,
+    counts: readonly ChipCountEntry[],
+  ): Observable<void> {
+    return this.http.post<void>(`${this.base(championshipId)}/${tableId}/counts`, {
+      tablePlayerId,
+      counts,
+    });
+  }
+
+  reconciliation(championshipId: string, tableId: string): Observable<Reconciliation> {
+    return this.http.get<Reconciliation>(`${this.base(championshipId)}/${tableId}/reconciliation`);
+  }
+
+  /**
+   * Works out who pays whom and where everyone finished. Once only, and only
+   * once the count balances against what left the case.
+   */
+  settle(championshipId: string, tableId: string): Observable<void> {
+    return this.http.post<void>(`${this.base(championshipId)}/${tableId}/settlement`, {});
+  }
+
+  settlement(championshipId: string, tableId: string): Observable<Settlement> {
+    return this.http.get<Settlement>(`${this.base(championshipId)}/${tableId}/settlement`);
+  }
+
+  blinds(championshipId: string, tableId: string): Observable<Blinds> {
+    return this.http.get<Blinds>(`${this.base(championshipId)}/${tableId}/blinds`);
+  }
+
+  /** Replaces the whole ladder. An empty list removes it, and with it the clock. */
+  setBlindLevels(
+    championshipId: string,
+    tableId: string,
+    levels: readonly BlindLevelInput[],
+  ): Observable<void> {
+    return this.http.put<void>(`${this.base(championshipId)}/${tableId}/blinds`, { levels });
+  }
+
+  controlClock(championshipId: string, tableId: string, action: ClockAction): Observable<void> {
+    return this.http.post<void>(`${this.base(championshipId)}/${tableId}/clock`, { action });
   }
 }

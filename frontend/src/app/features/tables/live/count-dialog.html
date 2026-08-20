@@ -1,0 +1,62 @@
+<h2 mat-dialog-title i18n="@@count.heading">Contagem de {{ data.playerName }}</h2>
+
+<mat-dialog-content>
+  <p i18n="@@count.explanation">
+    Conte as fichas que sobraram na sua frente e informe quantas de cada. Deixe em branco o que você
+    não tem.
+  </p>
+
+  <div class="count-rows">
+    @for (chip of data.chips; track chip.denominationId) {
+      @let colour = colourOf(chip.colour);
+      <div class="count-row">
+        <span
+          class="count-row__chip"
+          [style.background]="colour?.swatch ?? 'var(--mat-sys-surface-container-high)'"
+          [style.color]="colour?.ink ?? 'var(--mat-sys-on-surface)'"
+        >
+          {{ chip.faceValue }}
+        </span>
+
+        <mat-form-field class="count-row__field">
+          <mat-label>
+            @if (chip.effectiveValue !== chip.faceValue) {
+              <span i18n="@@count.chipWorth"
+                >Ficha {{ chip.faceValue }} (vale {{ chip.effectiveValue }})</span
+              >
+            } @else {
+              <span i18n="@@count.chip">Ficha {{ chip.faceValue }}</span>
+            }
+          </mat-label>
+          <input
+            matInput
+            type="number"
+            inputmode="numeric"
+            min="0"
+            step="1"
+            [ngModel]="quantities()[chip.denominationId]"
+            (ngModelChange)="set(chip.denominationId, $event)"
+          />
+        </mat-form-field>
+      </div>
+    }
+  </div>
+
+  <dl class="count-total">
+    <div>
+      <dt i18n="@@count.totalUnits">Total em fichas</dt>
+      <dd>{{ units() }}</dd>
+    </div>
+    <div>
+      <dt i18n="@@count.totalMoney">Equivale a</dt>
+      <dd>R$ {{ money() | number: '1.2-2' }}</dd>
+    </div>
+  </dl>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button matButton mat-dialog-close type="button" i18n="@@common.cancel">Cancelar</button>
+  <button matButton="filled" type="button" (click)="confirm()" i18n="@@count.confirm">
+    Informar contagem
+  </button>
+</mat-dialog-actions>
