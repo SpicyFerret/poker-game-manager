@@ -148,7 +148,6 @@ from the route, cached briefly via `HybridCache`.
 | Generic payment handle | Pix by default, but nothing in the model is Brazil-only. |
 | Enums as strings over the wire | Reordering an enum member stops being a silent breaking change. |
 | Stack notices queued on the table payload | The notice is already waiting when the player opens the screen, and reaches whoever was not looking at their phone when the table started. A push would need infrastructure this does not have. |
-| Chip leader shown next to the winner | They differ whenever rebuys are involved: balance takes off what you paid, so the biggest pile can belong to someone down on the night. |
 
 ## Delivery phases
 

@@ -33,9 +33,7 @@ public sealed class RankingsTests(IntegrationTestWebAppFactory factory) : BaseIn
         int PlayerCount,
         string? WinnerDisplayName,
         decimal WinnerBalance,
-        decimal MoneyIn,
-        string? ChipLeaderDisplayName,
-        decimal ChipLeaderChips);
+        decimal MoneyIn);
 
     private sealed record StatementRow(
         string TableName,
@@ -233,20 +231,16 @@ public sealed class RankingsTests(IntegrationTestWebAppFactory factory) : BaseIn
         row.WinnerDisplayName.ShouldBe("Amigo");
         row.WinnerBalance.ShouldBe(50m);
         row.MoneyIn.ShouldBe(100m);
-
-        // Nobody rebought, so the biggest stack and the best night are the same
-        // person, and the chips they hold are the whole table's money.
-        row.ChipLeaderDisplayName.ShouldBe("Amigo");
-        row.ChipLeaderChips.ShouldBe(100m);
     }
 
     /// <summary>
-    /// The case the card exists for: someone who rebought can finish with the
-    /// biggest pile in front of them and still be down on the night, because
-    /// balance takes off what they paid to get those chips.
+    /// The winner is whoever ends up ahead, not whoever ends up holding the most
+    /// chips. Someone several rebuys deep can finish with the biggest pile in
+    /// front of them and still be down on the night, because balance takes off
+    /// what they paid to get those chips.
     /// </summary>
     [Fact]
-    public async Task History_Should_NameAChipLeaderWhoIsNotTheWinner()
+    public async Task History_Should_NameTheBestBalanceNotTheBiggestStack()
     {
         (Guid _, AccessTokens owner) = await RegisterAndLoginAsync();
         Authenticate(owner.AccessToken);
@@ -355,9 +349,8 @@ public sealed class RankingsTests(IntegrationTestWebAppFactory factory) : BaseIn
         HistoryRow row = history!.Single();
         row.MoneyIn.ShouldBe(150m);
 
-        // The two differ, which is the whole point of showing both.
-        row.ChipLeaderDisplayName.ShouldBe("Dono");
-        row.ChipLeaderChips.ShouldBe(80m);
+        // The owner is holding R$ 80 of chips against the friend's 70, and is
+        // still not the winner: they paid 100 for them.
         row.WinnerDisplayName.ShouldBe("Amigo");
         row.WinnerBalance.ShouldBe(20m);
     }

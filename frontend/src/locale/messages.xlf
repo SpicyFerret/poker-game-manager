@@ -786,32 +786,18 @@
           <context context-type="linenumber">25,26</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="history.chipLeader" datatype="html">
-        <source>Chip leader</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/championships/detail/history/history.html</context>
-          <context context-type="linenumber">31,32</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="history.chipLeaderChips" datatype="html">
-        <source>Fichas na mão</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/championships/detail/history/history.html</context>
-          <context context-type="linenumber">35,36</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="history.moneyIn" datatype="html">
         <source>Total jogado</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/history/history.html</context>
-          <context context-type="linenumber">39,40</context>
+          <context context-type="linenumber">31,32</context>
         </context-group>
       </trans-unit>
       <trans-unit id="history.empty" datatype="html">
         <source>Nenhuma mesa fechada ainda.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/history/history.html</context>
-          <context context-type="linenumber">48,51</context>
+          <context context-type="linenumber">40,43</context>
         </context-group>
       </trans-unit>
       <trans-unit id="history.loadFailed" datatype="html">
@@ -1688,7 +1674,7 @@
         <source> Você ainda não participa de nenhum campeonato. Crie o seu ou entre com um código que alguém te passou. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/list/list.html</context>
-          <context context-type="linenumber">21,23</context>
+          <context context-type="linenumber">21,24</context>
         </context-group>
       </trans-unit>
       <trans-unit id="championships.memberCount" datatype="html">
