@@ -102,31 +102,6 @@
     @for (table of items(); track table.id) {
       <a class="card-link" [routerLink]="['/championships', championshipId(), 'tables', table.id]">
         <div class="table-card-glow" [class]="'table-card-glow--' + moodOf(table)">
-          <!--
-            The stroke, not the card, describes the state: pathLength normalises
-            the perimeter to 100 units regardless of the card's real size, so the
-            same dash pattern traces the edge on any rectangle without measuring
-            it — a short lit segment chasing around, not a spinning wedge behind
-            the card.
-          -->
-          <svg
-            class="table-card-glow__ring"
-            viewBox="0 0 100 100"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-            focusable="false"
-          >
-            <rect
-              x="1"
-              y="1"
-              width="98"
-              height="98"
-              rx="6"
-              pathLength="100"
-              vector-effect="non-scaling-stroke"
-            />
-          </svg>
-
           <mat-card class="table-card" [class.table-card--finished]="!isActive(table)">
             <mat-card-header>
               <mat-card-title>{{ table.name }}</mat-card-title>

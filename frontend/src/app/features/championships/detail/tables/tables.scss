@@ -43,12 +43,25 @@
   color: var(--mat-sys-error);
 }
 
-// --- Table status colour + a neon line chasing the card's own perimeter -----
+// --- Table status colour + a neon line running the card's own border --------
 //
-// A short lit segment travels around the card's own edge, rather than a glow
-// rotating behind it — that read as a spinning fan, not neon tracing an outline.
-// Done tables get the same ring, static and grey: nothing more will happen
-// there, so nothing on screen should suggest otherwise.
+// Two lit arcs travelling a ring that is the card's real rounded rectangle.
+//
+// Drawn as a conic-gradient clipped to a border-width ring by masking the
+// padding box out of the border box, rather than as an SVG rect: an SVG
+// stretched to the card's proportions distorts its corner radius and its dash
+// spacing, so the line drifted off the card's actual outline. A mask inherits
+// the card's own border-radius, so it cannot drift.
+//
+// The gradient carries both arcs and simply rotates, so there is no path seam
+// for a dash to straddle — which is what was showing up as a stray third
+// fragment.
+
+@property --table-glow-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
 
 .table-card-glow {
   position: relative;
@@ -56,67 +69,68 @@
   margin-bottom: 0.75rem;
 }
 
-.table-card-glow__ring {
-  position: absolute;
-  inset: -2px;
-  width: calc(100% + 4px);
-  height: calc(100% + 4px);
-  pointer-events: none;
-
-  rect {
-    fill: none;
-    stroke-width: 2.5;
-  }
-}
-
 .table-card-glow > .table-card {
   position: relative;
   margin-bottom: 0;
 }
 
-// Two dashes rather than one: a single arc reads as a line that starts and
-// stops somewhere on the card. Two, evenly spaced by the gap on both sides,
-// read as a pair travelling the loop together — always whole, never a stub.
-//
-// The pattern sums to slightly more than the path's normalised length (101
-// against 100) rather than exactly matching it: an exact match leaves the
-// closing gap ending precisely where the pattern restarts, and rounding
-// there occasionally redraws a sliver of the first dash, showing as a stray
-// third fragment. The 1-unit overrun gets silently truncated off the second
-// gap, which is imperceptible, and removes the seam the browser could round
-// the wrong way on.
-.table-card-glow--idle .table-card-glow__ring rect {
-  stroke: #22c55e;
-  stroke-dasharray: 12 38.5 12 38.5;
-  filter: drop-shadow(0 0 3px color-mix(in srgb, #22c55e 70%, transparent));
-  animation: table-glow-chase 3.5s linear infinite;
+.table-card-glow::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  pointer-events: none;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
 }
 
-.table-card-glow--live .table-card-glow__ring rect {
-  stroke: #3b82f6;
-  stroke-dasharray: 12 38.5 12 38.5;
-  filter: drop-shadow(0 0 3px color-mix(in srgb, #3b82f6 70%, transparent));
-  animation: table-glow-chase 2.2s linear infinite;
+// Two arcs, 180 degrees apart, each a short lit run fading out at both ends.
+@mixin table-glow($colour) {
+  background: conic-gradient(
+    from var(--table-glow-angle),
+    transparent 0deg,
+    $colour 12deg,
+    transparent 24deg,
+    transparent 180deg,
+    $colour 192deg,
+    transparent 204deg,
+    transparent 360deg
+  );
 }
 
-.table-card-glow--done .table-card-glow__ring rect {
-  stroke: var(--mat-sys-outline-variant);
-  stroke-width: 1.5;
+.table-card-glow--idle::before {
+  @include table-glow(#22c55e);
+
+  animation: table-glow-run 3.5s linear infinite;
+}
+
+.table-card-glow--live::before {
+  @include table-glow(#3b82f6);
+
+  animation: table-glow-run 2.2s linear infinite;
+}
+
+.table-card-glow--done::before {
+  background: var(--mat-sys-outline-variant);
   opacity: 0.6;
 }
 
-@keyframes table-glow-chase {
-  from {
-    stroke-dashoffset: 0;
-  }
+@keyframes table-glow-run {
   to {
-    stroke-dashoffset: -100;
+    --table-glow-angle: 360deg;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .table-card-glow--idle .table-card-glow__ring rect,
-  .table-card-glow--live .table-card-glow__ring rect {
+  .table-card-glow--idle::before,
+  .table-card-glow--live::before {
     animation: none;
   }
 }
