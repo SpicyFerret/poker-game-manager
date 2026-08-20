@@ -7,8 +7,10 @@ html {
 
   @include mat.theme(
     (
-      // Green primary is the felt; amber tertiary is the chip/accent colour.
-      color: (primary: mat.$green-palette, tertiary: mat.$orange-palette),
+      // Blue primary sits opposite the carpet's burgundy on the colour wheel,
+      // rather than fighting it the way green did; amber tertiary is the
+      // chip/gold-trim accent tying the two together.
+      color: (primary: mat.$azure-palette, tertiary: mat.$orange-palette),
       // System font stack on purpose: no external font request, which keeps the
       // first paint fast on a phone with bad signal at the table.
       typography: (
