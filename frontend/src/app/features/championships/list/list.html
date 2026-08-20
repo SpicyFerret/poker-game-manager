@@ -44,9 +44,20 @@
           </mat-card-subtitle>
         </mat-card-header>
 
-        @if (championship.description) {
+        @if (championship.description || championship.leaderDisplayName) {
           <mat-card-content>
-            <p>{{ championship.description }}</p>
+            @if (championship.description) {
+              <p>{{ championship.description }}</p>
+            }
+            @if (championship.leaderDisplayName; as leader) {
+              <p class="leader">
+                <span aria-hidden="true">&#9819;</span>
+                <strong>{{ leader }}</strong>
+                <span class="muted" i18n="@@championships.leaderPoints"
+                  >{{ championship.leaderPoints }} pts</span
+                >
+              </p>
+            }
           </mat-card-content>
         }
       </mat-card>
