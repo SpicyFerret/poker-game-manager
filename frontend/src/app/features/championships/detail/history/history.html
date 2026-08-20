@@ -1,0 +1,50 @@
+@if (error(); as message) {
+  <p role="alert" class="alert">{{ message }}</p>
+}
+
+@for (row of rows(); track row.tableId) {
+  <a class="card-link" [routerLink]="['/championships', championshipId(), 'tables', row.tableId]">
+    <mat-card class="night">
+      <mat-card-header>
+        <mat-card-title>{{ row.name }}</mat-card-title>
+        <mat-card-subtitle>
+          @if (row.closedAtUtc) {
+            {{ row.closedAtUtc | date: 'dd/MM/yyyy' }} ·
+          }
+          <span i18n="@@history.players">{{ row.playerCount }} jogador(es)</span>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <dl class="figures">
+          <div>
+            <dt i18n="@@history.winner">Ganhou a noite</dt>
+            <dd>{{ row.winnerDisplayName ?? '—' }}</dd>
+          </div>
+          <div>
+            <dt i18n="@@history.winnerBalance">Saldo</dt>
+            <dd [class.alert]="row.winnerBalance < 0">
+              R$ {{ row.winnerBalance | number: '1.2-2' }}
+            </dd>
+          </div>
+          <div>
+            <dt i18n="@@history.chipLeader">Chip leader</dt>
+            <dd>{{ row.chipLeaderDisplayName ?? '—' }}</dd>
+          </div>
+          <div>
+            <dt i18n="@@history.chipLeaderChips">Fichas na mão</dt>
+            <dd>R$ {{ row.chipLeaderChips | number: '1.2-2' }}</dd>
+          </div>
+          <div>
+            <dt i18n="@@history.moneyIn">Total jogado</dt>
+            <dd>R$ {{ row.moneyIn | number: '1.2-2' }}</dd>
+          </div>
+        </dl>
+      </mat-card-content>
+    </mat-card>
+  </a>
+} @empty {
+  @if (!loading()) {
+    <p i18n="@@history.empty">Nenhuma mesa fechada ainda.</p>
+  }
+}

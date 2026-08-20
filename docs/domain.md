@@ -74,6 +74,9 @@ confused: what is printed, what it counts as, and what it is worth in cash.
 - **`LedgerEntryChip`** — the per-denomination quantities for an entry. **Only exists when chips
   actually left the case.** A purchase between players produces none: those chips were already in
   play, they just changed hands.
+- **`LedgerEntry.AcknowledgedAtUtc`** — when the player confirmed they were actually handed those
+  chips. Null means the notice is still queued for them. Only the player themselves may set it: the
+  whole value of the check is a second pair of eyes, and the manager already counted the stack out.
 - **`FinalCount`** — per player, per denomination, reported by the player themselves.
 - **`Settlement` / `SettlementTransfer`** — from, to, amount. Generated once, then immutable.
 - **`TableResult`** — position, points, balance, written at close. Both rankings are aggregations over
@@ -121,7 +124,9 @@ transfers. One person paying several others is expected and correct.
 
 **`TableResultCalculator`** — orders by balance descending (ties broken by lower `PaidIn`, then join
 time), applies the championship's points table, writes `TableResult`. Two rankings over the
-championship: total points, and total balance.
+championship: total points, and total balance. Both are sums over `TableResult` and nothing else —
+the night's numbers were frozen when it settled, and people have already paid each other on the
+strength of them, so recomputing from the ledger could contradict money that has moved.
 
 ## Authorization
 
@@ -142,6 +147,8 @@ from the route, cached briefly via `HybridCache`.
 | i18n from the start (pt source, en translation) | Retrofitting i18n means touching every template again. |
 | Generic payment handle | Pix by default, but nothing in the model is Brazil-only. |
 | Enums as strings over the wire | Reordering an enum member stops being a silent breaking change. |
+| Stack notices queued on the table payload | The notice is already waiting when the player opens the screen, and reaches whoever was not looking at their phone when the table started. A push would need infrastructure this does not have. |
+| Chip leader shown next to the winner | They differ whenever rebuys are involved: balance takes off what you paid, so the biggest pile can belong to someone down on the night. |
 
 ## Delivery phases
 
@@ -156,8 +163,8 @@ Each phase ends with something usable end to end — backend, screen, tests.
   levels and a shared clock.
 - **Phase 3 — Closing.** *Done.* Player-reported counts, the live reconciliation panel, the
   `Reconciled` gate, settlement and table result.
-- **Phase 4 — Rankings.** Both rankings over the championship, table history, personal statement, championship
-  statistics.
+- **Phase 4 — Rankings.** *Done.* Both rankings over the championship, table history, personal
+  statement, championship statistics.
 
 ## Open, not blocking
 

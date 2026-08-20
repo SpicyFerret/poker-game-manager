@@ -37,6 +37,14 @@ export interface ChipStock {
   issued: number;
 }
 
+/** A stack handed to you that you have not confirmed receiving yet. */
+export interface PendingStack {
+  ledgerEntryId: string;
+  isRebuy: boolean;
+  money: number;
+  chips: StackPreviewChip[];
+}
+
 export interface TableDetail {
   id: string;
   championshipId: string;
@@ -57,6 +65,12 @@ export interface TableDetail {
   totalPaidIn: number;
   canManage: boolean;
   myPlayerId: string | null;
+
+  /**
+   * Your own unconfirmed stacks, oldest first. Carried on the table itself, so
+   * the notice is already waiting when you open the screen.
+   */
+  pendingStacks: PendingStack[];
 }
 
 export interface CreateTableRequest {

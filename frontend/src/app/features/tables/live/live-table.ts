@@ -37,6 +37,7 @@ import { Confirm } from '../../../shared/confirm/confirm.service';
 import { NavSection, SectionNav } from '../../../shared/section-nav/section-nav';
 import { BlindLevelsDialog } from './blind-levels-dialog';
 import { ChipTradeDialog, ChipTradeResult } from './chip-trade-dialog';
+import { StackNoticeDialog } from './stack-notice-dialog';
 import { CountDialog } from './count-dialog';
 
 /**
@@ -99,6 +100,13 @@ export class LiveTable implements OnInit {
 
   /** Drives the redraw. Its value is the local time, not anything from the server. */
   private readonly tick = signal(0);
+
+  /**
+   * The stack notice on screen right now, if any. One at a time: they arrive as
+   * a queue — a buy-in and a rebuy can both be waiting — and stacking dialogs on
+   * a phone would bury the first one.
+   */
+  private showingNoticeFor: string | null = null;
 
   protected readonly reconciliation = signal<Reconciliation | null>(null);
   protected readonly settlement = signal<Settlement | null>(null);
@@ -238,6 +246,7 @@ export class LiveTable implements OnInit {
           this.refreshClosing(table);
           this.refreshBlinds();
           this.followStatus();
+          this.showNextNotice(table);
         },
         error: (err: unknown) => {
           this.loading.set(false);
@@ -451,6 +460,56 @@ export class LiveTable implements OnInit {
                 fallback: $localize`:@@table.tradeFailed:Não foi possível registrar a compra de fichas.`,
               },
             );
+          });
+      });
+  }
+
+  /**
+   * Puts the next unconfirmed stack in front of the player.
+   *
+   * Driven by the poll rather than by the act of dealing, so it reaches whoever
+   * was not looking at their phone when the table started: it is waiting the
+   * moment they open the screen, and appears on its own for anyone already
+   * there. Confirming drains one and the next tick brings the next.
+   */
+  private showNextNotice(table: TableDetail): void {
+    const next = table.pendingStacks[0];
+
+    if (!next || this.showingNoticeFor !== null) {
+      return;
+    }
+
+    this.showingNoticeFor = next.ledgerEntryId;
+
+    this.dialog
+      .open(StackNoticeDialog, {
+        data: next,
+        // Not dismissable by tapping away: the whole point is that somebody
+        // actually looked at the chips.
+        disableClose: true,
+      })
+      .afterClosed()
+      .subscribe((confirmed: boolean | undefined) => {
+        this.showingNoticeFor = null;
+
+        if (!confirmed) {
+          return;
+        }
+
+        this.tables
+          .acknowledgeStack(this.championshipId(), this.tableId(), next.ledgerEntryId)
+          .subscribe({
+            next: () => this.refreshNow.next(),
+            // Left unacknowledged on failure, so it comes back round rather than
+            // vanishing silently — an unconfirmed stack is the thing worth
+            // chasing.
+            error: (err: unknown) =>
+              this.error.set(
+                describeError(
+                  err,
+                  $localize`:@@notice.ackFailed:Não foi possível confirmar o recebimento das fichas.`,
+                ),
+              ),
           });
       });
   }

@@ -9,9 +9,12 @@ import { ChampionshipsService } from '../../../core/championships/championships.
 import { RoleLabelPipe } from '../../../core/championships/role-label.pipe';
 import { NavSection, SectionNav } from '../../../shared/section-nav/section-nav';
 import { ChipSetsTab } from './chip-sets/chip-sets';
+import { HistoryTab } from './history/history';
 import { InvitesTab } from './invites/invites';
 import { MembersTab } from './members/members';
+import { RankingsTab } from './rankings/rankings';
 import { SettingsTab } from './settings/settings';
+import { StatementTab } from './statement/statement';
 import { TablesTab } from './tables/tables';
 
 @Component({
@@ -27,6 +30,9 @@ import { TablesTab } from './tables/tables';
     InvitesTab,
     ChipSetsTab,
     SettingsTab,
+    RankingsTab,
+    HistoryTab,
+    StatementTab,
   ],
   templateUrl: './detail.html',
   styleUrl: './detail.scss',
@@ -49,6 +55,19 @@ export class ChampionshipDetail implements OnInit {
   protected readonly setupOpen = signal(false);
 
   protected readonly section = signal('members');
+
+  /**
+   * The main view, below the setup panel. Tables first: on a game night that is
+   * the only thing anyone opens this screen for, and the rest is read afterwards.
+   */
+  protected readonly view = signal('tables');
+
+  protected readonly views = computed<NavSection[]>(() => [
+    { id: 'tables', label: $localize`:@@view.tables:Mesas` },
+    { id: 'rankings', label: $localize`:@@view.rankings:Ranking` },
+    { id: 'history', label: $localize`:@@view.history:Histórico` },
+    { id: 'statement', label: $localize`:@@view.statement:Meu extrato` },
+  ]);
 
   protected readonly canManage = computed(() => {
     const championship = this.championship();
@@ -75,6 +94,15 @@ export class ChampionshipDetail implements OnInit {
 
     return sections;
   });
+
+  /**
+   * Straight to the ranking from the championship's own card. It is the second
+   * thing anyone opens this screen for, and hunting for it in a strip of four
+   * sections is a worse answer than a button where the name already is.
+   */
+  protected showRanking(): void {
+    this.view.set('rankings');
+  }
 
   ngOnInit(): void {
     this.load();

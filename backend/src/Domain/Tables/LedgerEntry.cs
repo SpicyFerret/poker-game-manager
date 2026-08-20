@@ -44,6 +44,16 @@ public sealed class LedgerEntry
     /// <summary>The other player, for a chip trade between two people.</summary>
     public Guid? CounterpartyPlayerId { get; set; }
 
+    /// <summary>
+    /// When the player confirmed they had physically received these chips.
+    ///
+    /// Null means they have not seen the notice yet, which is how the table
+    /// screen knows to put it in front of them. Only ever set for entries where
+    /// chips actually left the case — a trade between players hands nothing over
+    /// that the case can be wrong about.
+    /// </summary>
+    public DateTime? AcknowledgedAtUtc { get; set; }
+
     public string? Note { get; set; }
     public Guid CreatedBy { get; set; }
     public DateTime CreatedAtUtc { get; set; }
