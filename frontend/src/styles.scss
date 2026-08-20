@@ -56,8 +56,15 @@ body {
 //   2–5. two diamond lattices, gold-on-burgundy and shadow-on-burgundy, laid
 //      at +45°/-45° so they cross into a lozenge grid — the same shape actual
 //      casino carpet weaves use.
-body {
-  background:
+//
+// Held in a custom property, not just written once on `body`, so the sticky
+// header can paint the identical carpet behind itself rather than a flat
+// surface colour. With `background-attachment: fixed` in both places, the
+// gradients are positioned against the viewport rather than either element's
+// own box, so the two paint pixel-for-pixel the same pattern and read as one
+// continuous carpet running behind the header, not two that happen to match.
+:root {
+  --casino-carpet:
     radial-gradient(
       ellipse 90% 90% at 50% 38%,
       transparent 32%,
@@ -68,6 +75,10 @@ body {
     repeating-linear-gradient(-45deg, rgb(196 155 74 / 14%) 0 2px, transparent 2px 34px),
     repeating-linear-gradient(45deg, rgb(0 0 0 / 22%) 0 1px, transparent 1px 34px),
     repeating-linear-gradient(-45deg, rgb(0 0 0 / 22%) 0 1px, transparent 1px 34px), #4a0f22;
+}
+
+body {
+  background: var(--casino-carpet);
   background-attachment: fixed;
 }
 
