@@ -48,23 +48,25 @@ export class ChampionshipDetail implements OnInit {
   protected readonly championship = signal<Championship | null>(null);
 
   /**
-   * Setup — members, invites, chip cases, settings — is folded away
-   * behind the gear. It is configured once and then rarely touched, while the
-   * tables are what someone opens this screen for on a game night.
+   * The one thing folded open at a time behind the gear and the ranking icon.
+   * Setup — members, invites, chip cases, settings — is configured once and
+   * rarely touched; the ranking is read, not edited. Neither is what a game
+   * night opens this screen for, so opening either tucks the tables away rather
+   * than sitting alongside them.
    */
-  protected readonly setupOpen = signal(false);
+  protected readonly panel = signal<'none' | 'setup' | 'rankings'>('none');
 
   protected readonly section = signal('members');
 
   /**
-   * The main view, below the setup panel. Tables first: on a game night that is
-   * the only thing anyone opens this screen for, and the rest is read afterwards.
+   * The main view, shown once neither panel is open. Tables first: on a game
+   * night that is the only thing anyone opens this screen for, and the rest is
+   * read afterwards.
    */
   protected readonly view = signal('tables');
 
   protected readonly views = computed<NavSection[]>(() => [
     { id: 'tables', label: $localize`:@@view.tables:Mesas` },
-    { id: 'rankings', label: $localize`:@@view.rankings:Ranking` },
     { id: 'history', label: $localize`:@@view.history:Histórico` },
     { id: 'statement', label: $localize`:@@view.statement:Meu extrato` },
   ]);
@@ -95,15 +97,6 @@ export class ChampionshipDetail implements OnInit {
     return sections;
   });
 
-  /**
-   * Straight to the ranking from the championship's own card. It is the second
-   * thing anyone opens this screen for, and hunting for it in a strip of four
-   * sections is a worse answer than a button where the name already is.
-   */
-  protected showRanking(): void {
-    this.view.set('rankings');
-  }
-
   ngOnInit(): void {
     this.load();
   }
@@ -130,7 +123,12 @@ export class ChampionshipDetail implements OnInit {
     });
   }
 
+  /** Opening one panel closes the other — they answer different questions, never both at once. */
   protected toggleSetup(): void {
-    this.setupOpen.update((open) => !open);
+    this.panel.update((current) => (current === 'setup' ? 'none' : 'setup'));
+  }
+
+  protected toggleRankings(): void {
+    this.panel.update((current) => (current === 'rankings' ? 'none' : 'rankings'));
   }
 }

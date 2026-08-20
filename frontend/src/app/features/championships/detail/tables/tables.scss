@@ -42,3 +42,95 @@
 .alert {
   color: var(--mat-sys-error);
 }
+
+// --- Table status colour + a neon line running the card's own border --------
+//
+// Two lit arcs travelling a ring that is the card's real rounded rectangle.
+//
+// Drawn as a conic-gradient clipped to a border-width ring by masking the
+// padding box out of the border box, rather than as an SVG rect: an SVG
+// stretched to the card's proportions distorts its corner radius and its dash
+// spacing, so the line drifted off the card's actual outline. A mask inherits
+// the card's own border-radius, so it cannot drift.
+//
+// The gradient carries both arcs and simply rotates, so there is no path seam
+// for a dash to straddle — which is what was showing up as a stray third
+// fragment.
+
+@property --table-glow-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.table-card-glow {
+  position: relative;
+  border-radius: 16px;
+  margin-bottom: 0.75rem;
+}
+
+.table-card-glow > .table-card {
+  position: relative;
+  margin-bottom: 0;
+}
+
+.table-card-glow::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  pointer-events: none;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+}
+
+// Two arcs, 180 degrees apart, each a short lit run fading out at both ends.
+@mixin table-glow($colour) {
+  background: conic-gradient(
+    from var(--table-glow-angle),
+    transparent 0deg,
+    $colour 12deg,
+    transparent 24deg,
+    transparent 180deg,
+    $colour 192deg,
+    transparent 204deg,
+    transparent 360deg
+  );
+}
+
+.table-card-glow--idle::before {
+  @include table-glow(#22c55e);
+
+  animation: table-glow-run 3.5s linear infinite;
+}
+
+.table-card-glow--live::before {
+  @include table-glow(#3b82f6);
+
+  animation: table-glow-run 2.2s linear infinite;
+}
+
+.table-card-glow--done::before {
+  background: var(--mat-sys-outline-variant);
+  opacity: 0.6;
+}
+
+@keyframes table-glow-run {
+  to {
+    --table-glow-angle: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .table-card-glow--idle::before,
+  .table-card-glow--live::before {
+    animation: none;
+  }
+}

@@ -18,9 +18,11 @@ import { ChampionshipsService } from '../../../../core/championships/championshi
 import { TableStatusLabelPipe } from '../../../../core/tables/table-status-label.pipe';
 import {
   JoinPolicy,
+  TableMood,
   TableSummary,
   isActive,
   sortForDisplay,
+  tableMood,
 } from '../../../../core/tables/table.models';
 import { TablesService } from '../../../../core/tables/tables.service';
 import { Confirm } from '../../../../shared/confirm/confirm.service';
@@ -79,6 +81,10 @@ export class TablesTab implements OnInit {
 
   protected isActive(table: TableSummary): boolean {
     return isActive(table.status);
+  }
+
+  protected moodOf(table: TableSummary): TableMood {
+    return tableMood(table.status);
   }
 
   protected load(): void {

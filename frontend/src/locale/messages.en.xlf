@@ -1247,17 +1247,9 @@
         <source>Não foi possível salvar a estrutura de blinds.</source>
         <target>The blind structure could not be saved.</target>
       </trans-unit>
-      <trans-unit id="championship.seeRanking" datatype="html">
-        <source> Ver ranking </source>
-        <target> See ranking </target>
-      </trans-unit>
       <trans-unit id="view.tables" datatype="html">
         <source>Mesas</source>
         <target>Tables</target>
-      </trans-unit>
-      <trans-unit id="view.rankings" datatype="html">
-        <source>Ranking</source>
-        <target>Ranking</target>
       </trans-unit>
       <trans-unit id="view.history" datatype="html">
         <source>Histórico</source>
@@ -1450,6 +1442,10 @@
       <trans-unit id="app.account" datatype="html">
         <source>Sua conta</source>
         <target>Your account</target>
+      </trans-unit>
+      <trans-unit id="championship.rankingsToggle" datatype="html">
+        <source>Ranking do campeonato</source>
+        <target>Championship ranking</target>
       </trans-unit>
     </body>
   </file>
