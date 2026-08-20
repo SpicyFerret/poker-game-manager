@@ -43,12 +43,12 @@
   color: var(--mat-sys-error);
 }
 
-// --- Table status colour + a moving neon ring on the live ones -------------
+// --- Table status colour + a neon line chasing the card's own perimeter -----
 //
-// The ring is a rotating conic-gradient sitting behind the card, inset so only
-// a sliver shows around the edge — the card's own opaque background covers the
-// centre. Done tables get a plain grey border with no motion: nothing more is
-// going to happen at them, so nothing on screen should suggest otherwise.
+// A short lit segment travels around the card's own edge, rather than a glow
+// rotating behind it — that read as a spinning fan, not neon tracing an outline.
+// Done tables get the same ring, static and grey: nothing more will happen
+// there, so nothing on screen should suggest otherwise.
 
 .table-card-glow {
   position: relative;
@@ -56,54 +56,56 @@
   margin-bottom: 0.75rem;
 }
 
-.table-card-glow::before {
-  content: '';
+.table-card-glow__ring {
   position: absolute;
   inset: -2px;
-  border-radius: inherit;
-  z-index: 0;
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  pointer-events: none;
+
+  rect {
+    fill: none;
+    stroke-width: 2.5;
+  }
 }
 
 .table-card-glow > .table-card {
   position: relative;
-  z-index: 1;
   margin-bottom: 0;
 }
 
-.table-card-glow--idle::before {
-  background: conic-gradient(
-    from 0deg,
-    transparent 0%,
-    color-mix(in srgb, #22c55e 85%, transparent) 12%,
-    transparent 28%
-  );
-  animation: table-glow-spin 4s linear infinite;
+.table-card-glow--idle .table-card-glow__ring rect {
+  stroke: #22c55e;
+  stroke-dasharray: 12 88;
+  filter: drop-shadow(0 0 3px color-mix(in srgb, #22c55e 70%, transparent));
+  animation: table-glow-chase 3.5s linear infinite;
 }
 
-.table-card-glow--live::before {
-  background: conic-gradient(
-    from 0deg,
-    transparent 0%,
-    color-mix(in srgb, #3b82f6 85%, transparent) 12%,
-    transparent 28%
-  );
-  animation: table-glow-spin 2.5s linear infinite;
+.table-card-glow--live .table-card-glow__ring rect {
+  stroke: #3b82f6;
+  stroke-dasharray: 12 88;
+  filter: drop-shadow(0 0 3px color-mix(in srgb, #3b82f6 70%, transparent));
+  animation: table-glow-chase 2.2s linear infinite;
 }
 
-.table-card-glow--done::before {
-  background: var(--mat-sys-outline-variant);
+.table-card-glow--done .table-card-glow__ring rect {
+  stroke: var(--mat-sys-outline-variant);
+  stroke-width: 1.5;
   opacity: 0.6;
 }
 
-@keyframes table-glow-spin {
+@keyframes table-glow-chase {
+  from {
+    stroke-dashoffset: 0;
+  }
   to {
-    transform: rotate(360deg);
+    stroke-dashoffset: -100;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .table-card-glow--idle::before,
-  .table-card-glow--live::before {
+  .table-card-glow--idle .table-card-glow__ring rect,
+  .table-card-glow--live .table-card-glow__ring rect {
     animation: none;
   }
 }
