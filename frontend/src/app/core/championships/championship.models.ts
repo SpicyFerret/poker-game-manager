@@ -30,6 +30,13 @@ export interface ChampionshipSummary {
   description: string | null;
   role: ChampionshipRole;
   memberCount: number;
+
+  /**
+   * Top of the points ranking. Null until a table has been settled — a card that
+   * claims a leader before anyone has played would be a lie, not an empty state.
+   */
+  leaderDisplayName: string | null;
+  leaderPoints: number;
 }
 
 export interface Championship {
@@ -43,6 +50,13 @@ export interface Championship {
   moneyPerUnit: number;
   pointsByPosition: number[];
   role: ChampionshipRole;
+
+  /**
+   * Top of the points ranking. Null until a table has been settled — a card that
+   * claims a leader before anyone has played would be a lie, not an empty state.
+   */
+  leaderDisplayName: string | null;
+  leaderPoints: number;
 }
 
 export interface ChampionshipSettings {

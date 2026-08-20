@@ -30,9 +30,21 @@
         }
       </div>
 
-      @if (championship.description) {
+      @if (championship.description || championship.leaderDisplayName) {
         <mat-card-content>
-          <p>{{ championship.description }}</p>
+          @if (championship.description) {
+            <p>{{ championship.description }}</p>
+          }
+          @if (championship.leaderDisplayName; as leader) {
+            <p class="leader">
+              <span aria-hidden="true">&#9819;</span>
+              <span i18n="@@championship.leading">Liderando</span>
+              <strong>{{ leader }}</strong>
+              <span class="muted" i18n="@@championship.leaderPoints"
+                >{{ championship.leaderPoints }} pts</span
+              >
+            </p>
+          }
         </mat-card-content>
       }
 

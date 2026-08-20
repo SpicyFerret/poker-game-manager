@@ -63,6 +63,8 @@ public sealed class RankingsTests(IntegrationTestWebAppFactory factory) : BaseIn
         NightRecord? BiggestWin,
         NightRecord? BiggestLoss);
 
+    private sealed record ChampionshipDto(string Name, string? LeaderDisplayName, int LeaderPoints);
+
     private static readonly int[] PointsByPosition = [10, 7];
 
     /// <summary>
@@ -435,6 +437,26 @@ public sealed class RankingsTests(IntegrationTestWebAppFactory factory) : BaseIn
     }
 
     [Fact]
+    public async Task ChampionshipCard_Should_NameTheLeaderOnPoints()
+    {
+        (Guid championshipId, AccessTokens owner, AccessTokens _) = await PlayANightAsync("Mesa");
+        Authenticate(owner.AccessToken);
+
+        ChampionshipDto? detail = await HttpClient.GetFromJsonAsync<ChampionshipDto>(
+            $"championships/{championshipId}");
+
+        detail!.LeaderDisplayName.ShouldBe("Amigo");
+        detail.LeaderPoints.ShouldBe(10);
+
+        // The same leader on the list card, so the two screens cannot disagree.
+        ChampionshipDto[]? mine = await HttpClient.GetFromJsonAsync<ChampionshipDto[]>("championships");
+
+        ChampionshipDto summary = mine!.Single(c => c.Name == "Quinta");
+        summary.LeaderDisplayName.ShouldBe("Amigo");
+        summary.LeaderPoints.ShouldBe(10);
+    }
+
+    [Fact]
     public async Task Rankings_Should_BeEmptyBeforeAnythingIsSettled()
     {
         (Guid _, AccessTokens owner) = await RegisterAndLoginAsync();
@@ -465,5 +487,12 @@ public sealed class RankingsTests(IntegrationTestWebAppFactory factory) : BaseIn
         statistics!.AverageMoneyPerTable.ShouldBe(0m);
         statistics.BiggestWin.ShouldBeNull();
         statistics.BiggestLoss.ShouldBeNull();
+
+        // And no leader invented before a single hand has been played.
+        ChampionshipDto? card = await HttpClient.GetFromJsonAsync<ChampionshipDto>(
+            $"championships/{championshipId}");
+
+        card!.LeaderDisplayName.ShouldBeNull();
+        card.LeaderPoints.ShouldBe(0);
     }
 }

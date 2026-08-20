@@ -667,11 +667,25 @@
           <context context-type="linenumber">26,28</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="championship.leading" datatype="html">
+        <source>Liderando</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/detail.html</context>
+          <context context-type="linenumber">41,42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="championship.leaderPoints" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ championship.leaderPoints }}"/> pts</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/detail.html</context>
+          <context context-type="linenumber">44,45</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="championship.seeRanking" datatype="html">
         <source> Ver ranking </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/detail.html</context>
-          <context context-type="linenumber">41,43</context>
+          <context context-type="linenumber">53,55</context>
         </context-group>
       </trans-unit>
       <trans-unit id="view.tables" datatype="html">
@@ -1202,7 +1216,7 @@
         <source> Ainda não há ranking. Ele aparece assim que a primeira mesa for fechada. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/rankings/rankings.html</context>
-          <context context-type="linenumber">106,108</context>
+          <context context-type="linenumber">106,107</context>
         </context-group>
       </trans-unit>
       <trans-unit id="rankings.loadFailed" datatype="html">
@@ -1660,7 +1674,7 @@
         <source> Você ainda não participa de nenhum campeonato. Crie o seu ou entre com um código que alguém te passou. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/list/list.html</context>
-          <context context-type="linenumber">21,24</context>
+          <context context-type="linenumber">21,23</context>
         </context-group>
       </trans-unit>
       <trans-unit id="championships.memberCount" datatype="html">
@@ -1668,6 +1682,13 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/list/list.html</context>
           <context context-type="linenumber">40,42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="championships.leaderPoints" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ championship.leaderPoints }}"/> pts</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/list/list.html</context>
+          <context context-type="linenumber">57,58</context>
         </context-group>
       </trans-unit>
       <trans-unit id="championships.loadFailed" datatype="html">

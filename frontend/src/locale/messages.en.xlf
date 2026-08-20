@@ -1439,6 +1439,18 @@
         <source> Conferi, está certo </source>
         <target> Counted, it is right </target>
       </trans-unit>
+      <trans-unit id="championships.leaderPoints" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ championship.leaderPoints }}"/> pts</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ championship.leaderPoints }}"/> pts</target>
+      </trans-unit>
+      <trans-unit id="championship.leading" datatype="html">
+        <source>Liderando</source>
+        <target>Leading</target>
+      </trans-unit>
+      <trans-unit id="championship.leaderPoints" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ championship.leaderPoints }}"/> pts</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ championship.leaderPoints }}"/> pts</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
