@@ -1,8 +1,10 @@
 import {
   TableStatus,
   TableSummary,
+  countUnits,
   isActive,
   issuedUnits,
+  offBy,
   remainingUnits,
   sortForDisplay,
   stacksLeft,
@@ -101,5 +103,38 @@ describe('chip unit helpers', () => {
 
   it('should not divide by zero when the buy-in is unset', () => {
     expect(stacksLeft(stock, 0)).toBe(0);
+  });
+});
+
+describe('counting helpers', () => {
+  const lines = [
+    {
+      denominationId: 'a',
+      faceValue: 5,
+      effectiveValue: 5,
+      issued: 40,
+      counted: 40,
+      difference: 0,
+    },
+    {
+      denominationId: 'b',
+      faceValue: 25,
+      effectiveValue: 100,
+      issued: 8,
+      counted: 6,
+      difference: -2,
+    },
+  ];
+
+  it('should value a reported stack by effective value', () => {
+    expect(countUnits(lines, { a: 10, b: 3 })).toBe(10 * 5 + 3 * 100);
+  });
+
+  it('should treat a blank box as none of that chip', () => {
+    expect(countUnits(lines, { a: 10, b: null })).toBe(50);
+  });
+
+  it('should surface only the chips that do not tally', () => {
+    expect(offBy(lines).map((line) => line.denominationId)).toEqual(['b']);
   });
 });

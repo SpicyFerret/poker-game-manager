@@ -959,6 +959,174 @@
         <source>Não foi possível excluir a mesa.</source>
         <target>The table could not be deleted.</target>
       </trans-unit>
+      <trans-unit id="count.heading" datatype="html">
+        <source>Contagem de <x id="INTERPOLATION" equiv-text="{{ data.playerName }}"/></source>
+        <target>Count for <x id="INTERPOLATION" equiv-text="{{ data.playerName }}"/></target>
+      </trans-unit>
+      <trans-unit id="count.explanation" datatype="html">
+        <source> Conte as fichas que sobraram na sua frente e informe quantas de cada. Deixe em branco o que você não tem. </source>
+        <target> Count the chips left in front of you and enter how many of each. Leave blank whatever you do not have. </target>
+      </trans-unit>
+      <trans-unit id="count.chipWorth" datatype="html">
+        <source>Ficha <x id="INTERPOLATION" equiv-text="{{ chip.faceValue }}"/> (vale <x id="INTERPOLATION_1" equiv-text="{{ chip.effectiveValue }}"/>)</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ chip.faceValue }}"/> chip (worth <x id="INTERPOLATION_1" equiv-text="{{ chip.effectiveValue }}"/>)</target>
+      </trans-unit>
+      <trans-unit id="count.chip" datatype="html">
+        <source>Ficha <x id="INTERPOLATION" equiv-text="{{ chip.faceValue }}"/></source>
+        <target><x id="INTERPOLATION" equiv-text="{{ chip.faceValue }}"/> chip</target>
+      </trans-unit>
+      <trans-unit id="count.totalUnits" datatype="html">
+        <source>Total em fichas</source>
+        <target>Total in chips</target>
+      </trans-unit>
+      <trans-unit id="count.totalMoney" datatype="html">
+        <source>Equivale a</source>
+        <target>Comes to</target>
+      </trans-unit>
+      <trans-unit id="count.confirm" datatype="html">
+        <source> Informar contagem </source>
+        <target> Report count </target>
+      </trans-unit>
+      <trans-unit id="table.startCounting" datatype="html">
+        <source> Encerrar e contar </source>
+        <target> End play and count </target>
+      </trans-unit>
+      <trans-unit id="table.settle" datatype="html">
+        <source> Fechar a conta </source>
+        <target> Settle up </target>
+      </trans-unit>
+      <trans-unit id="counting.heading" datatype="html">
+        <source>Conferência</source>
+        <target>Reconciliation</target>
+      </trans-unit>
+      <trans-unit id="counting.balances" datatype="html">
+        <source>Bate com o que saiu da maleta.</source>
+        <target>Matches what left the case.</target>
+      </trans-unit>
+      <trans-unit id="counting.waiting" datatype="html">
+        <source>Faltam <x id="INTERPOLATION" equiv-text="{{ reconciliation.awaitingCountFrom.length }}"/> contagem(ns).</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ reconciliation.awaitingCountFrom.length }}"/> count(s) still to come.</target>
+      </trans-unit>
+      <trans-unit id="counting.doesNotBalance" datatype="html">
+        <source>A contagem não bate com o que saiu da maleta.</source>
+        <target>The count does not match what left the case.</target>
+      </trans-unit>
+      <trans-unit id="counting.awaitingFrom" datatype="html">
+        <source>Ainda não informaram:</source>
+        <target>Still to report:</target>
+      </trans-unit>
+      <trans-unit id="counting.offBy" datatype="html">
+        <source>Fichas que não fecham:</source>
+        <target>Chips that do not tally:</target>
+      </trans-unit>
+      <trans-unit id="counting.chipLine" datatype="html">
+        <source>Ficha <x id="INTERPOLATION" equiv-text="{{ line.faceValue }}"/></source>
+        <target><x id="INTERPOLATION" equiv-text="{{ line.faceValue }}"/> chip</target>
+      </trans-unit>
+      <trans-unit id="counting.difference" datatype="html">
+        <source> <x id="INTERPOLATION" equiv-text="{{ line.counted }}"/> de <x id="INTERPOLATION_1" equiv-text="{{ line.issued }}"/> </source>
+        <target> <x id="INTERPOLATION" equiv-text="{{ line.counted }}"/> of <x id="INTERPOLATION_1" equiv-text="{{ line.issued }}"/> </target>
+      </trans-unit>
+      <trans-unit id="counting.allTally" datatype="html">
+        <source>Todas as fichas fecham.</source>
+        <target>Every chip tallies.</target>
+      </trans-unit>
+      <trans-unit id="counting.counted" datatype="html">
+        <source>contagem informada</source>
+        <target>count reported</target>
+      </trans-unit>
+      <trans-unit id="counting.notCounted" datatype="html">
+        <source>ainda não contou</source>
+        <target>has not counted yet</target>
+      </trans-unit>
+      <trans-unit id="counting.report" datatype="html">
+        <source> Informar contagem </source>
+        <target> Report count </target>
+      </trans-unit>
+      <trans-unit id="settlement.heading" datatype="html">
+        <source>Quem paga quem</source>
+        <target>Who pays whom</target>
+      </trans-unit>
+      <trans-unit id="settlement.transferCount" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ settlement.transfers.length }}"/> transferência(s)</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ settlement.transfers.length }}"/> transfer(s)</target>
+      </trans-unit>
+      <trans-unit id="settlement.copied" datatype="html">
+        <source>copiado</source>
+        <target>copied</target>
+      </trans-unit>
+      <trans-unit id="settlement.noHandle" datatype="html">
+        <source> sem chave cadastrada — combine com <x id="INTERPOLATION" equiv-text="{{ transfer.toDisplayName }}"/> </source>
+        <target> no payment key on file &#8212; sort it out with <x id="INTERPOLATION" equiv-text="{{ transfer.toDisplayName }}"/> </target>
+      </trans-unit>
+      <trans-unit id="settlement.nothingToPay" datatype="html">
+        <source>Ninguém deve nada a ninguém.</source>
+        <target>Nobody owes anybody anything.</target>
+      </trans-unit>
+      <trans-unit id="settlement.resultsHeading" datatype="html">
+        <source>Resultado</source>
+        <target>Result</target>
+      </trans-unit>
+      <trans-unit id="settlement.points" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ result.points }}"/> pts</source>
+        <target><x id="INTERPOLATION" equiv-text="{{ result.points }}"/> pts</target>
+      </trans-unit>
+      <trans-unit id="tableSection.counting" datatype="html">
+        <source>Contagem</source>
+        <target>Counting</target>
+      </trans-unit>
+      <trans-unit id="tableSection.settlement" datatype="html">
+        <source>Acerto</source>
+        <target>Settlement</target>
+      </trans-unit>
+      <trans-unit id="confirm.countingTitle" datatype="html">
+        <source>Encerrar o jogo e contar?</source>
+        <target>End play and start counting?</target>
+      </trans-unit>
+      <trans-unit id="confirm.countingMessage" datatype="html">
+        <source>Ninguém mais compra fichas. Cada jogador conta o que tem na frente e informa aqui.</source>
+        <target>Nobody buys any more chips. Each player counts what is in front of them and reports it here.</target>
+      </trans-unit>
+      <trans-unit id="table.countingFailed" datatype="html">
+        <source>Não foi possível encerrar o jogo.</source>
+        <target>Play could not be ended.</target>
+      </trans-unit>
+      <trans-unit id="confirm.countTitle" datatype="html">
+        <source>Confirmar a contagem?</source>
+        <target>Confirm this count?</target>
+      </trans-unit>
+      <trans-unit id="confirm.countMessage" datatype="html">
+        <source>É com isto que o acerto vai ser calculado. Dá para corrigir enquanto a mesa não fecha.</source>
+        <target>This is what the settlement will be worked out from. It can be corrected until the table closes.</target>
+      </trans-unit>
+      <trans-unit id="confirm.countEmptyMessage" datatype="html">
+        <source>Você está informando que não sobrou nenhuma ficha.</source>
+        <target>You are reporting that you have no chips left.</target>
+      </trans-unit>
+      <trans-unit id="table.countFailed" datatype="html">
+        <source>Não foi possível informar a contagem.</source>
+        <target>The count could not be reported.</target>
+      </trans-unit>
+      <trans-unit id="confirm.settleTitle" datatype="html">
+        <source>Fechar a conta da mesa?</source>
+        <target>Settle the table?</target>
+      </trans-unit>
+      <trans-unit id="confirm.settleMessage" datatype="html">
+        <source>Calcula quem paga quem, com o menor número de Pix, e a posição de cada um. É feito uma vez só.</source>
+        <target>Works out who pays whom, in as few payments as possible, and where everyone finished. Done once only.</target>
+      </trans-unit>
+      <trans-unit id="confirm.settleWaiting" datatype="html">
+        <source>Ainda falta gente informar a contagem.</source>
+        <target>Some people still have to report their count.</target>
+      </trans-unit>
+      <trans-unit id="confirm.settleUnbalanced" datatype="html">
+        <source>A contagem não bate com o que saiu da maleta.</source>
+        <target>The count does not match what left the case.</target>
+      </trans-unit>
+      <trans-unit id="table.settleFailed" datatype="html">
+        <source>Não foi possível fechar a conta.</source>
+        <target>The table could not be settled.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

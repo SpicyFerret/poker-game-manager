@@ -127,5 +127,4 @@ export class ChampionshipsService {
   deleteChipSet(championshipId: string, chipSetId: string): Observable<void> {
     return this.http.delete<void>(`${this.base}/${championshipId}/chip-sets/${chipSetId}`);
   }
-
 }

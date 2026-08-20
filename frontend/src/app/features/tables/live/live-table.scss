@@ -77,3 +77,87 @@
 .danger {
   --mat-button-text-label-text-color: var(--mat-sys-error);
 }
+
+.muted {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-small);
+  margin: 0.5rem 0 0.25rem;
+}
+
+.panel {
+  margin-bottom: 0.75rem;
+}
+
+.plain {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+// One payment per block rather than a table: on a phone the question is only
+// ever "do I owe anything, and to whom", and that reads better stacked.
+.transfer {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.transfer__who {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.transfer__amount {
+  font: var(--mat-sys-title-medium);
+}
+
+// Left-aligned and flush with the rest of the block: it is a key you copy, not
+// an action competing with the buttons above.
+.transfer__handle {
+  justify-self: start;
+  padding-left: 0;
+  padding-right: 0.5rem;
+}
+
+.results {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.result {
+  display: grid;
+  grid-template-columns: 2.2rem 1fr auto auto;
+  gap: 0.5rem;
+  align-items: baseline;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.result__position {
+  font: var(--mat-sys-title-medium);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.result__points {
+  font: var(--mat-sys-label-medium);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.result__balance {
+  font: var(--mat-sys-label-large);
+}
