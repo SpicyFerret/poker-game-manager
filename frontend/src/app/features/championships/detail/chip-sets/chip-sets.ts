@@ -15,6 +15,7 @@ import {
 } from '../../../../core/championships/championship.models';
 import { ChampionshipsService } from '../../../../core/championships/championships.service';
 import { CHIP_COLOURS, ChipColour, chipColour } from '../../../../shared/chip-colours';
+import { Confirm } from '../../../../shared/confirm/confirm.service';
 
 @Component({
   selector: 'app-chip-sets-tab',
@@ -32,6 +33,7 @@ import { CHIP_COLOURS, ChipColour, chipColour } from '../../../../shared/chip-co
 export class ChipSetsTab implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly championships = inject(ChampionshipsService);
+  private readonly confirm = inject(Confirm);
 
   readonly championshipId = input.required<string>();
   readonly callerRole = input.required<ChampionshipRole>();
@@ -154,6 +156,34 @@ export class ChipSetsTab implements OnInit {
       return;
     }
 
+    this.confirm
+      .ask({
+        title:
+          target === 'new'
+            ? $localize`:@@confirm.chipSetCreateTitle:Criar esta maleta?`
+            : $localize`:@@confirm.chipSetSaveTitle:Salvar a maleta?`,
+        details: [
+          { label: $localize`:@@field.chipSetName:Nome da maleta`, value: value.name.trim() },
+          {
+            label: $localize`:@@confirm.chipSetDenominations:tipos de ficha`,
+            value: String(denominations.length),
+          },
+        ],
+        confirmLabel: $localize`:@@common.save:Salvar`,
+      })
+      .subscribe(() => this.persist(target, value.name.trim(), denominations));
+  }
+
+  private persist(
+    target: string,
+    name: string,
+    denominations: {
+      faceValue: number;
+      effectiveValue: number;
+      quantity: number;
+      colour: string | null;
+    }[],
+  ): void {
     this.busy.set(true);
     this.error.set(null);
 
@@ -161,13 +191,8 @@ export class ChipSetsTab implements OnInit {
     // nothing, and a union of the two observables has no callable subscribe.
     const request: Observable<unknown> =
       target === 'new'
-        ? this.championships.createChipSet(this.championshipId(), value.name.trim(), denominations)
-        : this.championships.updateChipSet(
-            this.championshipId(),
-            target,
-            value.name.trim(),
-            denominations,
-          );
+        ? this.championships.createChipSet(this.championshipId(), name, denominations)
+        : this.championships.updateChipSet(this.championshipId(), target, name, denominations);
 
     request.subscribe({
       next: () => {
@@ -185,6 +210,18 @@ export class ChipSetsTab implements OnInit {
   }
 
   protected remove(chipSet: ChipSet): void {
+    this.confirm
+      .ask({
+        title: $localize`:@@confirm.chipSetDeleteTitle:Excluir esta maleta?`,
+        message: $localize`:@@confirm.chipSetDeleteMessage:Maleta usada por alguma mesa não pode ser excluída — o histórico delas depende dela.`,
+        details: [{ label: $localize`:@@field.chipSetName:Nome da maleta`, value: chipSet.name }],
+        destructive: true,
+        confirmLabel: $localize`:@@common.delete:Excluir`,
+      })
+      .subscribe(() => this.removeConfirmed(chipSet));
+  }
+
+  private removeConfirmed(chipSet: ChipSet): void {
     this.busy.set(true);
     this.error.set(null);
 

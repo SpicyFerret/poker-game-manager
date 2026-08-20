@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 
 import { describeError } from '../../../core/api/problem-details';
 import { ChampionshipsService } from '../../../core/championships/championships.service';
+import { Confirm } from '../../../shared/confirm/confirm.service';
 import { parsePointsTable } from '../points-table';
 
 @Component({
@@ -28,6 +29,7 @@ import { parsePointsTable } from '../points-table';
 export class ChampionshipCreate {
   private readonly championships = inject(ChampionshipsService);
   private readonly router = inject(Router);
+  private readonly confirm = inject(Confirm);
 
   protected readonly submitting = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -58,10 +60,41 @@ export class ChampionshipCreate {
       return;
     }
 
+    const value = this.form.getRawValue();
+
+    this.confirm
+      .ask({
+        title: $localize`:@@confirm.createChampionshipTitle:Criar o campeonato?`,
+        details: [
+          { label: $localize`:@@field.championshipName:Nome`, value: value.name.trim() },
+          {
+            label: $localize`:@@field.defaultBuyIn:Buy-in padrão (R$)`,
+            value: String(value.defaultBuyIn),
+          },
+          {
+            label: $localize`:@@field.moneyPerUnit:Valor de 1 unidade de ficha (R$)`,
+            value: String(value.moneyPerUnit),
+          },
+        ],
+        confirmLabel: $localize`:@@championships.createSubmit:Criar`,
+      })
+      .subscribe(() => this.persist(value, points));
+  }
+
+  private persist(
+    value: {
+      name: string;
+      description: string;
+      defaultBuyIn: number;
+      defaultRebuy: number;
+      enforceDefaults: boolean;
+      moneyPerUnit: number;
+      pointsByPosition: string;
+    },
+    points: number[],
+  ): void {
     this.submitting.set(true);
     this.error.set(null);
-
-    const value = this.form.getRawValue();
 
     this.championships
       .create({

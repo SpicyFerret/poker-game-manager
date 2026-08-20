@@ -4,12 +4,15 @@ using Application.Tables.Blinds;
 using Application.Tables.BuyChips;
 using Application.Tables.Counting;
 using Application.Tables.Create;
+using Application.Tables.Delete;
 using Application.Tables.Get;
 using Application.Tables.IssueStack;
 using Application.Tables.Join;
+using Application.Tables.Preview;
 using Application.Tables.Settle;
 using Application.Tables.Start;
 using Domain.Tables;
+using Microsoft.AspNetCore.Mvc;
 using SharedKernel;
 using Web.Api.Extensions;
 using Web.Api.Infrastructure;
@@ -38,6 +41,8 @@ internal sealed class Tables : IEndpoint
     public sealed record SetBlindLevelsRequest(IReadOnlyList<BlindLevelInput> Levels);
 
     public sealed record ClockRequest(ClockAction Action);
+
+    public sealed record DeleteTableRequest(string ConfirmName);
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -252,6 +257,39 @@ internal sealed class Tables : IEndpoint
         {
             Result result = await handler.Handle(
                 new ControlClockCommand(championshipId, tableId, request.Action),
+                cancellationToken);
+
+            return result.Match(Results.NoContent, CustomResults.Problem);
+        });
+
+        group.MapGet("{tableId:guid}/stack-preview", async (
+            Guid championshipId,
+            Guid tableId,
+            bool isRebuy,
+            IQueryHandler<GetStackPreviewQuery, StackPreviewResponse> handler,
+            CancellationToken cancellationToken) =>
+        {
+            Result<StackPreviewResponse> result = await handler.Handle(
+                new GetStackPreviewQuery(championshipId, tableId, isRebuy),
+                cancellationToken);
+
+            return result.Match(Results.Ok, CustomResults.Problem);
+        });
+
+        // The name goes in the body rather than the query string: it is a
+        // confirmation, and confirmations do not belong in a URL that gets logged.
+        // [FromBody] is required because minimal APIs never infer a body for
+        // DELETE. Without it the endpoint fails while routing is being built,
+        // which takes down every other route in the app, not just this one.
+        group.MapDelete("{tableId:guid}", async (
+            Guid championshipId,
+            Guid tableId,
+            [FromBody] DeleteTableRequest request,
+            ICommandHandler<DeleteTableCommand> handler,
+            CancellationToken cancellationToken) =>
+        {
+            Result result = await handler.Handle(
+                new DeleteTableCommand(championshipId, tableId, request.ConfirmName),
                 cancellationToken);
 
             return result.Match(Results.NoContent, CustomResults.Problem);

@@ -23,6 +23,7 @@ import {
   sortForDisplay,
 } from '../../../../core/tables/table.models';
 import { TablesService } from '../../../../core/tables/tables.service';
+import { Confirm } from '../../../../shared/confirm/confirm.service';
 
 @Component({
   selector: 'app-tables-tab',
@@ -45,6 +46,7 @@ export class TablesTab implements OnInit {
   private readonly tables = inject(TablesService);
   private readonly championships = inject(ChampionshipsService);
   private readonly router = inject(Router);
+  private readonly confirm = inject(Confirm);
 
   readonly championshipId = input.required<string>();
   readonly callerRole = input.required<ChampionshipRole>();
@@ -117,6 +119,34 @@ export class TablesTab implements OnInit {
 
     const value = this.form.getRawValue();
 
+    this.confirm
+      .ask({
+        title: $localize`:@@confirm.createTableTitle:Abrir esta mesa?`,
+        message: $localize`:@@confirm.createTableMessage:Nenhuma ficha sai da maleta agora — só quando a mesa for iniciada.`,
+        details: [
+          { label: $localize`:@@field.tableName:Nome da mesa`, value: value.name.trim() },
+          {
+            label: $localize`:@@field.buyIn:Buy-in (R$)`,
+            value:
+              value.buyIn === null
+                ? $localize`:@@confirm.championshipDefault:padrão do campeonato`
+                : String(value.buyIn),
+          },
+        ],
+        confirmLabel: $localize`:@@tables.createSubmit:Abrir mesa`,
+      })
+      .subscribe(() => this.persist(value));
+  }
+
+  private persist(value: {
+    name: string;
+    chipSetId: string;
+    buyIn: number | null;
+    rebuy: number | null;
+    joinPolicy: JoinPolicy;
+    allowLateEntry: boolean;
+    smallChipReserve: number | null;
+  }): void {
     this.busy.set(true);
     this.error.set(null);
 

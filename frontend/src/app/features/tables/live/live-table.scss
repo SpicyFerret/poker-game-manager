@@ -71,3 +71,9 @@
   line-height: 1.2;
   opacity: 0.85;
 }
+
+// Destructive actions read as destructive without shouting: same weight as the
+// others, only the colour differs.
+.danger {
+  --mat-button-text-label-text-color: var(--mat-sys-error);
+}

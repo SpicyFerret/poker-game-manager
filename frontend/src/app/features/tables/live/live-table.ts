@@ -3,12 +3,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { Subject, merge, switchMap, timer } from 'rxjs';
-
-import { NavSection, SectionNav } from '../../../shared/section-nav/section-nav';
-import { ChipColour, chipColour } from '../../../shared/chip-colours';
+import { Router } from '@angular/router';
+import { Observable, Subject, merge, switchMap, timer } from 'rxjs';
 
 import { describeError } from '../../../core/api/problem-details';
 import {
@@ -23,6 +20,10 @@ import {
   TableStatusLabelPipe,
 } from '../../../core/tables/table-status-label.pipe';
 import { TablesService } from '../../../core/tables/tables.service';
+import { ChipColour, chipColour } from '../../../shared/chip-colours';
+import { ConfirmDetail } from '../../../shared/confirm/confirm-dialog';
+import { Confirm } from '../../../shared/confirm/confirm.service';
+import { NavSection, SectionNav } from '../../../shared/section-nav/section-nav';
 import { ChipTradeDialog, ChipTradeResult } from './chip-trade-dialog';
 
 /**
@@ -36,7 +37,6 @@ const POLL_MS = 5000;
   selector: 'app-live-table',
   imports: [
     MatCardModule,
-    MatListModule,
     MatButtonModule,
     MatProgressBarModule,
     MatDialogModule,
@@ -50,6 +50,8 @@ const POLL_MS = 5000;
 export class LiveTable implements OnInit {
   private readonly tables = inject(TablesService);
   private readonly dialog = inject(MatDialog);
+  private readonly confirm = inject(Confirm);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly championshipId = input.required<string>();
@@ -62,6 +64,13 @@ export class LiveTable implements OnInit {
   protected readonly error = signal<string | null>(null);
   protected readonly busy = signal(false);
   protected readonly loading = signal(true);
+
+  protected readonly section = signal('players');
+
+  protected readonly sections = computed<NavSection[]>(() => [
+    { id: 'players', label: $localize`:@@tableSection.players:Jogadores` },
+    { id: 'case', label: $localize`:@@tableSection.case:Maleta` },
+  ]);
 
   protected readonly remainingUnits = computed(() => {
     const table = this.table();
@@ -78,21 +87,14 @@ export class LiveTable implements OnInit {
     return table ? stacksLeft(table.stock, table.buyInUnits) : 0;
   });
 
-  protected readonly section = signal('players');
-
-  protected readonly sections = computed<NavSection[]>(() => [
-    { id: 'players', label: $localize`:@@tableSection.players:Jogadores` },
-    { id: 'case', label: $localize`:@@tableSection.case:Maleta` },
-  ]);
+  protected readonly playing = computed(
+    () => this.table()?.players.filter((p) => p.status === 'Playing') ?? [],
+  );
 
   /** Resolves a stored colour token, or null for anything unrecognised. */
   protected colourOf(token: string | null | undefined): ChipColour | null {
     return chipColour(token);
   }
-
-  protected readonly playing = computed(
-    () => this.table()?.players.filter((p) => p.status === 'Playing') ?? [],
-  );
 
   ngOnInit(): void {
     merge(timer(0, POLL_MS), this.refreshNow)
@@ -138,32 +140,130 @@ export class LiveTable implements OnInit {
   }
 
   protected start(): void {
-    this.run(this.tables.start(this.championshipId(), this.tableId()), {
-      fallback: $localize`:@@table.startFailed:Não foi possível iniciar a mesa.`,
-    });
+    const table = this.table();
+
+    if (!table) {
+      return;
+    }
+
+    const waiting = table.players.filter((p) => p.status === 'Standby').length;
+
+    this.confirm
+      .ask({
+        title: $localize`:@@confirm.startTitle:Iniciar a mesa?`,
+        message: $localize`:@@confirm.startMessage:Cada jogador recebe um stack e as fichas saem da maleta. Se ela não cobrir todos, nada é entregue.`,
+        details: [
+          {
+            label: $localize`:@@confirm.startPlayers:jogadores aguardando`,
+            value: String(waiting),
+          },
+          {
+            label: $localize`:@@confirm.startBuyIn:buy-in cada`,
+            value: `R$ ${table.buyIn}`,
+          },
+        ],
+        confirmLabel: $localize`:@@table.start:Iniciar mesa`,
+      })
+      .subscribe(() => {
+        this.run(this.tables.start(this.championshipId(), this.tableId()), {
+          fallback: $localize`:@@table.startFailed:Não foi possível iniciar a mesa.`,
+        });
+      });
   }
 
   protected join(): void {
     const table = this.table();
     const code = table?.joinPolicy === 'Code' ? (prompt(this.codePrompt()) ?? '') : null;
 
-    this.run(this.tables.join(this.championshipId(), this.tableId(), code), {
-      fallback: $localize`:@@table.joinFailed:Não foi possível entrar na mesa.`,
-    });
+    this.confirm
+      .ask({
+        title: $localize`:@@confirm.joinTitle:Entrar nesta mesa?`,
+        message: $localize`:@@confirm.joinMessage:Você entra aguardando. As fichas só saem quando o gerente iniciar ou te distribuir.`,
+        confirmLabel: $localize`:@@table.join:Entrar na mesa`,
+      })
+      .subscribe(() => {
+        this.run(this.tables.join(this.championshipId(), this.tableId(), code), {
+          fallback: $localize`:@@table.joinFailed:Não foi possível entrar na mesa.`,
+        });
+      });
   }
 
   protected rebuy(player: TablePlayer): void {
-    this.run(
-      this.tables.issueStack(this.championshipId(), this.tableId(), player.tablePlayerId, true),
-      { fallback: $localize`:@@table.rebuyFailed:Não foi possível fazer o rebuy.` },
-    );
+    this.confirmStack(player, true);
   }
 
   protected dealIn(player: TablePlayer): void {
-    this.run(
-      this.tables.issueStack(this.championshipId(), this.tableId(), player.tablePlayerId, false),
-      { fallback: $localize`:@@table.dealInFailed:Não foi possível dar fichas ao jogador.` },
-    );
+    this.confirmStack(player, false);
+  }
+
+  /**
+   * Asks the server what this stack would be made of, and puts that list in the
+   * confirmation — because the person tapping the button is also the person who
+   * has to count those chips out of the case.
+   */
+  private confirmStack(player: TablePlayer, isRebuy: boolean): void {
+    if (this.busy()) {
+      return;
+    }
+
+    this.busy.set(true);
+    this.error.set(null);
+
+    this.tables.stackPreview(this.championshipId(), this.tableId(), isRebuy).subscribe({
+      next: (preview) => {
+        this.busy.set(false);
+
+        const details: ConfirmDetail[] = preview.chips.map((chip) => {
+          const colour = this.colourOf(chip.colour);
+
+          return {
+            label: $localize`:@@confirm.chipOf:ficha ${chip.faceValue}:VALUE:`,
+            value: `${chip.quantity}x`,
+            swatch: colour?.swatch,
+            ink: colour?.ink,
+          };
+        });
+
+        this.confirm
+          .ask({
+            title: isRebuy
+              ? $localize`:@@confirm.rebuyTitle:Rebuy de ${player.displayName}:NAME:?`
+              : $localize`:@@confirm.dealInTitle:Dar fichas para ${player.displayName}:NAME:?`,
+            message: $localize`:@@confirm.stackMessage:Entregue exatamente estas fichas da maleta:`,
+            details,
+            confirmLabel: $localize`:@@confirm.stackConfirm:Entreguei as fichas`,
+            // The API would refuse this anyway; saying so here stops the manager
+            // counting chips for a stack that was never going to be dealt.
+            blockedReason: preview.isPossible
+              ? undefined
+              : $localize`:@@confirm.stackBlocked:A maleta não fecha este stack: faltam ${preview.shortfallUnits}:UNITS: unidades.`,
+          })
+          .subscribe(() => {
+            this.run(
+              this.tables.issueStack(
+                this.championshipId(),
+                this.tableId(),
+                player.tablePlayerId,
+                isRebuy,
+              ),
+              {
+                fallback: isRebuy
+                  ? $localize`:@@table.rebuyFailed:Não foi possível fazer o rebuy.`
+                  : $localize`:@@table.dealInFailed:Não foi possível dar fichas ao jogador.`,
+              },
+            );
+          });
+      },
+      error: (err: unknown) => {
+        this.busy.set(false);
+        this.error.set(
+          describeError(
+            err,
+            $localize`:@@table.previewFailed:Não foi possível calcular as fichas deste stack.`,
+          ),
+        );
+      },
+    });
   }
 
   protected tradeChips(buyer: TablePlayer): void {
@@ -187,18 +287,73 @@ export class LiveTable implements OnInit {
           return;
         }
 
-        this.run(
-          this.tables.buyChipsFromPlayer(
-            this.championshipId(),
-            this.tableId(),
-            buyer.tablePlayerId,
-            result.sellerPlayerId,
-            result.amount,
-          ),
-          {
-            fallback: $localize`:@@table.tradeFailed:Não foi possível registrar a compra de fichas.`,
+        const seller = table.players.find((p) => p.tablePlayerId === result.sellerPlayerId);
+
+        this.confirm
+          .ask({
+            title: $localize`:@@confirm.tradeTitle:Registrar a compra de fichas?`,
+            message: $localize`:@@confirm.tradeMessage:Nenhuma ficha sai da maleta. Quem vende é creditado no mesmo valor.`,
+            details: [
+              {
+                label: $localize`:@@trade.buyer:Comprador`,
+                value: buyer.displayName,
+              },
+              {
+                label: $localize`:@@trade.seller:Vendedor`,
+                value: seller?.displayName ?? '',
+              },
+              {
+                label: $localize`:@@trade.amount:Valor (R$)`,
+                value: String(result.amount),
+              },
+            ],
+            confirmLabel: $localize`:@@trade.confirm:Registrar`,
+          })
+          .subscribe(() => {
+            this.run(
+              this.tables.buyChipsFromPlayer(
+                this.championshipId(),
+                this.tableId(),
+                buyer.tablePlayerId,
+                result.sellerPlayerId,
+                result.amount,
+              ),
+              {
+                fallback: $localize`:@@table.tradeFailed:Não foi possível registrar a compra de fichas.`,
+              },
+            );
+          });
+      });
+  }
+
+  protected deleteTable(): void {
+    const table = this.table();
+
+    if (!table) {
+      return;
+    }
+
+    this.confirm
+      .ask({
+        title: $localize`:@@confirm.deleteTableTitle:Excluir a mesa?`,
+        message: $localize`:@@confirm.deleteTableMessage:Some tudo desta noite: jogadores, lançamentos, contagens e o acerto. Não dá para desfazer.`,
+        destructive: true,
+        requireTyped: table.name,
+        requireTypedLabel: $localize`:@@confirm.typeTableName:Digite o nome da mesa`,
+        confirmLabel: $localize`:@@common.delete:Excluir`,
+      })
+      .subscribe(() => {
+        this.busy.set(true);
+
+        this.tables.delete(this.championshipId(), this.tableId(), table.name).subscribe({
+          next: () => void this.router.navigate(['/championships', this.championshipId()]),
+          error: (err: unknown) => {
+            this.busy.set(false);
+            this.error.set(
+              describeError(err, $localize`:@@table.deleteFailed:Não foi possível excluir a mesa.`),
+            );
           },
-        );
+        });
       });
   }
 
@@ -206,7 +361,7 @@ export class LiveTable implements OnInit {
     return $localize`:@@table.codePrompt:Código da mesa`;
   }
 
-  private run(action: ReturnType<TablesService['start']>, options: { fallback: string }): void {
+  private run(action: Observable<void>, options: { fallback: string }): void {
     if (this.busy()) {
       return;
     }

@@ -1,4 +1,4 @@
-using SharedKernel;
+﻿using SharedKernel;
 
 namespace Domain.Championships;
 
@@ -50,4 +50,8 @@ public static class ChampionshipErrors
     public static readonly Error CannotRemoveOwner = Error.Conflict(
         "Championships.CannotRemoveOwner",
         "The owner cannot be removed. Transfer ownership first");
+
+    public static readonly Error ConfirmationDoesNotMatch = Error.Problem(
+        "Championships.ConfirmationDoesNotMatch",
+        "Type the championship's name exactly to confirm");
 }

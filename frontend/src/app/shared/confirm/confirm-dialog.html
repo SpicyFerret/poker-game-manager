@@ -1,0 +1,51 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+
+<mat-dialog-content>
+  @if (data.message) {
+    <p>{{ data.message }}</p>
+  }
+
+  @if (data.details?.length) {
+    <ul class="details">
+      @for (detail of data.details; track detail.label) {
+        <li class="detail">
+          @if (detail.swatch) {
+            <span
+              class="detail__chip"
+              [style.background]="detail.swatch"
+              [style.color]="detail.ink"
+              aria-hidden="true"
+              >{{ detail.value }}</span
+            >
+          } @else {
+            <strong class="detail__value">{{ detail.value }}</strong>
+          }
+          <span class="detail__label">{{ detail.label }}</span>
+        </li>
+      }
+    </ul>
+  }
+
+  @if (data.blockedReason) {
+    <p role="alert" class="blocked">{{ data.blockedReason }}</p>
+  } @else if (data.requireTyped) {
+    <mat-form-field class="form-field-full">
+      <mat-label>{{ data.requireTypedLabel }}</mat-label>
+      <input matInput [formControl]="typed" autocomplete="off" />
+    </mat-form-field>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button matButton mat-dialog-close type="button" i18n="@@common.cancel">Cancelar</button>
+  <button
+    [attr.mat-button-variant]="null"
+    matButton="filled"
+    type="button"
+    [class.destructive]="data.destructive"
+    [disabled]="!canConfirm()"
+    (click)="confirm()"
+  >
+    {{ data.confirmLabel }}
+  </button>
+</mat-dialog-actions>

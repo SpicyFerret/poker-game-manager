@@ -152,6 +152,10 @@
           <context context-type="sourcefile">src/app/features/auth/register/register.html</context>
           <context context-type="linenumber">32,33</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
+          <context context-type="linenumber">97</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="field.password" datatype="html">
         <source>Senha</source>
@@ -266,6 +270,10 @@
           <context context-type="linenumber">14,15</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/create/create.ts</context>
+          <context context-type="linenumber">69</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.html</context>
           <context context-type="linenumber">4,5</context>
         </context-group>
@@ -286,6 +294,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/create/create.html</context>
           <context context-type="linenumber">24,26</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/create/create.ts</context>
+          <context context-type="linenumber">71</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.html</context>
@@ -319,6 +331,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/create/create.html</context>
           <context context-type="linenumber">50,52</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/create/create.ts</context>
+          <context context-type="linenumber">75</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.html</context>
@@ -356,23 +372,34 @@
           <context context-type="sourcefile">src/app/features/championships/create/create.html</context>
           <context context-type="linenumber">83,85</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/create/create.ts</context>
+          <context context-type="linenumber">79</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="championships.pointsInvalid" datatype="html">
         <source>A tabela de pontos deve ser uma lista de números separados por vírgula.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/create/create.ts</context>
-          <context context-type="linenumber">56</context>
+          <context context-type="linenumber">58</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.ts</context>
-          <context context-type="linenumber">86</context>
+          <context context-type="linenumber">121</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.createChampionshipTitle" datatype="html">
+        <source>Criar o campeonato?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/create/create.ts</context>
+          <context context-type="linenumber">67</context>
         </context-group>
       </trans-unit>
       <trans-unit id="championships.createFailed" datatype="html">
         <source>Não foi possível criar o campeonato.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/create/create.ts</context>
-          <context context-type="linenumber">83</context>
+          <context context-type="linenumber">116</context>
         </context-group>
       </trans-unit>
       <trans-unit id="chipSets.new" datatype="html">
@@ -416,6 +443,22 @@
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.html</context>
           <context context-type="linenumber">68,69</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
+          <context context-type="linenumber">219</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.html</context>
+          <context context-type="linenumber">124,126</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.ts</context>
+          <context context-type="linenumber">86</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">343</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="chipSets.editHeading" datatype="html">
         <source>Maleta</source>
@@ -429,6 +472,14 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.html</context>
           <context context-type="linenumber">83,84</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
+          <context context-type="linenumber">166</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
+          <context context-type="linenumber">217</context>
         </context-group>
       </trans-unit>
       <trans-unit id="field.faceValue" datatype="html">
@@ -487,8 +538,20 @@
           <context context-type="linenumber">171,172</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
+          <context context-type="linenumber">172</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
+          <context context-type="linenumber">139</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.html</context>
           <context context-type="linenumber">69,71</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.ts</context>
+          <context context-type="linenumber">130</context>
         </context-group>
       </trans-unit>
       <trans-unit id="common.cancel" datatype="html">
@@ -513,33 +576,72 @@
           <context context-type="sourcefile">src/app/features/tables/live/chip-trade-dialog.html</context>
           <context context-type="linenumber">32,34</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/confirm/confirm-dialog.html</context>
+          <context context-type="linenumber">40,42</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="chipSets.loadFailed" datatype="html">
         <source>Não foi possível carregar as maletas.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
-          <context context-type="linenumber">87</context>
+          <context context-type="linenumber">89</context>
         </context-group>
       </trans-unit>
       <trans-unit id="chipSets.duplicateFaceValue" datatype="html">
         <source>Cada ficha da maleta precisa ter um valor impresso diferente.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
-          <context context-type="linenumber">152</context>
+          <context context-type="linenumber">154</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.chipSetCreateTitle" datatype="html">
+        <source>Criar esta maleta?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
+          <context context-type="linenumber">163</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.chipSetSaveTitle" datatype="html">
+        <source>Salvar a maleta?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
+          <context context-type="linenumber">164</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.chipSetDenominations" datatype="html">
+        <source>tipos de ficha</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
+          <context context-type="linenumber">168</context>
         </context-group>
       </trans-unit>
       <trans-unit id="chipSets.saveFailed" datatype="html">
         <source>Não foi possível salvar a maleta.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
-          <context context-type="linenumber">181</context>
+          <context context-type="linenumber">206</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.chipSetDeleteTitle" datatype="html">
+        <source>Excluir esta maleta?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
+          <context context-type="linenumber">215</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.chipSetDeleteMessage" datatype="html">
+        <source>Maleta usada por alguma mesa não pode ser excluída — o histórico delas depende dela.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
+          <context context-type="linenumber">216</context>
         </context-group>
       </trans-unit>
       <trans-unit id="chipSets.deleteFailed" datatype="html">
         <source>Não foi possível excluir a maleta.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
-          <context context-type="linenumber">201</context>
+          <context context-type="linenumber">238</context>
         </context-group>
       </trans-unit>
       <trans-unit id="championship.setupToggle" datatype="html">
@@ -605,6 +707,10 @@
           <context context-type="linenumber">6,7</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.ts</context>
+          <context context-type="linenumber">74</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/add-member-dialog.html</context>
           <context context-type="linenumber">12,13</context>
         </context-group>
@@ -612,12 +718,20 @@
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.html</context>
           <context context-type="linenumber">39,40</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
+          <context context-type="linenumber">98</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="field.maxUses" datatype="html">
         <source>Limite de usos</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/invites/create-invite-dialog.html</context>
           <context context-type="linenumber">15,16</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.ts</context>
+          <context context-type="linenumber">76</context>
         </context-group>
       </trans-unit>
       <trans-unit id="invites.maxUsesHint" datatype="html">
@@ -636,6 +750,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.html</context>
           <context context-type="linenumber">14,17</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.ts</context>
+          <context context-type="linenumber">83</context>
         </context-group>
       </trans-unit>
       <trans-unit id="invites.empty" datatype="html">
@@ -686,26 +804,72 @@
           <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.html</context>
           <context context-type="linenumber">52,53</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.ts</context>
+          <context context-type="linenumber">118</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="invites.loadFailed" datatype="html">
         <source>Não foi possível carregar os convites.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.ts</context>
-          <context context-type="linenumber">49</context>
+          <context context-type="linenumber">51</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.inviteTitle" datatype="html">
+        <source>Gerar este convite?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.ts</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.inviteMessage" datatype="html">
+        <source>Quem tiver o código entra no campeonato com esse cargo.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.ts</context>
+          <context context-type="linenumber">72</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.unlimited" datatype="html">
+        <source>ilimitado</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.ts</context>
+          <context context-type="linenumber">79</context>
         </context-group>
       </trans-unit>
       <trans-unit id="invites.createFailed" datatype="html">
         <source>Não foi possível criar o convite.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.ts</context>
-          <context context-type="linenumber">79</context>
+          <context context-type="linenumber">104</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.revokeTitle" datatype="html">
+        <source>Revogar este convite?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.ts</context>
+          <context context-type="linenumber">114</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.revokeMessage" datatype="html">
+        <source>Quem já entrou continua no campeonato. O código para de funcionar e não volta.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.ts</context>
+          <context context-type="linenumber">115</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.code" datatype="html">
+        <source>código</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.ts</context>
+          <context context-type="linenumber">116</context>
         </context-group>
       </trans-unit>
       <trans-unit id="invites.revokeFailed" datatype="html">
         <source>Não foi possível revogar o convite.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.ts</context>
-          <context context-type="linenumber">101</context>
+          <context context-type="linenumber">137</context>
         </context-group>
       </trans-unit>
       <trans-unit id="members.addHeading" datatype="html">
@@ -739,6 +903,10 @@
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.html</context>
           <context context-type="linenumber">15,19</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
+          <context context-type="linenumber">100</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="members.noPaymentHandle" datatype="html">
         <source>· sem chave de recebimento</source>
@@ -753,33 +921,83 @@
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.html</context>
           <context context-type="linenumber">60,61</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
+          <context context-type="linenumber">176</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="members.loadFailed" datatype="html">
         <source>Não foi possível carregar os membros.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
-          <context context-type="linenumber">73</context>
+          <context context-type="linenumber">75</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.addMemberTitle" datatype="html">
+        <source>Adicionar ao campeonato?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
+          <context context-type="linenumber">95</context>
         </context-group>
       </trans-unit>
       <trans-unit id="members.addFailed" datatype="html">
         <source>Não foi possível adicionar. Confira se essa pessoa já tem conta.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
-          <context context-type="linenumber">102</context>
+          <context context-type="linenumber">120</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.roleTitle" datatype="html">
+        <source>Alterar o cargo?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
+          <context context-type="linenumber">134</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.roleWho" datatype="html">
+        <source>membro</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
+          <context context-type="linenumber">136</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
+          <context context-type="linenumber">174</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.roleNew" datatype="html">
+        <source>novo cargo</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
+          <context context-type="linenumber">137</context>
         </context-group>
       </trans-unit>
       <trans-unit id="members.roleFailed" datatype="html">
         <source>Não foi possível alterar o cargo.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
-          <context context-type="linenumber">127</context>
+          <context context-type="linenumber">162</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.removeMemberTitle" datatype="html">
+        <source>Remover do campeonato?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
+          <context context-type="linenumber">172</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.removeMemberMessage" datatype="html">
+        <source>As mesas que essa pessoa já jogou continuam registradas.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
+          <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
       <trans-unit id="members.removeFailed" datatype="html">
         <source>Não foi possível remover o membro.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
-          <context context-type="linenumber">148</context>
+          <context context-type="linenumber">194</context>
         </context-group>
       </trans-unit>
       <trans-unit id="field.seasonName" datatype="html">
@@ -788,6 +1006,10 @@
           <context context-type="sourcefile">src/app/features/championships/detail/seasons/seasons.html</context>
           <context context-type="linenumber">9,10</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/seasons/seasons.ts</context>
+          <context context-type="linenumber">80</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="field.startsOn" datatype="html">
         <source>Começa em</source>
@@ -795,12 +1017,20 @@
           <context context-type="sourcefile">src/app/features/championships/detail/seasons/seasons.html</context>
           <context context-type="linenumber">14,15</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/seasons/seasons.ts</context>
+          <context context-type="linenumber">81</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="field.endsOn" datatype="html">
         <source>Termina em</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/seasons/seasons.html</context>
           <context context-type="linenumber">19,20</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/seasons/seasons.ts</context>
+          <context context-type="linenumber">83</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seasons.endsOnHint" datatype="html">
@@ -816,6 +1046,10 @@
           <context context-type="sourcefile">src/app/features/championships/detail/seasons/seasons.html</context>
           <context context-type="linenumber">32,34</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/seasons/seasons.ts</context>
+          <context context-type="linenumber">87</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="seasons.open" datatype="html">
         <source>— em aberto</source>
@@ -823,19 +1057,37 @@
           <context context-type="sourcefile">src/app/features/championships/detail/seasons/seasons.html</context>
           <context context-type="linenumber">46,48</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/seasons/seasons.ts</context>
+          <context context-type="linenumber">84</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="seasons.loadFailed" datatype="html">
         <source>Não foi possível carregar as temporadas.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/seasons/seasons.ts</context>
-          <context context-type="linenumber">60</context>
+          <context context-type="linenumber">62</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.seasonTitle" datatype="html">
+        <source>Criar esta temporada?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/seasons/seasons.ts</context>
+          <context context-type="linenumber">77</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.seasonMessage" datatype="html">
+        <source>Os rankings passam a somar por esta janela de datas.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/seasons/seasons.ts</context>
+          <context context-type="linenumber">78</context>
         </context-group>
       </trans-unit>
       <trans-unit id="seasons.createFailed" datatype="html">
         <source>Não foi possível criar a temporada. Confira se as datas não se sobrepõem a outra.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/seasons/seasons.ts</context>
-          <context context-type="linenumber">94</context>
+          <context context-type="linenumber">109</context>
         </context-group>
       </trans-unit>
       <trans-unit id="settings.saved" datatype="html">
@@ -865,12 +1117,20 @@
           <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.html</context>
           <context context-type="linenumber">83,86</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.ts</context>
+          <context context-type="linenumber">188</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="settings.newOwner" datatype="html">
         <source>Novo dono</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.html</context>
           <context context-type="linenumber">87,88</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.ts</context>
+          <context context-type="linenumber">191</context>
         </context-group>
       </trans-unit>
       <trans-unit id="settings.transfer" datatype="html">
@@ -879,19 +1139,86 @@
           <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.html</context>
           <context context-type="linenumber">102,104</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.ts</context>
+          <context context-type="linenumber">196</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.dangerHeading" datatype="html">
+        <source>Excluir campeonato</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.html</context>
+          <context context-type="linenumber">111,112</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.dangerWarning" datatype="html">
+        <source> Some tudo: membros, convites, maletas, temporadas, todas as mesas já jogadas e os rankings. Não dá para desfazer. </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.html</context>
+          <context context-type="linenumber">113,117</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.deleteChampionshipTitle" datatype="html">
+        <source>Excluir o campeonato?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.ts</context>
+          <context context-type="linenumber">81</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.deleteChampionshipMessage" datatype="html">
+        <source>Some tudo: membros, convites, maletas, temporadas, todas as mesas já jogadas e os rankings. Não dá para desfazer.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.ts</context>
+          <context context-type="linenumber">82</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.typeChampionshipName" datatype="html">
+        <source>Digite o nome do campeonato</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.ts</context>
+          <context context-type="linenumber">85</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.deleteFailed" datatype="html">
+        <source>Não foi possível excluir o campeonato.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.ts</context>
+          <context context-type="linenumber">99</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.settingsTitle" datatype="html">
+        <source>Salvar as configurações?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.ts</context>
+          <context context-type="linenumber">128</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.settingsMessage" datatype="html">
+        <source>Vale para as próximas mesas. As já abertas guardam os valores com que foram criadas.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.ts</context>
+          <context context-type="linenumber">129</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="settings.saveFailed" datatype="html">
         <source>Não foi possível salvar.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.ts</context>
-          <context context-type="linenumber">114</context>
+          <context context-type="linenumber">170</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.transferTitle" datatype="html">
+        <source>Transferir a propriedade?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.ts</context>
+          <context context-type="linenumber">187</context>
         </context-group>
       </trans-unit>
       <trans-unit id="settings.transferFailed" datatype="html">
         <source>Não foi possível transferir a propriedade.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.ts</context>
-          <context context-type="linenumber">142</context>
+          <context context-type="linenumber">217</context>
         </context-group>
       </trans-unit>
       <trans-unit id="tables.createHeading" datatype="html">
@@ -906,6 +1233,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/tables/tables.html</context>
           <context context-type="linenumber">15,16</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/tables/tables.ts</context>
+          <context context-type="linenumber">127</context>
         </context-group>
       </trans-unit>
       <trans-unit id="field.chipSet" datatype="html">
@@ -927,6 +1258,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/tables/tables.html</context>
           <context context-type="linenumber">34,35</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/tables/tables.ts</context>
+          <context context-type="linenumber">129</context>
         </context-group>
       </trans-unit>
       <trans-unit id="tables.buyInHint" datatype="html">
@@ -998,6 +1333,10 @@
           <context context-type="sourcefile">src/app/features/championships/detail/tables/tables.html</context>
           <context context-type="linenumber">76,77</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/tables/tables.ts</context>
+          <context context-type="linenumber">136</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="tables.new" datatype="html">
         <source> Nova mesa </source>
@@ -1031,14 +1370,35 @@
         <source>Não foi possível carregar as mesas.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/tables/tables.ts</context>
-          <context context-type="linenumber">87</context>
+          <context context-type="linenumber">89</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.createTableTitle" datatype="html">
+        <source>Abrir esta mesa?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/tables/tables.ts</context>
+          <context context-type="linenumber">124</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.createTableMessage" datatype="html">
+        <source>Nenhuma ficha sai da maleta agora — só quando a mesa for iniciada.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/tables/tables.ts</context>
+          <context context-type="linenumber">125</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.championshipDefault" datatype="html">
+        <source>padrão do campeonato</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/tables/tables.ts</context>
+          <context context-type="linenumber">132</context>
         </context-group>
       </trans-unit>
       <trans-unit id="tables.createFailed" datatype="html">
         <source>Não foi possível criar a mesa.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/tables/tables.ts</context>
-          <context context-type="linenumber">144</context>
+          <context context-type="linenumber">174</context>
         </context-group>
       </trans-unit>
       <trans-unit id="join.heading" datatype="html">
@@ -1201,12 +1561,20 @@
           <context context-type="sourcefile">src/app/features/tables/live/chip-trade-dialog.html</context>
           <context context-type="linenumber">11,12</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">298</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="trade.seller" datatype="html">
         <source>Vendedor</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/chip-trade-dialog.html</context>
           <context context-type="linenumber">16,17</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">302</context>
         </context-group>
       </trans-unit>
       <trans-unit id="trade.amount" datatype="html">
@@ -1215,12 +1583,20 @@
           <context context-type="sourcefile">src/app/features/tables/live/chip-trade-dialog.html</context>
           <context context-type="linenumber">25,26</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">306</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="trade.confirm" datatype="html">
         <source> Registrar </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/chip-trade-dialog.html</context>
           <context context-type="linenumber">40,42</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">310</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.buyIn" datatype="html">
@@ -1264,6 +1640,10 @@
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
           <context context-type="linenumber">53,54</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">182</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="table.start" datatype="html">
         <source> Iniciar mesa </source>
@@ -1271,131 +1651,275 @@
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
           <context context-type="linenumber">64,65</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">165</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="table.delete" datatype="html">
+        <source> Excluir mesa </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
+          <context context-type="linenumber">76,77</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="table.paidIn" datatype="html">
         <source>pagou R$ <x id="INTERPOLATION" equiv-text="{{ player.paidIn }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">80,81</context>
+          <context context-type="linenumber">92,93</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.rebuys" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{ player.rebuyCount }}"/> rebuy(s)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">82,83</context>
+          <context context-type="linenumber">94,95</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.noPaymentHandle" datatype="html">
         <source>sem chave de recebimento</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">86,88</context>
+          <context context-type="linenumber">98,100</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.rebuy" datatype="html">
         <source> Rebuy </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">101,102</context>
+          <context context-type="linenumber">113,114</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.tradeChips" datatype="html">
         <source> Comprar de jogador </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">110,111</context>
+          <context context-type="linenumber">122,123</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.dealIn" datatype="html">
         <source> Dar fichas </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">120,121</context>
+          <context context-type="linenumber">132,133</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.chipCountsAs" datatype="html">
         <source>vale <x id="INTERPOLATION" equiv-text="{{ chip.effectiveValue }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">143,144</context>
+          <context context-type="linenumber">155,156</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.chipRemaining" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{ chip.remaining }}"/> na maleta</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">147,148</context>
+          <context context-type="linenumber">159,160</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.chipIssued" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{ chip.issued }}"/> em jogo</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">150,151</context>
+          <context context-type="linenumber">162,163</context>
         </context-group>
       </trans-unit>
       <trans-unit id="tableSection.players" datatype="html">
         <source>Jogadores</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">84</context>
+          <context context-type="linenumber">71</context>
         </context-group>
       </trans-unit>
       <trans-unit id="tableSection.case" datatype="html">
         <source>Maleta</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">85</context>
+          <context context-type="linenumber">72</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.loadFailed" datatype="html">
         <source>Não foi possível carregar a mesa.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">114</context>
+          <context context-type="linenumber">116</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.startTitle" datatype="html">
+        <source>Iniciar a mesa?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">153</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.startMessage" datatype="html">
+        <source>Cada jogador recebe um stack e as fichas saem da maleta. Se ela não cobrir todos, nada é entregue.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">154</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.startPlayers" datatype="html">
+        <source>jogadores aguardando</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">157</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.startBuyIn" datatype="html">
+        <source>buy-in cada</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">161</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.startFailed" datatype="html">
         <source>Não foi possível iniciar a mesa.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">142</context>
+          <context context-type="linenumber">169</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.joinTitle" datatype="html">
+        <source>Entrar nesta mesa?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">180</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.joinMessage" datatype="html">
+        <source>Você entra aguardando. As fichas só saem quando o gerente iniciar ou te distribuir.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">181</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.joinFailed" datatype="html">
         <source>Não foi possível entrar na mesa.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">151</context>
+          <context context-type="linenumber">186</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.chipOf" datatype="html">
+        <source>ficha <x id="VALUE" equiv-text="chip.faceValue"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">220</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.rebuyTitle" datatype="html">
+        <source>Rebuy de <x id="NAME" equiv-text="player.displayName"/>?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">230</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.dealInTitle" datatype="html">
+        <source>Dar fichas para <x id="NAME" equiv-text="player.displayName"/>?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">231</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.stackMessage" datatype="html">
+        <source>Entregue exatamente estas fichas da maleta:</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">232</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.stackConfirm" datatype="html">
+        <source>Entreguei as fichas</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">234</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.stackBlocked" datatype="html">
+        <source>A maleta não fecha este stack: faltam <x id="UNITS" equiv-text="preview.shortfallUnits"/> unidades.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">239</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.rebuyFailed" datatype="html">
         <source>Não foi possível fazer o rebuy.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">158</context>
+          <context context-type="linenumber">251</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.dealInFailed" datatype="html">
         <source>Não foi possível dar fichas ao jogador.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">165</context>
+          <context context-type="linenumber">252</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="table.previewFailed" datatype="html">
+        <source>Não foi possível calcular as fichas deste stack.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">262</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.tradeTitle" datatype="html">
+        <source>Registrar a compra de fichas?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">294</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.tradeMessage" datatype="html">
+        <source>Nenhuma ficha sai da maleta. Quem vende é creditado no mesmo valor.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">295</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.tradeFailed" datatype="html">
         <source>Não foi possível registrar a compra de fichas.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">199</context>
+          <context context-type="linenumber">322</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.deleteTableTitle" datatype="html">
+        <source>Excluir a mesa?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">338</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.deleteTableMessage" datatype="html">
+        <source>Some tudo desta noite: jogadores, lançamentos, contagens e o acerto. Não dá para desfazer.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">339</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.typeTableName" datatype="html">
+        <source>Digite o nome da mesa</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">342</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="table.deleteFailed" datatype="html">
+        <source>Não foi possível excluir a mesa.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">353</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.codePrompt" datatype="html">
         <source>Código da mesa</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">206</context>
+          <context context-type="linenumber">361</context>
         </context-group>
       </trans-unit>
       <trans-unit id="chipColour.white" datatype="html">
