@@ -1,4 +1,4 @@
-// Title on the left, gear pinned to the right edge of the card.
+// Title on the left, ranking and gear stacked on the right edge of the card.
 .header-row {
   display: flex;
   align-items: flex-start;
@@ -10,11 +10,32 @@
   min-width: 0;
 }
 
-.header-row__gear {
+// Ranking above the gear, both pinned to the card's right edge — reachable
+// with a thumb without reflowing the title next to them.
+.header-row__actions {
+  display: flex;
   flex: 0 0 auto;
-  margin: 0.5rem 0.5rem 0 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  margin: 0.35rem 0.35rem 0 0;
+}
+
+.header-row__action {
   font-size: 1.25rem;
   line-height: 1;
+  color: var(--mat-sys-on-surface-variant);
+  transition: color 0.15s ease;
+}
+
+// Lit up while its panel is open, so which one is expanded is never a guess.
+.header-row__action--on {
+  color: var(--mat-sys-tertiary);
+}
+
+.header-row__action:hover,
+.header-row__action:focus-visible {
+  color: var(--mat-sys-tertiary);
 }
 
 .setup {

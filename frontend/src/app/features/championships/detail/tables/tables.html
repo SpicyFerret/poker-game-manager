@@ -101,16 +101,18 @@
 
     @for (table of items(); track table.id) {
       <a class="card-link" [routerLink]="['/championships', championshipId(), 'tables', table.id]">
-        <mat-card class="table-card" [class.table-card--finished]="!isActive(table)">
-          <mat-card-header>
-            <mat-card-title>{{ table.name }}</mat-card-title>
-            <mat-card-subtitle>
-              {{ table.status | tableStatusLabel }} ·
-              <span i18n="@@tables.playerCount">{{ table.playerCount }} jogador(es)</span> ·
-              <span i18n="@@tables.buyIn">buy-in R$ {{ table.buyIn }}</span>
-            </mat-card-subtitle>
-          </mat-card-header>
-        </mat-card>
+        <div class="table-card-glow" [class]="'table-card-glow--' + moodOf(table)">
+          <mat-card class="table-card" [class.table-card--finished]="!isActive(table)">
+            <mat-card-header>
+              <mat-card-title>{{ table.name }}</mat-card-title>
+              <mat-card-subtitle>
+                {{ table.status | tableStatusLabel }} ·
+                <span i18n="@@tables.playerCount">{{ table.playerCount }} jogador(es)</span> ·
+                <span i18n="@@tables.buyIn">buy-in R$ {{ table.buyIn }}</span>
+              </mat-card-subtitle>
+            </mat-card-header>
+          </mat-card>
+        </div>
       </a>
     }
   }

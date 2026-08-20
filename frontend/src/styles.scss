@@ -36,9 +36,27 @@ html,
 body {
   height: 100%;
   margin: 0;
-  background: var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
   font: var(--mat-sys-body-medium);
+}
+
+// A faint felt-green glow behind the surface rather than a flat panel — the
+// intent is a card table, not a terminal. Fixed, so it does not scroll away
+// and reappear as a hard seam further down the page.
+body {
+  background:
+    radial-gradient(
+      ellipse 140% 60% at 50% -10%,
+      color-mix(in srgb, var(--mat-sys-primary) 16%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 120% 50% at 100% 100%,
+      color-mix(in srgb, var(--mat-sys-tertiary) 10%, transparent),
+      transparent 55%
+    ),
+    var(--mat-sys-surface);
+  background-attachment: fixed;
 }
 
 // Mobile-first shared helpers. Anything wider than a phone just gets the same

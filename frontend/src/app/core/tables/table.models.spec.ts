@@ -12,6 +12,7 @@ import {
   sortForDisplay,
   stacksLeft,
   suggestLadder,
+  tableMood,
 } from './table.models';
 
 function summary(name: string, status: TableStatus, createdAtUtc: string): TableSummary {
@@ -212,5 +213,24 @@ describe('suggestLadder', () => {
 
   it('should not suggest a blind of zero when the case has no chips', () => {
     expect(suggestLadder(0)[0].smallBlind).toBe(1);
+  });
+});
+
+describe('tableMood', () => {
+  it('should be idle before anyone has sat down', () => {
+    expect(tableMood('Draft')).toBe('idle');
+    expect(tableMood('Open')).toBe('idle');
+  });
+
+  it('should be live once play has started, through counting and settling', () => {
+    expect(tableMood('Running')).toBe('live');
+    expect(tableMood('Counting')).toBe('live');
+    expect(tableMood('Reconciled')).toBe('live');
+    expect(tableMood('Settled')).toBe('live');
+  });
+
+  it('should be done once nothing more will happen at the table', () => {
+    expect(tableMood('Closed')).toBe('done');
+    expect(tableMood('Cancelled')).toBe('done');
   });
 });
