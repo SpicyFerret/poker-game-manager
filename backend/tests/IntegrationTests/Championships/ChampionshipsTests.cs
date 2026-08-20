@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
 
 namespace IntegrationTests.Championships;
@@ -330,27 +330,6 @@ public sealed class ChampionshipsTests(IntegrationTestWebAppFactory factory) : B
         set.TotalUnits.ShouldBe(35_000);
     }
 
-    [Fact]
-    public async Task Seasons_Should_RejectAnOverlappingRange()
-    {
-        // Arrange
-        (Guid _, AccessTokens tokens) = await RegisterAndLoginAsync();
-        Authenticate(tokens.AccessToken);
-        Guid championshipId = await CreateChampionshipAsync();
-
-        HttpResponseMessage first = await HttpClient.PostAsJsonAsync(
-            $"championships/{championshipId}/seasons",
-            new { name = "2026", startsOn = "2026-01-01", endsOn = "2026-12-31" });
-        first.EnsureSuccessStatusCode();
-
-        // Act
-        HttpResponseMessage clashing = await HttpClient.PostAsJsonAsync(
-            $"championships/{championshipId}/seasons",
-            new { name = "Meio de 2026", startsOn = "2026-06-01", endsOn = "2026-07-01" });
-
-        // Assert
-        clashing.StatusCode.ShouldBe(HttpStatusCode.Conflict);
-    }
 
     private sealed record ChipSetDto(Guid Id, string Name, long TotalUnits, DenominationDto[] Denominations);
 

@@ -195,8 +195,8 @@
         <target><x id="INTERPOLATION" equiv-text="{{ chipSet.totalUnits }}"/> units in total</target>
       </trans-unit>
       <trans-unit id="chipSets.countsAs" datatype="html">
-        <source>, valendo <x id="INTERPOLATION" equiv-text="{{ denomination.effectiveValue }}"/></source>
-        <target>, counting as <x id="INTERPOLATION" equiv-text="{{ denomination.effectiveValue }}"/></target>
+        <source>vale <x id="INTERPOLATION" equiv-text="{{ denomination.effectiveValue }}"/></source>
+        <target>counts as <x id="INTERPOLATION" equiv-text="{{ denomination.effectiveValue }}"/></target>
       </trans-unit>
       <trans-unit id="common.edit" datatype="html">
         <source> Editar </source>
@@ -239,7 +239,7 @@
         <target> Save </target>
       </trans-unit>
       <trans-unit id="common.cancel" datatype="html">
-        <source>Cancelar</source>
+        <source> Cancelar </source>
         <target>Cancel</target>
       </trans-unit>
       <trans-unit id="chipSets.loadFailed" datatype="html">
@@ -269,10 +269,6 @@
       <trans-unit id="tab.chipSets" datatype="html">
         <source>Maletas</source>
         <target>Chip cases</target>
-      </trans-unit>
-      <trans-unit id="tab.seasons" datatype="html">
-        <source>Temporadas</source>
-        <target>Seasons</target>
       </trans-unit>
       <trans-unit id="tab.settings" datatype="html">
         <source>Configurações</source>
@@ -351,8 +347,8 @@
         <target>&#183; no payment details</target>
       </trans-unit>
       <trans-unit id="members.remove" datatype="html">
-        <source>Remover membro</source>
-        <target>Remove member</target>
+        <source> Remover </source>
+        <target> Remove </target>
       </trans-unit>
       <trans-unit id="members.loadFailed" datatype="html">
         <source>Não foi possível carregar os membros.</source>
@@ -369,38 +365,6 @@
       <trans-unit id="members.removeFailed" datatype="html">
         <source>Não foi possível remover o membro.</source>
         <target>The member could not be removed.</target>
-      </trans-unit>
-      <trans-unit id="field.seasonName" datatype="html">
-        <source>Nome da temporada</source>
-        <target>Season name</target>
-      </trans-unit>
-      <trans-unit id="field.startsOn" datatype="html">
-        <source>Começa em</source>
-        <target>Starts on</target>
-      </trans-unit>
-      <trans-unit id="field.endsOn" datatype="html">
-        <source>Termina em</source>
-        <target>Ends on</target>
-      </trans-unit>
-      <trans-unit id="seasons.endsOnHint" datatype="html">
-        <source>Deixe em branco para uma temporada em aberto.</source>
-        <target>Leave blank for an open-ended season.</target>
-      </trans-unit>
-      <trans-unit id="seasons.create" datatype="html">
-        <source> Criar temporada </source>
-        <target> Create season </target>
-      </trans-unit>
-      <trans-unit id="seasons.open" datatype="html">
-        <source>— em aberto</source>
-        <target>&#8212; open-ended</target>
-      </trans-unit>
-      <trans-unit id="seasons.loadFailed" datatype="html">
-        <source>Não foi possível carregar as temporadas.</source>
-        <target>The seasons could not be loaded.</target>
-      </trans-unit>
-      <trans-unit id="seasons.createFailed" datatype="html">
-        <source>Não foi possível criar a temporada. Confira se as datas não se sobrepõem a outra.</source>
-        <target>The season could not be created. Check that the dates do not overlap another one.</target>
       </trans-unit>
       <trans-unit id="settings.saved" datatype="html">
         <source>Configurações salvas.</source>
@@ -467,8 +431,7 @@
         <target> You are not in any championship yet. Create one, or join with a code someone sent you. </target>
       </trans-unit>
       <trans-unit id="championships.memberCount" datatype="html">
-        <source>{VAR_PLURAL, plural, =1 {1 membro} other {<x id="INTERPOLATION"/>
-            membros}}</source>
+        <source>{VAR_PLURAL, plural, =1 {1 membro} other {<x id="INTERPOLATION"/> membros}}</source>
         <target>{VAR_PLURAL, plural, =1 {1 member} other {<x id="INTERPOLATION"/>
             members}}</target>
       </trans-unit>
@@ -681,8 +644,8 @@
         <target> Give chips </target>
       </trans-unit>
       <trans-unit id="table.chipCountsAs" datatype="html">
-        <source>(vale <x id="INTERPOLATION" equiv-text="{{ chip.effectiveValue }}"/>)</source>
-        <target>(counts as <x id="INTERPOLATION" equiv-text="{{ chip.effectiveValue }}"/>)</target>
+        <source>vale <x id="INTERPOLATION" equiv-text="{{ chip.effectiveValue }}"/></source>
+        <target>counts as <x id="INTERPOLATION" equiv-text="{{ chip.effectiveValue }}"/></target>
       </trans-unit>
       <trans-unit id="table.chipRemaining" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{ chip.remaining }}"/> na maleta</source>
@@ -868,29 +831,21 @@
         <source>As mesas que essa pessoa já jogou continuam registradas.</source>
         <target>The tables this person already played stay on record.</target>
       </trans-unit>
-      <trans-unit id="confirm.seasonTitle" datatype="html">
-        <source>Criar esta temporada?</source>
-        <target>Create this season?</target>
-      </trans-unit>
-      <trans-unit id="confirm.seasonMessage" datatype="html">
-        <source>Os rankings passam a somar por esta janela de datas.</source>
-        <target>Rankings will add up over this date range.</target>
-      </trans-unit>
       <trans-unit id="settings.dangerHeading" datatype="html">
         <source>Excluir campeonato</source>
         <target>Delete championship</target>
       </trans-unit>
       <trans-unit id="settings.dangerWarning" datatype="html">
-        <source> Some tudo: membros, convites, maletas, temporadas, todas as mesas já jogadas e os rankings. Não dá para desfazer. </source>
-        <target> Everything goes: members, invites, chip cases, seasons, every table ever played and the rankings. This cannot be undone. </target>
+        <source> Some tudo: membros, convites, maletas, todas as mesas já jogadas e os rankings. Não dá para desfazer. </source>
+        <target> Everything goes: members, invites, chip cases, every table ever played and the rankings. This cannot be undone. </target>
       </trans-unit>
       <trans-unit id="confirm.deleteChampionshipTitle" datatype="html">
         <source>Excluir o campeonato?</source>
         <target>Delete the championship?</target>
       </trans-unit>
       <trans-unit id="confirm.deleteChampionshipMessage" datatype="html">
-        <source>Some tudo: membros, convites, maletas, temporadas, todas as mesas já jogadas e os rankings. Não dá para desfazer.</source>
-        <target>Everything goes: members, invites, chip cases, seasons, every table ever played and the rankings. This cannot be undone.</target>
+        <source>Some tudo: membros, convites, maletas, todas as mesas já jogadas e os rankings. Não dá para desfazer.</source>
+        <target>Everything goes: members, invites, chip cases, every table ever played and the rankings. This cannot be undone.</target>
       </trans-unit>
       <trans-unit id="confirm.typeChampionshipName" datatype="html">
         <source>Digite o nome do campeonato</source>

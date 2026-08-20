@@ -1,7 +1,6 @@
 ﻿using Application.Abstractions.Data;
 using Domain.Championships;
 using Domain.ChipSets;
-using Domain.Seasons;
 using Domain.Tables;
 using Domain.Users;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +28,6 @@ public sealed class TestDbContext(DbContextOptions<TestDbContext> options)
 
     public DbSet<ChipDenomination> ChipDenominations { get; set; }
 
-    public DbSet<Season> Seasons { get; set; }
 
     public DbSet<PokerTable> Tables { get; set; }
 

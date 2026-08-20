@@ -1,7 +1,6 @@
 ﻿using Application.Abstractions.Data;
 using Domain.Championships;
 using Domain.ChipSets;
-using Domain.Seasons;
 using Domain.Tables;
 using Domain.Users;
 using Infrastructure.DomainEvents;
@@ -29,7 +28,6 @@ public sealed class ApplicationDbContext(
 
     public DbSet<ChipDenomination> ChipDenominations { get; set; }
 
-    public DbSet<Season> Seasons { get; set; }
 
     public DbSet<PokerTable> Tables { get; set; }
 

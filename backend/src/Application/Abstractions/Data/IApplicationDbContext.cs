@@ -1,6 +1,5 @@
 ﻿using Domain.Championships;
 using Domain.ChipSets;
-using Domain.Seasons;
 using Domain.Tables;
 using Domain.Users;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +18,6 @@ public interface IApplicationDbContext
     DbSet<ChipSet> ChipSets { get; }
     DbSet<ChipDenomination> ChipDenominations { get; }
 
-    DbSet<Season> Seasons { get; }
 
     DbSet<PokerTable> Tables { get; }
     DbSet<TablePlayer> TablePlayers { get; }

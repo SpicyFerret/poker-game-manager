@@ -12,7 +12,6 @@ import {
   ChipSet,
   Invite,
   Member,
-  Season,
 } from './championship.models';
 
 @Injectable({ providedIn: 'root' })
@@ -129,22 +128,4 @@ export class ChampionshipsService {
     return this.http.delete<void>(`${this.base}/${championshipId}/chip-sets/${chipSetId}`);
   }
 
-  // --- Seasons -------------------------------------------------------------
-
-  seasons(championshipId: string): Observable<Season[]> {
-    return this.http.get<Season[]>(`${this.base}/${championshipId}/seasons`);
-  }
-
-  createSeason(
-    championshipId: string,
-    name: string,
-    startsOn: string,
-    endsOn: string | null,
-  ): Observable<string> {
-    return this.http.post<string>(`${this.base}/${championshipId}/seasons`, {
-      name,
-      startsOn,
-      endsOn,
-    });
-  }
 }

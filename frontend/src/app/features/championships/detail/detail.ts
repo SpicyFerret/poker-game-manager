@@ -11,7 +11,6 @@ import { NavSection, SectionNav } from '../../../shared/section-nav/section-nav'
 import { ChipSetsTab } from './chip-sets/chip-sets';
 import { InvitesTab } from './invites/invites';
 import { MembersTab } from './members/members';
-import { SeasonsTab } from './seasons/seasons';
 import { SettingsTab } from './settings/settings';
 import { TablesTab } from './tables/tables';
 
@@ -27,7 +26,6 @@ import { TablesTab } from './tables/tables';
     MembersTab,
     InvitesTab,
     ChipSetsTab,
-    SeasonsTab,
     SettingsTab,
   ],
   templateUrl: './detail.html',
@@ -44,7 +42,7 @@ export class ChampionshipDetail implements OnInit {
   protected readonly championship = signal<Championship | null>(null);
 
   /**
-   * Setup — members, invites, chip cases, seasons, settings — is folded away
+   * Setup — members, invites, chip cases, settings — is folded away
    * behind the gear. It is configured once and then rarely touched, while the
    * tables are what someone opens this screen for on a game night.
    */
@@ -72,7 +70,6 @@ export class ChampionshipDetail implements OnInit {
 
     sections.push(
       { id: 'chipSets', label: $localize`:@@tab.chipSets:Maletas` },
-      { id: 'seasons', label: $localize`:@@tab.seasons:Temporadas` },
       { id: 'settings', label: $localize`:@@tab.settings:Configurações` },
     );
 
