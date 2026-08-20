@@ -18,49 +18,62 @@
 
   @for (member of members(); track member.userId) {
     <mat-card class="member">
-      <mat-card-header>
-        <mat-card-title>{{ member.displayName }}</mat-card-title>
-        <mat-card-subtitle>
-          {{ member.role | roleLabel }}
-          @if (!member.hasPaymentHandle) {
-            <span class="alert" i18n="@@members.noPaymentHandle">· sem chave de recebimento</span>
-          }
-        </mat-card-subtitle>
-      </mat-card-header>
+      <div class="member-row">
+        <mat-card-header class="member-row__text">
+          <mat-card-title>{{ member.displayName }}</mat-card-title>
+          <mat-card-subtitle>
+            {{ member.role | roleLabel }}
+            @if (!member.hasPaymentHandle) {
+              <span class="alert" i18n="@@members.noPaymentHandle">· sem chave de recebimento</span>
+            }
+          </mat-card-subtitle>
+        </mat-card-header>
 
-      @if (canActOn(member)) {
-        <mat-card-content>
-          <!--
-            The select lives in the card body with room to breathe. Nested in a
-            list line it was clipped by the line's fixed height, which is what
-            hid its value.
-          -->
-          <mat-form-field class="member__role">
-            <mat-label i18n="@@field.role">Cargo</mat-label>
-            <mat-select
-              [value]="member.role"
+        @if (canActOn(member)) {
+          <div class="member-row__actions">
+            <button
+              matIconButton
+              type="button"
+              [matMenuTriggerFor]="roleMenu"
               [disabled]="busy()"
-              (valueChange)="changeRole(member, $event)"
+              i18n-aria-label="@@members.changeRoleFor"
+              aria-label="Cargo de {{ member.displayName }}"
             >
-              @for (role of rolesICanAssign(); track role) {
-                <mat-option [value]="role">{{ role | roleLabel }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-        </mat-card-content>
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+                <path
+                  fill="currentColor"
+                  d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Z"
+                />
+              </svg>
+            </button>
 
-        <mat-card-actions align="end">
-          <button
-            matButton
-            type="button"
-            [disabled]="busy()"
-            (click)="remove(member)"
-            i18n="@@members.remove"
-          >
-            Remover
-          </button>
-        </mat-card-actions>
-      }
+            <mat-menu #roleMenu="matMenu">
+              @for (role of rolesICanAssign(); track role) {
+                <button mat-menu-item type="button" (click)="changeRole(member, role)">
+                  {{ role | roleLabel }}
+                </button>
+              }
+            </mat-menu>
+
+            <button
+              matIconButton
+              type="button"
+              class="member-row__danger"
+              [disabled]="busy()"
+              (click)="remove(member)"
+              i18n-aria-label="@@members.removeFor"
+              aria-label="Remover {{ member.displayName }}"
+            >
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+                <path
+                  fill="currentColor"
+                  d="M9 3a1 1 0 0 0-1 1v1H4v2h1v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7h1V5h-4V4a1 1 0 0 0-1-1H9Zm-1 6h2v9H8V9Zm4 0h2v9h-2V9Z"
+                />
+              </svg>
+            </button>
+          </div>
+        }
+      </div>
     </mat-card>
   }
 </section>

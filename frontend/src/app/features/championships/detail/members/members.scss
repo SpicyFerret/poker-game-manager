@@ -11,8 +11,30 @@
   margin-bottom: 0.75rem;
 }
 
-.member__role {
-  width: 100%;
+// Name and role on the left, the two actions stacked on the card's right
+// edge — the same shape as the championship card's own gear and ranking.
+.member-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.member-row__text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.member-row__actions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  margin: 0.5rem 0.5rem 0 0;
+}
+
+.member-row__danger {
+  color: var(--mat-sys-error);
 }
 
 .alert {
