@@ -1,11 +1,16 @@
 // A card rather than a toolbar: the rest of the app is cards, and a full-bleed
 // bar was the one thing on screen that did not belong to the same set.
+//
+// Paints the same carpet as the body rather than a flat surface colour — see
+// --casino-carpet in styles.scss for why the two line up as one continuous
+// pattern instead of a strip that merely matches.
 .app-bar {
   position: sticky;
   top: 0;
   z-index: 10;
   padding: 0.5rem 1rem 0;
-  background: var(--mat-sys-surface);
+  background: var(--casino-carpet);
+  background-attachment: fixed;
 }
 
 .app-bar__card {
