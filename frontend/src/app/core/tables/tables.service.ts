@@ -3,7 +3,15 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { CreateTableRequest, StackPreview, TableDetail, TableSummary } from './table.models';
+import {
+  ChipCountEntry,
+  CreateTableRequest,
+  Reconciliation,
+  Settlement,
+  StackPreview,
+  TableDetail,
+  TableSummary,
+} from './table.models';
 
 @Injectable({ providedIn: 'root' })
 export class TablesService {
@@ -76,5 +84,42 @@ export class TablesService {
       sellerPlayerId,
       amount,
     });
+  }
+
+  /** Play is over. Everyone starts counting what they are holding. */
+  startCounting(championshipId: string, tableId: string): Observable<void> {
+    return this.http.post<void>(`${this.base(championshipId)}/${tableId}/counting`, {});
+  }
+
+  /**
+   * One player's whole stack, replacing whatever they reported before. Sent
+   * whole rather than chip by chip so a correction overwrites the mistake
+   * instead of adding to it.
+   */
+  reportCount(
+    championshipId: string,
+    tableId: string,
+    tablePlayerId: string,
+    counts: readonly ChipCountEntry[],
+  ): Observable<void> {
+    return this.http.post<void>(`${this.base(championshipId)}/${tableId}/counts`, {
+      tablePlayerId,
+      counts,
+    });
+  }
+
+  reconciliation(championshipId: string, tableId: string): Observable<Reconciliation> {
+    return this.http.get<Reconciliation>(
+      `${this.base(championshipId)}/${tableId}/reconciliation`,
+    );
+  }
+
+  /** Works out who pays whom and what everyone scored. Only once, and only once the count balances. */
+  settle(championshipId: string, tableId: string): Observable<void> {
+    return this.http.post<void>(`${this.base(championshipId)}/${tableId}/settlement`, {});
+  }
+
+  settlement(championshipId: string, tableId: string): Observable<Settlement> {
+    return this.http.get<Settlement>(`${this.base(championshipId)}/${tableId}/settlement`);
   }
 }

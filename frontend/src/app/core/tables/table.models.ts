@@ -127,3 +127,77 @@ export interface StackPreview {
   shortfallUnits: number;
   isPossible: boolean;
 }
+
+export interface ReconciliationLine {
+  denominationId: string;
+  faceValue: number;
+  effectiveValue: number;
+  /** Chips that left the case at this table. */
+  issued: number;
+  /** Chips the players have reported holding. */
+  counted: number;
+  /** counted − issued. Negative means chips are missing from the count. */
+  difference: number;
+}
+
+export interface AwaitingPlayer {
+  tablePlayerId: string;
+  displayName: string;
+}
+
+export interface Reconciliation {
+  lines: ReconciliationLine[];
+  awaitingCountFrom: AwaitingPlayer[];
+  everyoneHasCounted: boolean;
+  chipsBalance: boolean;
+  /** Both of the above. The API refuses to settle unless this is true. */
+  canSettle: boolean;
+}
+
+export type PaymentHandleType = 'Pix' | 'Other';
+
+export interface Transfer {
+  fromDisplayName: string;
+  toDisplayName: string;
+  amount: number;
+  toPaymentType: PaymentHandleType | null;
+  toPaymentHandle: string | null;
+}
+
+export interface TableResultRow {
+  tablePlayerId: string;
+  displayName: string;
+  position: number;
+  points: number;
+  balance: number;
+}
+
+export interface Settlement {
+  transfers: Transfer[];
+  results: TableResultRow[];
+}
+
+/** What one player's reported stack is worth, in play units. */
+export function countUnits(
+  lines: readonly ReconciliationLine[],
+  quantities: Readonly<Record<string, number | null>>,
+): number {
+  return lines.reduce(
+    (total, line) => total + (quantities[line.denominationId] ?? 0) * line.effectiveValue,
+    0,
+  );
+}
+
+/**
+ * Only the chips that do not tally. During counting this is the whole question —
+ * showing twelve balanced denominations alongside the one that is off just makes
+ * it harder to find.
+ */
+export function offBy(lines: readonly ReconciliationLine[]): ReconciliationLine[] {
+  return lines.filter((line) => line.difference !== 0);
+}
+
+export interface ChipCountEntry {
+  denominationId: string;
+  quantity: number;
+}
