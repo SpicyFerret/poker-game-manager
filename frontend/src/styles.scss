@@ -40,22 +40,32 @@ body {
   font: var(--mat-sys-body-medium);
 }
 
-// A faint felt-green glow behind the surface rather than a flat panel — the
-// intent is a card table, not a terminal. Fixed, so it does not scroll away
-// and reappear as a hard seam further down the page.
+// A casino carpet, not a flat panel — the intent is a card table, not a
+// terminal. Fixed, so it does not scroll away and reappear as a hard seam
+// further down the page.
+//
+// Deliberately not theme-adaptive: this is an art choice, not a tint of
+// whatever colour happens to be primary, and it holds regardless of light or
+// dark mode. Built from five flat layers rather than an image, so there is
+// nothing to fetch and nothing to fail to load:
+//
+//   1. the vignette — a radial fade to near-black at the edges, which is what
+//      gives it depth instead of reading as a solid colour;
+//   2–5. two diamond lattices, gold-on-burgundy and shadow-on-burgundy, laid
+//      at +45°/-45° so they cross into a lozenge grid — the same shape actual
+//      casino carpet weaves use.
 body {
   background:
     radial-gradient(
-      ellipse 140% 60% at 50% -10%,
-      color-mix(in srgb, var(--mat-sys-primary) 16%, transparent),
-      transparent 60%
+      ellipse 90% 90% at 50% 38%,
+      transparent 32%,
+      rgb(0 0 0 / 50%) 68%,
+      rgb(0 0 0 / 94%) 100%
     ),
-    radial-gradient(
-      ellipse 120% 50% at 100% 100%,
-      color-mix(in srgb, var(--mat-sys-tertiary) 10%, transparent),
-      transparent 55%
-    ),
-    var(--mat-sys-surface);
+    repeating-linear-gradient(45deg, rgb(196 155 74 / 14%) 0 2px, transparent 2px 34px),
+    repeating-linear-gradient(-45deg, rgb(196 155 74 / 14%) 0 2px, transparent 2px 34px),
+    repeating-linear-gradient(45deg, rgb(0 0 0 / 22%) 0 1px, transparent 1px 34px),
+    repeating-linear-gradient(-45deg, rgb(0 0 0 / 22%) 0 1px, transparent 1px 34px), #4a0f22;
   background-attachment: fixed;
 }
 
