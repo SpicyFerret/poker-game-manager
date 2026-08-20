@@ -135,6 +135,13 @@ is Owner in one and Player in another. So championship-scoped authorization reso
 `(userId, championshipId) → Role` and is applied as an endpoint filter reading the championship id
 from the route, cached briefly via `HybridCache`.
 
+**Rebuying and buying chips off another player are self-service.** Both endpoints only require
+`Player`, then check the specific target: a rebuy for your own `TablePlayer`, or a chip purchase
+where you are the buyer, needs nothing more. Acting on someone else's row — rebuying for them,
+recording a purchase where they are the buyer, or dealing a standby player in at all — still needs
+`TableManager`. The two checks live in the handler, after the target is resolved, rather than in the
+role gate, because the gate cannot yet know whose row is being touched.
+
 ## Decisions
 
 | Decision | Why |

@@ -232,3 +232,46 @@
   color: var(--mat-sys-on-surface-variant);
   font: var(--mat-sys-label-medium);
 }
+
+// --- Rebuy/loan controls: your own via a fixed footer, others' behind a toggle
+
+.manage-others-toggle {
+  color: var(--mat-sys-on-surface-variant);
+  transition: color 0.15s ease;
+}
+
+// Lit up while active, so a manager never wonders whether the per-player
+// buttons they are about to look for are actually showing.
+.manage-others-toggle--on {
+  color: var(--mat-sys-tertiary);
+}
+
+// Fixed to the viewport, not the page column, so it survives scrolling and
+// reads as a bar rather than another card in the feed.
+.own-actions {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  padding: 0.5rem 1rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
+  background: var(--mat-sys-surface);
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+.own-actions__inner {
+  display: flex;
+  max-width: 560px;
+  margin: 0 auto;
+  gap: 0.5rem;
+
+  button {
+    flex: 1 1 0;
+  }
+}
+
+// Room at the bottom of the scrolling content so the fixed footer never
+// covers the last card.
+.page--own-footer {
+  padding-bottom: 4.5rem;
+}

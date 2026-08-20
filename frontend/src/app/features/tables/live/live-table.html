@@ -1,4 +1,4 @@
-<div class="page">
+<div class="page" [class.page--own-footer]="canUseOwnFooter()">
   @if (loading() || busy()) {
     <mat-progress-bar mode="indeterminate" />
   }
@@ -86,6 +86,20 @@
             Fechar a conta
           </button>
         }
+        @if (table.canManage && table.status === 'Running') {
+          <button
+            matIconButton
+            type="button"
+            class="manage-others-toggle"
+            [class.manage-others-toggle--on]="manageOthers()"
+            [attr.aria-pressed]="manageOthers()"
+            (click)="toggleManageOthers()"
+            i18n-aria-label="@@table.manageOthersToggle"
+            aria-label="Fazer rebuy e comprar fichas em nome de outros jogadores"
+          >
+            <span aria-hidden="true">&#9881;</span>
+          </button>
+        }
         @if (table.canManage) {
           <button
             matButton
@@ -123,8 +137,8 @@
             </mat-card-header>
 
             @if (table.canManage && table.status === 'Running') {
-              <mat-card-actions align="end">
-                @if (player.status === 'Playing') {
+              @if (manageOthers() && player.status === 'Playing') {
+                <mat-card-actions align="end">
                   <button
                     matButton
                     type="button"
@@ -143,7 +157,9 @@
                   >
                     Comprar de jogador
                   </button>
-                } @else if (player.status === 'Standby') {
+                </mat-card-actions>
+              } @else if (player.status === 'Standby') {
+                <mat-card-actions align="end">
                   <button
                     matButton
                     type="button"
@@ -153,8 +169,8 @@
                   >
                     Dar fichas
                   </button>
-                }
-              </mat-card-actions>
+                </mat-card-actions>
+              }
             }
           </mat-card>
         }
@@ -460,5 +476,30 @@
         </mat-card>
       }
     }
+  }
+
+  @if (canUseOwnFooter()) {
+    <div class="own-actions">
+      <div class="own-actions__inner">
+        <button
+          matButton="filled"
+          type="button"
+          [disabled]="busy()"
+          (click)="rebuy(ownPlayer()!)"
+          i18n="@@table.rebuy"
+        >
+          Rebuy
+        </button>
+        <button
+          matButton
+          type="button"
+          [disabled]="busy() || playing().length < 2"
+          (click)="tradeChips(ownPlayer()!)"
+          i18n="@@table.tradeChips"
+        >
+          Comprar de jogador
+        </button>
+      </div>
+    </div>
   }
 </div>

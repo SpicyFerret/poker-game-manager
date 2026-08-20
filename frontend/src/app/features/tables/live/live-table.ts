@@ -111,6 +111,13 @@ export class LiveTable implements OnInit {
   protected readonly reconciliation = signal<Reconciliation | null>(null);
   protected readonly settlement = signal<Settlement | null>(null);
 
+  /**
+   * Off by default: the players list reads clean, and everyone drives their
+   * own rebuy and chip purchases from the fixed footer below. A manager flips
+   * this on to reach the same controls for someone else's row.
+   */
+  protected readonly manageOthers = signal(false);
+
   protected readonly section = signal('players');
 
   protected readonly sections = computed<NavSection[]>(() => {
@@ -159,6 +166,23 @@ export class LiveTable implements OnInit {
   protected readonly playing = computed(
     () => this.table()?.players.filter((p) => p.status === 'Playing') ?? [],
   );
+
+  /** The caller's own seat at this table, if they have one. */
+  protected readonly ownPlayer = computed<TablePlayer | undefined>(() => {
+    const table = this.table();
+
+    return table?.players.find((p) => p.tablePlayerId === table.myPlayerId);
+  });
+
+  /**
+   * The fixed footer is for topping up your own stack — it appears once you
+   * are actually seated and playing, table-wide, not per section.
+   */
+  protected readonly canUseOwnFooter = computed(() => {
+    const table = this.table();
+
+    return table !== null && table.status === 'Running' && this.ownPlayer()?.status === 'Playing';
+  });
 
   protected readonly currentLevel = computed<BlindLevel | undefined>(() => {
     const blinds = this.blinds();
@@ -324,6 +348,10 @@ export class LiveTable implements OnInit {
           fallback: $localize`:@@table.joinFailed:Não foi possível entrar na mesa.`,
         });
       });
+  }
+
+  protected toggleManageOthers(): void {
+    this.manageOthers.update((current) => !current);
   }
 
   protected rebuy(player: TablePlayer): void {

@@ -18,9 +18,12 @@ internal sealed class BuyChipsFromPlayerCommandHandler(
 {
     public async Task<Result> Handle(BuyChipsFromPlayerCommand command, CancellationToken cancellationToken)
     {
+        // Player, not TableManager: buying for yourself needs nobody's
+        // permission but your own. Recording a purchase where someone else is
+        // the buyer is checked explicitly below, once the buyer is resolved.
         Result<ChampionshipRole> caller = await championshipContext.RequireRoleAsync(
             command.ChampionshipId,
-            ChampionshipRole.TableManager,
+            ChampionshipRole.Player,
             cancellationToken);
 
         if (caller.IsFailure)
@@ -63,6 +66,11 @@ internal sealed class BuyChipsFromPlayerCommandHandler(
         if (buyer is null || seller is null)
         {
             return Result.Failure(TableErrors.NotAPlayer);
+        }
+
+        if (buyer.UserId != userContext.UserId && caller.Value < ChampionshipRole.TableManager)
+        {
+            return Result.Failure(TableErrors.CannotBuyChipsForSomeoneElse);
         }
 
         if (buyer.Status != TablePlayerStatus.Playing)

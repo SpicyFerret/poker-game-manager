@@ -288,6 +288,162 @@ public sealed class TablesTests(IntegrationTestWebAppFactory factory) : BaseInte
     }
 
     [Fact]
+    public async Task Rebuy_Should_BeSelfServiceForAPlainPlayer()
+    {
+        (Guid _, AccessTokens ownerTokens) = await RegisterAndLoginAsync();
+        Authenticate(ownerTokens.AccessToken);
+        (Guid championshipId, Guid chipSetId) = await SetUpChampionshipAsync();
+        Guid tableId = await CreateTableAsync(championshipId, chipSetId);
+
+        // The owner manages the table without sitting at it — the point here is
+        // that the plain player needs nobody's permission to rebuy their own row.
+        AccessTokens playerTokens = await AddSecondPlayerAsync(championshipId, ownerTokens);
+        Authenticate(playerTokens.AccessToken);
+        await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/tables/{tableId}/join", new { code = (string?)null });
+
+        Authenticate(ownerTokens.AccessToken);
+        await HttpClient.PostAsJsonAsync($"championships/{championshipId}/tables/{tableId}/start", new { });
+
+        TableDetail? before = await GetTableAsync(championshipId, tableId);
+        Guid playerId = before!.Players.Single().TablePlayerId;
+
+        // Act — the plain player rebuys for themselves, with no manager involved.
+        Authenticate(playerTokens.AccessToken);
+        HttpResponseMessage rebuy = await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/tables/{tableId}/stacks",
+            new { tablePlayerId = playerId, isRebuy = true });
+
+        rebuy.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+    }
+
+    [Fact]
+    public async Task Rebuy_Should_RefuseAPlainPlayerRebuyingForSomeoneElse()
+    {
+        (Guid _, AccessTokens ownerTokens) = await RegisterAndLoginAsync();
+        Authenticate(ownerTokens.AccessToken);
+        (Guid championshipId, Guid chipSetId) = await SetUpChampionshipAsync();
+        Guid tableId = await CreateTableAsync(championshipId, chipSetId);
+
+        await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/tables/{tableId}/join", new { code = (string?)null });
+
+        AccessTokens playerTokens = await AddSecondPlayerAsync(championshipId, ownerTokens);
+        Authenticate(playerTokens.AccessToken);
+        await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/tables/{tableId}/join", new { code = (string?)null });
+
+        Authenticate(ownerTokens.AccessToken);
+        await HttpClient.PostAsJsonAsync($"championships/{championshipId}/tables/{tableId}/start", new { });
+
+        // The owner joined before the plain player, so their row is first —
+        // that is the "someone else" the plain player has no business rebuying.
+        TableDetail? table = await GetTableAsync(championshipId, tableId);
+        Guid ownerPlayerId = table!.Players[0].TablePlayerId;
+
+        Authenticate(playerTokens.AccessToken);
+        HttpResponseMessage rebuy = await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/tables/{tableId}/stacks",
+            new { tablePlayerId = ownerPlayerId, isRebuy = true });
+
+        rebuy.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+    }
+
+    [Fact]
+    public async Task ChipTrade_Should_BeSelfServiceWhenTheCallerIsTheBuyer()
+    {
+        (Guid _, AccessTokens ownerTokens) = await RegisterAndLoginAsync();
+        Authenticate(ownerTokens.AccessToken);
+        (Guid championshipId, Guid chipSetId) = await SetUpChampionshipAsync();
+        Guid tableId = await CreateTableAsync(championshipId, chipSetId);
+
+        await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/tables/{tableId}/join", new { code = (string?)null });
+
+        AccessTokens playerTokens = await AddSecondPlayerAsync(championshipId, ownerTokens);
+        Authenticate(playerTokens.AccessToken);
+        await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/tables/{tableId}/join", new { code = (string?)null });
+
+        Authenticate(ownerTokens.AccessToken);
+        await HttpClient.PostAsJsonAsync($"championships/{championshipId}/tables/{tableId}/start", new { });
+
+        TableDetail? table = await GetTableAsync(championshipId, tableId);
+        Guid seller = table!.Players[0].TablePlayerId;
+        Guid buyer = table.Players[1].TablePlayerId;
+
+        // Act — the plain player buys chips off the owner for themselves.
+        Authenticate(playerTokens.AccessToken);
+        HttpResponseMessage trade = await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/tables/{tableId}/chip-trades",
+            new { buyerPlayerId = buyer, sellerPlayerId = seller, amount = 50m });
+
+        trade.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+    }
+
+    [Fact]
+    public async Task ChipTrade_Should_RefuseAPlainPlayerRecordingSomeoneElseAsBuyer()
+    {
+        (Guid _, AccessTokens ownerTokens) = await RegisterAndLoginAsync();
+        Authenticate(ownerTokens.AccessToken);
+        (Guid championshipId, Guid chipSetId) = await SetUpChampionshipAsync();
+        Guid tableId = await CreateTableAsync(championshipId, chipSetId);
+
+        await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/tables/{tableId}/join", new { code = (string?)null });
+
+        AccessTokens playerTokens = await AddSecondPlayerAsync(championshipId, ownerTokens);
+        Authenticate(playerTokens.AccessToken);
+        await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/tables/{tableId}/join", new { code = (string?)null });
+
+        Authenticate(ownerTokens.AccessToken);
+        await HttpClient.PostAsJsonAsync($"championships/{championshipId}/tables/{tableId}/start", new { });
+
+        TableDetail? table = await GetTableAsync(championshipId, tableId);
+        Guid owner = table!.Players[0].TablePlayerId;
+        Guid otherPlayer = table.Players[1].TablePlayerId;
+
+        // Act — the plain player tries to record the owner as the buyer.
+        Authenticate(playerTokens.AccessToken);
+        HttpResponseMessage trade = await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/tables/{tableId}/chip-trades",
+            new { buyerPlayerId = owner, sellerPlayerId = otherPlayer, amount = 50m });
+
+        trade.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+    }
+
+    [Fact]
+    public async Task DealIn_Should_StillRequireATableManagerEvenForOneself()
+    {
+        (Guid _, AccessTokens ownerTokens) = await RegisterAndLoginAsync();
+        Authenticate(ownerTokens.AccessToken);
+        (Guid championshipId, Guid chipSetId) = await SetUpChampionshipAsync();
+        Guid tableId = await CreateTableAsync(championshipId, chipSetId, joinPolicy: "AnyMember");
+
+        AccessTokens playerTokens = await AddSecondPlayerAsync(championshipId, ownerTokens);
+        Authenticate(ownerTokens.AccessToken);
+        await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/tables/{tableId}/join", new { code = (string?)null });
+        await HttpClient.PostAsJsonAsync($"championships/{championshipId}/tables/{tableId}/start", new { });
+
+        // A late entrant, still in Standby.
+        Authenticate(playerTokens.AccessToken);
+        await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/tables/{tableId}/join", new { code = (string?)null });
+
+        TableDetail? table = await GetTableAsync(championshipId, tableId);
+        Guid standbyPlayerId = table!.Players.Single(p => p.Status == "Standby").TablePlayerId;
+
+        // Act — the standby player tries to deal themselves in.
+        HttpResponseMessage dealIn = await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/tables/{tableId}/stacks",
+            new { tablePlayerId = standbyPlayerId, isRebuy = false });
+
+        dealIn.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+    }
+
+    [Fact]
     public async Task Join_Should_NeedTheCode_OnACodedTable()
     {
         // Arrange
