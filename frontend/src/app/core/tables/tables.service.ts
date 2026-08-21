@@ -40,6 +40,11 @@ export class TablesService {
     return this.http.post<void>(`${this.base(championshipId)}/${tableId}/join`, { code });
   }
 
+  /** A manager seating someone else — the only way onto an InviteOnly table. */
+  addPlayer(championshipId: string, tableId: string, userId: string): Observable<void> {
+    return this.http.post<void>(`${this.base(championshipId)}/${tableId}/players`, { userId });
+  }
+
   /** What chips a buy-in or rebuy would hand over, without handing them over. */
   stackPreview(
     championshipId: string,
