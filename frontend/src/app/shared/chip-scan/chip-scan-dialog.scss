@@ -5,7 +5,7 @@
 }
 
 // Fills the dialog rather than sitting inline, once the camera is live — the
-// point is to see the frame clearly enough to line the stack up.
+// point is to see the frame clearly enough to line every stack up in it.
 .content--live {
   flex: 1 1 auto;
   padding: 0;
@@ -19,10 +19,9 @@
   background: #000;
 }
 
-// Kept in the DOM at all times (see the template comment) so the video/canvas
-// elements exist before capture() needs them — hidden with display:none
-// rather than removed, which would tear the element (and the live stream)
-// down and rebuild it every phase change.
+// Kept in the DOM at all times (see the template comment) so the video and
+// canvas exist for the frame loop — hidden with display:none rather than
+// removed, which would tear the live stream down with them.
 .camera--hidden {
   display: none;
 }
@@ -33,8 +32,9 @@
   object-fit: cover;
 }
 
-// Matches the crop taken from the frame exactly (same fractions in the
-// component), so what the guide frames is what actually gets analysed.
+// Matches the crop the frame loop analyses exactly (same fractions in the
+// component), so what the guide frames is what actually gets read. Wide on
+// purpose — several stacks need to fit side by side across it.
 .camera__guide {
   position: absolute;
   border: 3px dashed rgb(255 255 255 / 80%);
@@ -42,39 +42,83 @@
   pointer-events: none;
 }
 
-.camera__hint {
+// Floats over the stack it belongs to, so a wrong reading is traceable to a
+// specific pile rather than to the count as a whole.
+.camera__reading {
   position: absolute;
-  bottom: 1rem;
-  left: 50%;
+  top: -0.9rem;
   transform: translateX(-50%);
-  margin: 0;
-  padding: 0.35rem 0.75rem;
+  min-width: 2rem;
+  padding: 0.15rem 0.5rem;
   border-radius: 999px;
-  background: rgb(0 0 0 / 70%);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 50%);
+  font: var(--mat-sys-label-large);
+  text-align: center;
+}
+
+.camera__reading--unsure {
+  opacity: 0.7;
+}
+
+.camera__guidance {
+  position: absolute;
+  right: 1rem;
+  bottom: 1.25rem;
+  left: 1rem;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 12px;
+  background: rgb(0 0 0 / 72%);
   color: #fff;
-  font: var(--mat-sys-label-medium);
+  font: var(--mat-sys-body-medium);
+  text-align: center;
 }
 
-.confirm-row {
+// Fills as consecutive frames agree; reaching the end is what locks the
+// reading, so it doubles as an explanation of why the app is waiting.
+.camera__progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background: var(--mat-sys-primary);
+  transition: width 120ms linear;
+}
+
+.hint {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-small);
+}
+
+// Same row shape as the manual count screen — a scan just pre-fills these
+// instead of leaving them blank.
+.count-rows {
   display: flex;
-  gap: 0.75rem;
-
-  &__quantity {
-    flex: 1 1 40%;
-  }
-
-  &__colour {
-    flex: 1 1 60%;
-  }
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
-.swatch {
-  display: inline-block;
-  width: 0.9rem;
-  height: 0.9rem;
-  margin-right: 0.4rem;
+.count-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.count-row__chip {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  aspect-ratio: 1;
+  border: 2px dashed rgb(255 255 255 / 45%);
   border-radius: 50%;
-  vertical-align: middle;
+  font: var(--mat-sys-label-large);
+}
+
+.count-row__field {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .alert {

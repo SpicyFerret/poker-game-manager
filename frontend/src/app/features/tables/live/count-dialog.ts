@@ -8,7 +8,12 @@ import { MatInputModule } from '@angular/material/input';
 
 import { ChipCountEntry, ChipStock } from '../../../core/tables/table.models';
 import { ChipColour, chipColour } from '../../../shared/chip-colours';
-import { ChipScanDialog, ChipScanResult } from '../../../shared/chip-scan/chip-scan-dialog';
+import {
+  ChipScanCandidate,
+  ChipScanData,
+  ChipScanDialog,
+  ChipScanResult,
+} from '../../../shared/chip-scan/chip-scan-dialog';
 
 export interface CountDialogData {
   playerName: string;
@@ -74,19 +79,30 @@ export class CountDialog {
     return chipColour(token);
   }
 
-  /** Fills one box from a photo of the stack instead of typing it. */
-  protected scan(chip: ChipStock): void {
+  /** Fills every box at once from a single photo of all the stacks, told apart by colour. */
+  protected scanAll(): void {
+    const quantities = this.quantities();
+
+    const chips: ChipScanCandidate[] = this.data.chips.map((chip) => ({
+      key: chip.denominationId,
+      faceValue: chip.faceValue,
+      colourToken: chip.colour,
+      existingQuantity: quantities[chip.denominationId] ?? null,
+    }));
+
     this.matDialog
       .open(ChipScanDialog, {
-        data: { label: $localize`:@@chipScan.chipLabel:Ficha ${chip.faceValue}:VALUE:` },
+        data: { title: $localize`:@@count.scanTitle:a contagem`, chips } satisfies ChipScanData,
         maxWidth: '100vw',
         width: '100vw',
         height: '100dvh',
       })
       .afterClosed()
-      .subscribe((result: ChipScanResult | undefined) => {
-        if (result) {
-          this.set(chip.denominationId, result.quantity);
+      .subscribe((results: ChipScanResult[] | undefined) => {
+        if (results) {
+          for (const result of results) {
+            this.set(result.key, result.quantity);
+          }
         }
       });
   }
