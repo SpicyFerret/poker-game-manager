@@ -1495,37 +1495,109 @@
         <source> Todo mundo do campeonato já está nesta mesa. </source>
         <target> Everyone in the championship is already at this table. </target>
       </trans-unit>
-      <trans-unit id="chipScan.scanStackAriaLabel" datatype="html">
-        <source>Escanear pilha</source>
-        <target>Scan stack</target>
+      <trans-unit id="chipScan.scanAllButton" datatype="html">
+        <source> 📷 Escanear todas as fichas </source>
+        <target> 📷 Scan every chip </target>
       </trans-unit>
-      <trans-unit id="chipScan.chipLabel" datatype="html">
-        <source>Ficha <x id="VALUE" equiv-text="faceValue"/></source>
-        <target>Chip <x id="VALUE" equiv-text="faceValue"/></target>
+      <trans-unit id="chipSets.scanTitle" datatype="html">
+        <source>a maleta</source>
+        <target>the case</target>
       </trans-unit>
-      <trans-unit id="chipScan.newChip" datatype="html">
-        <source>Ficha nova</source>
-        <target>New chip</target>
-      </trans-unit>
-      <trans-unit id="chipScan.scanAriaLabel" datatype="html">
-        <source>Escanear ficha <x id="INTERPOLATION" equiv-text="{{ chip.faceValue }}"/></source>
-        <target>Scan chip <x id="INTERPOLATION" equiv-text="{{ chip.faceValue }}"/></target>
+      <trans-unit id="count.scanTitle" datatype="html">
+        <source>a contagem</source>
+        <target>the count</target>
       </trans-unit>
       <trans-unit id="chipScan.heading" datatype="html">
-        <source>Escanear <x id="INTERPOLATION" equiv-text="{{ data.label }}"/></source>
-        <target>Scan <x id="INTERPOLATION" equiv-text="{{ data.label }}"/></target>
+        <source>Escanear <x id="INTERPOLATION" equiv-text="{{ data.title }}"/></source>
+        <target>Scan <x id="INTERPOLATION" equiv-text="{{ data.title }}"/></target>
       </trans-unit>
       <trans-unit id="chipScan.instructions" datatype="html">
-        <source> Empilhe as fichas de lado, aponte a câmera e encaixe a pilha na moldura. A contagem é só uma sugestão — você confirma o número antes de enviar. </source>
-        <target> Stack the chips on their side, point the camera, and fit the stack inside the frame. The count is only a suggestion — you confirm the number before sending it. </target>
+        <source> Separe as fichas em pilhas por cor, uma ao lado da outra, deitadas de lado. A câmera fica aberta e vai te dizendo o que ajustar — quando a leitura ficar estável, ela trava sozinha. </source>
+        <target> Sort the chips into stacks by colour, side by side, lying on their sides. The camera stays open and tells you what to adjust — once the reading holds steady, it locks on its own. </target>
+      </trans-unit>
+      <trans-unit id="chipScan.calibrationNeeded" datatype="html">
+        <source> Ainda não sei o tamanho das suas fichas, então a contagem pode errar. Calibrar leva alguns segundos e vale para todas as próximas contagens neste aparelho. </source>
+        <target> I don't know how big your chips are yet, so the count may be off. Calibrating takes a few seconds and applies to every later count on this device. </target>
+      </trans-unit>
+      <trans-unit id="chipScan.calibrationLocked" datatype="html">
+        <source> Peguei a pilha. Agora conte à mão quantas fichas ela tem e informe abaixo — é com isso que eu aprendo o tamanho da sua ficha. </source>
+        <target> Got the stack. Now count it by hand and enter how many chips it has below — that's what teaches me the size of your chips. </target>
+      </trans-unit>
+      <trans-unit id="chipScan.calibrationCountLabel" datatype="html">
+        <source>Quantas fichas tem essa pilha?</source>
+        <target>How many chips are in this stack?</target>
+      </trans-unit>
+      <trans-unit id="chipScan.calibrationFailed" datatype="html">
+        <source>Não deu para medir essa pilha. Tente de novo com a pilha inteira dentro da moldura.</source>
+        <target>That stack could not be measured. Try again with the whole stack inside the frame.</target>
+      </trans-unit>
+      <trans-unit id="chipScan.calibrate" datatype="html">
+        <source> Calibrar </source>
+        <target> Calibrate </target>
+      </trans-unit>
+      <trans-unit id="chipScan.saveCalibration" datatype="html">
+        <source> Salvar calibração </source>
+        <target> Save calibration </target>
+      </trans-unit>
+      <trans-unit id="common.back" datatype="html">
+        <source>Voltar</source>
+        <target>Back</target>
+      </trans-unit>
+      <trans-unit id="chipScan.readingUnsure" datatype="html">
+        <source>?</source>
+        <target>?</target>
+      </trans-unit>
+      <trans-unit id="chipScan.guideTilt" datatype="html">
+        <source>Incline o celular para ficar de frente para as pilhas.</source>
+        <target>Tilt the phone to face the stacks straight on.</target>
+      </trans-unit>
+      <trans-unit id="chipScan.guideDark" datatype="html">
+        <source>Está escuro demais — acenda uma luz ou chegue mais perto.</source>
+        <target>Too dark — turn a light on or move closer.</target>
+      </trans-unit>
+      <trans-unit id="chipScan.guideBright" datatype="html">
+        <source>Muita luz refletindo — tire o brilho direto das fichas.</source>
+        <target>Too much glare — take the direct light off the chips.</target>
+      </trans-unit>
+      <trans-unit id="chipScan.guideNoStacks" datatype="html">
+        <source>Coloque as pilhas de lado dentro da moldura, separadas por cor.</source>
+        <target>Lay the stacks on their sides inside the frame, separated by colour.</target>
+      </trans-unit>
+      <trans-unit id="chipScan.guideClipped" datatype="html">
+        <source>A pilha está saindo da moldura — afaste um pouco o celular.</source>
+        <target>The stack runs past the frame — move the phone back a little.</target>
+      </trans-unit>
+      <trans-unit id="chipScan.guideTooSmall" datatype="html">
+        <source>As pilhas estão pequenas demais — chegue mais perto.</source>
+        <target>The stacks are too small — move closer.</target>
+      </trans-unit>
+      <trans-unit id="chipScan.guideUnsure" datatype="html">
+        <source>Ainda não consigo ter certeza — segure firme e enquadre a pilha inteira.</source>
+        <target>Still not sure — hold steady and frame the whole stack.</target>
+      </trans-unit>
+      <trans-unit id="chipScan.guideHold" datatype="html">
+        <source>Segure assim...</source>
+        <target>Hold it there...</target>
+      </trans-unit>
+      <trans-unit id="chipScan.guideAim" datatype="html">
+        <source>Aponte para as pilhas.</source>
+        <target>Point at the stacks.</target>
       </trans-unit>
       <trans-unit id="chipScan.unsupported" datatype="html">
         <source> A câmera não está disponível neste aparelho ou a permissão foi negada. Digite a contagem normalmente. </source>
         <target> The camera is not available on this device, or permission was denied. Type the count in as usual. </target>
       </trans-unit>
+      <trans-unit id="chipScan.stacksDetected" datatype="html">
+        <source>{VAR_PLURAL, plural, =1 {1 pilha reconhecida} other {<x id="INTERPOLATION"/> pilhas reconhecidas}}</source>
+        <target>{VAR_PLURAL, plural, =1 {1 stack recognised} other {<x id="INTERPOLATION"/> stacks recognised}}</target>
+      </trans-unit>
       <trans-unit id="chipScan.confirmExplanation" datatype="html">
-        <source>Confira o valor antes de enviar.</source>
-        <target>Check the value before sending it.</target>
+        <source> Confira os valores antes de enviar — o que não foi reconhecido ficou como estava. </source>
+        <target> Check the values before sending — anything not recognised was left as it was. </target>
+      </trans-unit>
+      <trans-unit id="chipScan.confirmNoneDetected" datatype="html">
+        <source> Não reconhecemos nenhuma pilha. Você pode tentar de novo ou digitar direto abaixo. </source>
+        <target> No stacks were recognised. You can try again, or just type the counts in below. </target>
       </trans-unit>
       <trans-unit id="chipScan.quantity" datatype="html">
         <source>Quantidade</source>
@@ -1548,8 +1620,8 @@
         <target> Try again </target>
       </trans-unit>
       <trans-unit id="chipScan.confirm" datatype="html">
-        <source> Usar esta contagem </source>
-        <target> Use this count </target>
+        <source> Usar estas contagens </source>
+        <target> Use these counts </target>
       </trans-unit>
       <trans-unit id="chipScan.cameraDenied" datatype="html">
         <source>Não foi possível abrir a câmera. Você pode digitar a contagem normalmente.</source>

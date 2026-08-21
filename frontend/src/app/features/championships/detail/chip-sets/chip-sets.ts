@@ -16,7 +16,12 @@ import {
 } from '../../../../core/championships/championship.models';
 import { ChampionshipsService } from '../../../../core/championships/championships.service';
 import { CHIP_COLOURS, ChipColour, chipColour } from '../../../../shared/chip-colours';
-import { ChipScanDialog, ChipScanResult } from '../../../../shared/chip-scan/chip-scan-dialog';
+import {
+  ChipScanCandidate,
+  ChipScanData,
+  ChipScanDialog,
+  ChipScanResult,
+} from '../../../../shared/chip-scan/chip-scan-dialog';
 import { Confirm } from '../../../../shared/confirm/confirm.service';
 
 @Component({
@@ -125,33 +130,34 @@ export class ChipSetsTab implements OnInit {
     this.error.set(null);
   }
 
-  /** Fills the count from a photo of the stack instead of typing it. */
-  protected scanDenomination(index: number): void {
-    const group = this.denominations.at(index);
-    const faceValue = Number(group.value.faceValue) || 0;
+  /**
+   * Fills every denomination's quantity at once from a single photo of all
+   * its stacks, told apart by the colour already picked for each row — a row
+   * with no colour yet has nothing to be recognised by, so it is left alone.
+   */
+  protected scanAll(): void {
+    const chips: ChipScanCandidate[] = this.denominations.controls.map((control, index) => ({
+      key: String(index),
+      faceValue: Number(control.value.faceValue) || 0,
+      colourToken: control.value.colour ? control.value.colour : null,
+      existingQuantity: Number(control.value.quantity) || null,
+    }));
 
     this.matDialog
       .open(ChipScanDialog, {
-        data: {
-          label:
-            faceValue > 0
-              ? $localize`:@@chipScan.chipLabel:Ficha ${faceValue}:VALUE:`
-              : $localize`:@@chipScan.newChip:Ficha nova`,
-        },
+        data: { title: $localize`:@@chipSets.scanTitle:a maleta`, chips } satisfies ChipScanData,
         maxWidth: '100vw',
         width: '100vw',
         height: '100dvh',
       })
       .afterClosed()
-      .subscribe((result: ChipScanResult | undefined) => {
-        if (!result) {
+      .subscribe((results: ChipScanResult[] | undefined) => {
+        if (!results) {
           return;
         }
 
-        group.patchValue({ quantity: result.quantity });
-
-        if (!group.value.colour && result.colourToken) {
-          group.patchValue({ colour: result.colourToken });
+        for (const result of results) {
+          this.denominations.at(Number(result.key)).patchValue({ quantity: result.quantity });
         }
       });
   }

@@ -6,6 +6,10 @@
     não tem.
   </p>
 
+  <button matButton type="button" class="scan-all" (click)="scanAll()" i18n="@@chipScan.scanAllButton">
+    📷 Escanear todas as fichas
+  </button>
+
   <div class="count-rows">
     @for (chip of data.chips; track chip.denominationId) {
       @let colour = colourOf(chip.colour);
@@ -38,16 +42,6 @@
             (ngModelChange)="set(chip.denominationId, $event)"
           />
         </mat-form-field>
-
-        <button
-          matIconButton
-          type="button"
-          (click)="scan(chip)"
-          aria-label="Escanear ficha {{ chip.faceValue }}"
-          i18n-aria-label="@@chipScan.scanAriaLabel"
-        >
-          <span aria-hidden="true">📷</span>
-        </button>
       </div>
     }
   </div>
