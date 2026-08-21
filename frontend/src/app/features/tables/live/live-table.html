@@ -64,6 +64,17 @@
             Iniciar mesa
           </button>
         }
+        @if (canAddPlayer()) {
+          <button
+            matButton
+            type="button"
+            [disabled]="busy()"
+            (click)="openAddPlayer()"
+            i18n="@@table.addPlayer"
+          >
+            Adicionar jogador
+          </button>
+        }
         @if (table.canManage && table.status === 'Running') {
           <button
             matButton="filled"

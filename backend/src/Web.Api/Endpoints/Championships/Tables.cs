@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Tables;
 using Application.Tables.Acknowledge;
+using Application.Tables.AddPlayer;
 using Application.Tables.Blinds;
 using Application.Tables.BuyChips;
 using Application.Tables.Counting;
@@ -32,6 +33,8 @@ internal sealed class Tables : IEndpoint
         int SmallChipReserve);
 
     public sealed record JoinRequest(string? Code);
+
+    public sealed record AddPlayerRequest(Guid UserId);
 
     public sealed record IssueStackRequest(Guid TablePlayerId, bool IsRebuy);
 
@@ -105,6 +108,20 @@ internal sealed class Tables : IEndpoint
         {
             Result result = await handler.Handle(
                 new JoinTableCommand(championshipId, tableId, request.Code),
+                cancellationToken);
+
+            return result.Match(Results.NoContent, CustomResults.Problem);
+        });
+
+        group.MapPost("{tableId:guid}/players", async (
+            Guid championshipId,
+            Guid tableId,
+            AddPlayerRequest request,
+            ICommandHandler<AddPlayerCommand> handler,
+            CancellationToken cancellationToken) =>
+        {
+            Result result = await handler.Handle(
+                new AddPlayerCommand(championshipId, tableId, request.UserId),
                 cancellationToken);
 
             return result.Match(Results.NoContent, CustomResults.Problem);

@@ -1,0 +1,33 @@
+<h2 mat-dialog-title i18n="@@table.addPlayerHeading">Adicionar jogador</h2>
+
+<mat-dialog-content>
+  @if (data.candidates.length === 0) {
+    <p i18n="@@table.addPlayerNoneLeft">Todo mundo do campeonato já está nesta mesa.</p>
+  } @else {
+    <form [formGroup]="form">
+      <mat-form-field class="form-field-full">
+        <mat-label i18n="@@table.addPlayerWho">Quem</mat-label>
+        <mat-select formControlName="userId">
+          @for (member of data.candidates; track member.userId) {
+            <mat-option [value]="member.userId">{{ member.displayName }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </form>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button matButton mat-dialog-close type="button" i18n="@@common.cancel">Cancelar</button>
+  @if (data.candidates.length > 0) {
+    <button
+      matButton="filled"
+      type="button"
+      [disabled]="form.invalid"
+      (click)="confirm()"
+      i18n="@@table.addPlayerConfirm"
+    >
+      Adicionar
+    </button>
+  }
+</mat-dialog-actions>

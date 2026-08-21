@@ -1463,6 +1463,38 @@
         <source>Fazer rebuy e comprar fichas em nome de outros jogadores</source>
         <target>Rebuy and buy chips on behalf of other players</target>
       </trans-unit>
+      <trans-unit id="table.addPlayerLoadFailed" datatype="html">
+        <source>Não foi possível carregar os membros do campeonato.</source>
+        <target>The championship members could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="table.addPlayer" datatype="html">
+        <source> Adicionar jogador </source>
+        <target> Add player </target>
+      </trans-unit>
+      <trans-unit id="table.addPlayerFailed" datatype="html">
+        <source>Não foi possível adicionar o jogador.</source>
+        <target>The player could not be added.</target>
+      </trans-unit>
+      <trans-unit id="table.addPlayerHeading" datatype="html">
+        <source>Adicionar jogador</source>
+        <target>Add player</target>
+      </trans-unit>
+      <trans-unit id="confirm.addPlayerTitle" datatype="html">
+        <source>Adicionar à mesa?</source>
+        <target>Add to the table?</target>
+      </trans-unit>
+      <trans-unit id="table.addPlayerConfirm" datatype="html">
+        <source> Adicionar </source>
+        <target> Add </target>
+      </trans-unit>
+      <trans-unit id="table.addPlayerWho" datatype="html">
+        <source>Quem</source>
+        <target>Who</target>
+      </trans-unit>
+      <trans-unit id="table.addPlayerNoneLeft" datatype="html">
+        <source> Todo mundo do campeonato já está nesta mesa. </source>
+        <target> Everyone in the championship is already at this table. </target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
