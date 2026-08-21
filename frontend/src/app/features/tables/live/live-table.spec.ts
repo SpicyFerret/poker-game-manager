@@ -65,6 +65,7 @@ describe('LiveTable', () => {
     canUseOwnFooter: () => boolean;
     manageOthers: () => boolean;
     toggleManageOthers: () => void;
+    canAddPlayer: () => boolean;
   }
 
   function instance(): Exposed {
@@ -131,5 +132,35 @@ describe('LiveTable', () => {
 
     instance().toggleManageOthers();
     expect(instance().manageOthers()).toBe(false);
+  });
+
+  /**
+   * Adding is the only door onto an InviteOnly table — always offered while
+   * the table is manageable and still open, regardless of join policy.
+   */
+  it('should let a manager add a player while the table is open', () => {
+    load(table({ canManage: true, status: 'Open' }));
+
+    expect(instance().canAddPlayer()).toBe(true);
+  });
+
+  it('should let a manager add a player once running, only if late entry is allowed', () => {
+    load(table({ canManage: true, status: 'Running', allowLateEntry: true }));
+    expect(instance().canAddPlayer()).toBe(true);
+
+    load(table({ canManage: true, status: 'Running', allowLateEntry: false }));
+    expect(instance().canAddPlayer()).toBe(false);
+  });
+
+  it('should not let a plain player add anyone', () => {
+    load(table({ canManage: false, status: 'Open' }));
+
+    expect(instance().canAddPlayer()).toBe(false);
+  });
+
+  it('should not offer adding once the table has moved past counting', () => {
+    load(table({ canManage: true, status: 'Settled' }));
+
+    expect(instance().canAddPlayer()).toBe(false);
   });
 });

@@ -9,6 +9,8 @@ import { Router } from '@angular/router';
 import { Observable, Subject, merge, switchMap, timer } from 'rxjs';
 
 import { describeError } from '../../../core/api/problem-details';
+import { Member } from '../../../core/championships/championship.models';
+import { ChampionshipsService } from '../../../core/championships/championships.service';
 import {
   BlindLevel,
   BlindLevelInput,
@@ -35,6 +37,7 @@ import { ChipColour, chipColour } from '../../../shared/chip-colours';
 import { ConfirmDetail } from '../../../shared/confirm/confirm-dialog';
 import { Confirm } from '../../../shared/confirm/confirm.service';
 import { NavSection, SectionNav } from '../../../shared/section-nav/section-nav';
+import { AddTablePlayerDialog } from './add-table-player-dialog';
 import { BlindLevelsDialog } from './blind-levels-dialog';
 import { ChipTradeDialog, ChipTradeResult } from './chip-trade-dialog';
 import { StackNoticeDialog } from './stack-notice-dialog';
@@ -71,6 +74,7 @@ const TICK_MS = 1000;
 })
 export class LiveTable implements OnInit {
   private readonly tables = inject(TablesService);
+  private readonly championships = inject(ChampionshipsService);
   private readonly dialog = inject(MatDialog);
   private readonly confirm = inject(Confirm);
   private readonly router = inject(Router);
@@ -301,6 +305,21 @@ export class LiveTable implements OnInit {
     return table !== null && table.myPlayerId === null && this.isLive();
   }
 
+  /**
+   * The manager's own door onto the table, open under the same window a
+   * self-join gets — and the only door at all on an InviteOnly table, which
+   * has no code and lets nobody self-serve.
+   */
+  protected canAddPlayer(): boolean {
+    const table = this.table();
+
+    return (
+      table !== null &&
+      table.canManage &&
+      (table.status === 'Open' || (table.status === 'Running' && table.allowLateEntry))
+    );
+  }
+
   protected start(): void {
     const table = this.table();
 
@@ -346,6 +365,60 @@ export class LiveTable implements OnInit {
       .subscribe(() => {
         this.run(this.tables.join(this.championshipId(), this.tableId(), code), {
           fallback: $localize`:@@table.joinFailed:Não foi possível entrar na mesa.`,
+        });
+      });
+  }
+
+  /**
+   * Fetches the championship roster fresh rather than reusing anything cached,
+   * so someone invited moments ago is already offered — then filters to
+   * whoever is not already at this table, since nobody else is worth showing.
+   */
+  protected openAddPlayer(): void {
+    const table = this.table();
+
+    if (!table) {
+      return;
+    }
+
+    this.championships.members(this.championshipId()).subscribe({
+      next: (members) => {
+        const seated = new Set(table.players.map((p) => p.userId));
+        const candidates = members.filter((m) => !seated.has(m.userId));
+
+        this.dialog
+          .open(AddTablePlayerDialog, { data: { candidates } })
+          .afterClosed()
+          .subscribe((userId: string | undefined) => {
+            if (userId) {
+              this.confirmAddPlayer(userId, candidates);
+            }
+          });
+      },
+      error: (err: unknown) =>
+        this.error.set(
+          describeError(
+            err,
+            $localize`:@@table.addPlayerLoadFailed:Não foi possível carregar os membros do campeonato.`,
+          ),
+        ),
+    });
+  }
+
+  private confirmAddPlayer(userId: string, candidates: readonly Member[]): void {
+    const member = candidates.find((c) => c.userId === userId);
+
+    this.confirm
+      .ask({
+        title: $localize`:@@confirm.addPlayerTitle:Adicionar à mesa?`,
+        details: member
+          ? [{ label: $localize`:@@confirm.roleWho:membro`, value: member.displayName }]
+          : [],
+        confirmLabel: $localize`:@@table.addPlayerConfirm:Adicionar`,
+      })
+      .subscribe(() => {
+        this.run(this.tables.addPlayer(this.championshipId(), this.tableId(), userId), {
+          fallback: $localize`:@@table.addPlayerFailed:Não foi possível adicionar o jogador.`,
         });
       });
   }

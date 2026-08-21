@@ -58,6 +58,10 @@ confused: what is printed, what it counts as, and what it is worth in cash.
 
 - **`Table`** — championship, chip set, buy-in, rebuy, money-per-unit, join policy
   (`AnyMember | InviteOnly | Code`), whether late entry is allowed, blind structure, status.
+  `InviteOnly` has no code and lets nobody self-serve; a manager seats each player by hand
+  (`POST .../players`), which is the only door onto that kind of table and works on any table
+  regardless of its join policy — a manual add is strictly narrower than letting someone self-join,
+  never wider.
 - Status runs `Draft → Open → Running → Counting → Reconciled → Settled → Closed` (plus `Cancelled`).
   **`Reconciled` is the gate**: it is only reachable once the count matches, and only from there can
   a settlement be produced.
