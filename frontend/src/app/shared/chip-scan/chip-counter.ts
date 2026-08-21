@@ -1,14 +1,40 @@
 /**
- * Chip-stack counting from a photo, entirely client-side.
+ * Chip-stack counting from a camera frame, entirely client-side.
  *
- * No ML model and no external CV library: a stacked chip's rim shows up as a
- * horizontal brightness edge, so counting a stack reduces to finding local
- * maxima in the stack's vertical brightness-gradient profile — a 1-D
- * peak-finding problem, plain enough to write and test directly against
- * Canvas `ImageData`. The result is always shown to the person for
- * confirmation before it reaches any form, so an approximate count here is a
- * convenience, never a source of truth.
+ * Two independent estimates, deliberately, because either one alone is easy
+ * to fool:
+ *
+ *  1. **Rim peaks.** A stacked chip's rim is a horizontal brightness edge, so
+ *     counting rims is finding local maxima in the stack's vertical
+ *     brightness-gradient profile.
+ *  2. **Proportion.** Seen side-on, a stack is exactly one chip wide and N
+ *     chips tall, so `N ≈ (height / width) × (diameter / thickness)`. This
+ *     needs no edge to be visible at all — only the stack's outline.
+ *
+ * The second is what makes the first trustworthy: it says roughly how far
+ * apart two rims must be, which turns peak-finding from an open-ended count
+ * (where a shadow or a logo becomes a chip) into a constrained one. When the
+ * two estimates disagree, that disagreement is itself the useful output — the
+ * caller says "not sure yet" instead of showing a confident wrong number.
+ *
+ * Everything here is typed against a minimal `RgbaImage` rather than the DOM
+ * `ImageData`, so every function works identically on a real captured frame
+ * and on a plain object built in a test, with no canvas involved either way.
  */
+
+export interface RgbaImage {
+  readonly width: number;
+  readonly height: number;
+  readonly data: Uint8ClampedArray;
+}
+
+/**
+ * Diameter ÷ thickness for a standard 39mm × 3.3mm poker chip. Only ever a
+ * starting point: a calibration step measures the real ratio of the chips in
+ * front of the person, because ceramic, clay and cheap plastic chips are all
+ * noticeably different thicknesses at the same diameter.
+ */
+export const DEFAULT_CHIP_RATIO = 39 / 3.3;
 
 /** One local maximum in a 1-D signal: its position and how far it stands above its neighbourhood. */
 export interface Peak {
@@ -86,35 +112,48 @@ function movingAverage(signal: readonly number[], window: number): number[] {
   });
 }
 
-export interface StackScan {
-  count: number;
-  /** 0..1, rough — how clean the peak pattern was. Never trusted blindly. */
-  confidence: number;
+function luminanceAt(image: RgbaImage, x: number, y: number): number {
+  const i = (y * image.width + x) * 4;
+
+  return 0.299 * image.data[i] + 0.587 * image.data[i + 1] + 0.114 * image.data[i + 2];
+}
+
+/** Mean brightness over the whole frame, for the too-dark / too-bright warnings. */
+export function meanLuminance(image: RgbaImage): number {
+  const { width, height } = image;
+
+  if (width === 0 || height === 0) {
+    return 0;
+  }
+
+  let sum = 0;
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      sum += luminanceAt(image, x, y);
+    }
+  }
+
+  return sum / (width * height);
 }
 
 /**
- * Counts chips in a side-on photo of a single stack. Converts to greyscale,
- * takes a vertical gradient (each row's brightness step from the row two
- * above it), averages across the width to get one profile per row, smooths
- * it, then counts peaks — one per visible chip rim.
+ * Counts chip rims down a cropped stack. `minSpacing` comes from the
+ * proportion estimate rather than being guessed here — that constraint is
+ * the whole reason this stopped counting shadows as chips.
  */
-export function countChipsInStack(imageData: ImageData): StackScan {
-  const { width, height, data } = imageData;
+export function countRims(image: RgbaImage, minSpacing: number): number {
+  const { width, height } = image;
 
   if (width === 0 || height < 3) {
-    return { count: 0, confidence: 0 };
+    return 0;
   }
 
   const luminance: number[] = new Array(height);
-
   for (let y = 0; y < height; y++) {
     let sum = 0;
-
     for (let x = 0; x < width; x++) {
-      const i = (y * width + x) * 4;
-      sum += 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+      sum += luminanceAt(image, x, y);
     }
-
     luminance[y] = sum / width;
   }
 
@@ -126,18 +165,24 @@ export function countChipsInStack(imageData: ImageData): StackScan {
   const smoothed = movingAverage(rowProfile, 3);
   const maxSignal = Math.max(...smoothed, 1);
 
-  // A stack of N chips has roughly one rim every height/N pixels; without
-  // knowing N up front, a fraction of the frame height is the closest thing
-  // to a reasonable minimum spacing between two distinct chips.
-  const minSpacing = Math.max(2, Math.floor(height / 60));
-  const minProminence = maxSignal * 0.15;
+  return findPeaks(smoothed, Math.max(2, minSpacing), maxSignal * 0.15).length;
+}
 
-  const peaks = findPeaks(smoothed, minSpacing, minProminence);
+/**
+ * How many chips a stack of this shape must contain, from its outline alone.
+ * Independent of whether a single rim is actually visible, which is what
+ * makes it a useful check on the rim count rather than a duplicate of it.
+ */
+export function estimateFromProportion(
+  stackWidth: number,
+  stackHeight: number,
+  ratio: number,
+): number {
+  if (stackWidth <= 0 || stackHeight <= 0) {
+    return 0;
+  }
 
-  return {
-    count: peaks.length,
-    confidence: peaks.length === 0 ? 0 : Math.min(1, peaks.length / 20),
-  };
+  return Math.round((stackHeight / stackWidth) * ratio);
 }
 
 export interface ColourCandidate {
@@ -145,7 +190,7 @@ export interface ColourCandidate {
   swatch: string;
 }
 
-function hexToRgb(hex: string): [number, number, number] {
+export function hexToRgb(hex: string): [number, number, number] {
   const clean = hex.replace('#', '');
   const value = parseInt(clean, 16);
 
@@ -159,14 +204,14 @@ function hexToRgb(hex: string): [number, number, number] {
  * to bleed into the average.
  */
 export function matchDenominationColour(
-  imageData: ImageData,
+  image: RgbaImage,
   candidates: readonly ColourCandidate[],
 ): string | null {
   if (candidates.length === 0) {
     return null;
   }
 
-  const { width, height, data } = imageData;
+  const { width, height, data } = image;
   const yStart = Math.floor(height / 3);
   const yEnd = Math.floor((height * 2) / 3);
 
@@ -207,19 +252,310 @@ export function matchDenominationColour(
   return best?.token ?? null;
 }
 
-export interface ChipScanEstimate {
-  quantity: number;
-  colourToken: string | null;
-  confidence: number;
+/** A span of rows or columns. */
+export interface Span {
+  start: number;
+  end: number;
 }
 
-/** Runs both estimators over one captured frame. */
-export function scanChipStack(
-  imageData: ImageData,
-  colourCandidates: readonly ColourCandidate[],
-): ChipScanEstimate {
-  const { count, confidence } = countChipsInStack(imageData);
-  const colourToken = matchDenominationColour(imageData, colourCandidates);
+/**
+ * The longest contiguous run of rows whose average colour is within
+ * `tolerance` of `target` — the stack's vertical extent, as opposed to the
+ * whole cropped frame. Without this the proportion estimate would measure the
+ * guide box rather than the chips inside it.
+ */
+export function verticalExtent(
+  image: RgbaImage,
+  target: readonly [number, number, number],
+  tolerance: number,
+): Span {
+  const { width, height, data } = image;
+  let best: Span = { start: 0, end: 0 };
+  let runStart: number | null = null;
 
-  return { quantity: count, colourToken, confidence };
+  const closeRun = (end: number): void => {
+    if (runStart !== null && end - runStart > best.end - best.start) {
+      best = { start: runStart, end };
+    }
+    runStart = null;
+  };
+
+  for (let y = 0; y < height; y++) {
+    let r = 0;
+    let g = 0;
+    let b = 0;
+
+    for (let x = 0; x < width; x++) {
+      const i = (y * width + x) * 4;
+      r += data[i];
+      g += data[i + 1];
+      b += data[i + 2];
+    }
+
+    r /= width;
+    g /= width;
+    b /= width;
+
+    const distance = Math.sqrt((r - target[0]) ** 2 + (g - target[1]) ** 2 + (b - target[2]) ** 2);
+
+    if (distance <= tolerance) {
+      if (runStart === null) {
+        runStart = y;
+      }
+    } else {
+      closeRun(y);
+    }
+  }
+
+  closeRun(height);
+
+  return best;
+}
+
+/**
+ * Per-column variance of vertical luminance: high where chips are — their
+ * rims create brightness banding running down the column — low over a
+ * comparatively flat background (table felt, floor, a hand).
+ */
+export function columnActivity(image: RgbaImage): number[] {
+  const { width, height } = image;
+  const activity: number[] = new Array(width).fill(0);
+
+  for (let x = 0; x < width; x++) {
+    let sum = 0;
+    let sumSquares = 0;
+
+    for (let y = 0; y < height; y++) {
+      const luminance = luminanceAt(image, x, y);
+      sum += luminance;
+      sumSquares += luminance * luminance;
+    }
+
+    const mean = sum / height;
+    activity[x] = sumSquares / height - mean * mean;
+  }
+
+  return activity;
+}
+
+/**
+ * Groups a column-activity signal into stack regions: runs of
+ * above-`threshold` columns at least `minWidth` wide, tolerating gaps
+ * narrower than `minGap` (a chip's own lighter rim can dip briefly) without
+ * splitting the region, and closing it once a gap reaches `minGap`.
+ */
+export function segmentStacks(
+  activity: readonly number[],
+  threshold: number,
+  minWidth: number,
+  minGap: number,
+): Span[] {
+  const regions: Span[] = [];
+  let regionStart: number | null = null;
+  let gapRun = 0;
+
+  const closeRegion = (end: number): void => {
+    if (regionStart !== null && end - regionStart >= minWidth) {
+      regions.push({ start: regionStart, end });
+    }
+    regionStart = null;
+    gapRun = 0;
+  };
+
+  for (let x = 0; x < activity.length; x++) {
+    if (activity[x] > threshold) {
+      if (regionStart === null) {
+        regionStart = x;
+      }
+      gapRun = 0;
+    } else if (regionStart !== null) {
+      gapRun++;
+      if (gapRun >= minGap) {
+        closeRegion(x - gapRun + 1);
+      }
+    }
+  }
+
+  closeRegion(activity.length - gapRun);
+
+  return regions;
+}
+
+function cropColumns(image: RgbaImage, start: number, end: number): RgbaImage {
+  const width = end - start;
+  const height = image.height;
+  const data = new Uint8ClampedArray(width * height * 4);
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const srcIndex = (y * image.width + (start + x)) * 4;
+      const dstIndex = (y * width + x) * 4;
+
+      data[dstIndex] = image.data[srcIndex];
+      data[dstIndex + 1] = image.data[srcIndex + 1];
+      data[dstIndex + 2] = image.data[srcIndex + 2];
+      data[dstIndex + 3] = image.data[srcIndex + 3];
+    }
+  }
+
+  return { width, height, data };
+}
+
+export interface AnalysedStack {
+  columns: Span;
+  rows: Span;
+  colourToken: string | null;
+  /** From the outline's proportions. */
+  byProportion: number;
+  /** From counting visible rims. */
+  byRims: number;
+  /** What to show. Null when the two estimates disagree too much to be worth showing. */
+  quantity: number | null;
+  /** True when the stack runs into the top or bottom of the frame, so its real height is unknown. */
+  clipped: boolean;
+}
+
+/** Something specific and fixable about the current frame. */
+export type FrameIssue =
+  | 'too-dark'
+  | 'too-bright'
+  | 'no-stacks'
+  | 'clipped'
+  | 'too-small'
+  | 'disagreement';
+
+export interface FrameAnalysis {
+  stacks: AnalysedStack[];
+  issues: FrameIssue[];
+}
+
+/**
+ * The two estimates are allowed to differ by whichever is larger: one chip,
+ * or a tenth of the count. A tall stack legitimately loses a rim or two to
+ * glare; a short one has no such excuse.
+ */
+function reconcile(byProportion: number, byRims: number): number | null {
+  const tolerance = Math.max(1, Math.round(Math.max(byProportion, byRims) * 0.1));
+
+  if (Math.abs(byProportion - byRims) > tolerance) {
+    return null;
+  }
+
+  // The proportion estimate is the more robust of the two — it does not need
+  // any individual rim to survive the lighting — so it wins ties.
+  return byProportion > 0 ? byProportion : byRims;
+}
+
+/**
+ * Analyses one camera frame: finds each stack, estimates it both ways, and
+ * reports what is wrong with the frame in terms the person holding the phone
+ * can act on. `colourCandidates` should be just the colours actually in play
+ * (the chip set's own denominations), not the whole palette — with only a few
+ * real candidates, a colour match is far less likely to land on the wrong one.
+ */
+export function analyseFrame(
+  image: RgbaImage,
+  colourCandidates: readonly ColourCandidate[],
+  ratio: number = DEFAULT_CHIP_RATIO,
+): FrameAnalysis {
+  const issues: FrameIssue[] = [];
+  const brightness = meanLuminance(image);
+
+  if (brightness < 45) {
+    issues.push('too-dark');
+  } else if (brightness > 215) {
+    issues.push('too-bright');
+  }
+
+  const activity = columnActivity(image);
+  const maxActivity = Math.max(...activity, 0);
+
+  // An absolute floor, not just a relative one. Over a flat surface the
+  // variance is only floating-point dust, and a purely proportional
+  // threshold would happily segment that dust into a full-width "stack".
+  // Real stacked chips band strongly; this is a standard deviation of ~5
+  // brightness levels, well under any genuine stack.
+  if (maxActivity < 25) {
+    return { stacks: [], issues: [...issues, 'no-stacks'] };
+  }
+
+  const regions = segmentStacks(
+    activity,
+    maxActivity * 0.12,
+    Math.max(4, Math.floor(image.width / 40)),
+    Math.max(2, Math.floor(image.width / 80)),
+  );
+
+  if (regions.length === 0) {
+    return { stacks: [], issues: [...issues, 'no-stacks'] };
+  }
+
+  const stacks = regions.map((columns) => analyseStack(image, columns, colourCandidates, ratio));
+
+  if (stacks.some((s) => s.clipped)) {
+    issues.push('clipped');
+  }
+  // A stack narrower than this leaves too few pixels per chip for either
+  // estimate to mean anything — the answer is to move the phone closer.
+  if (stacks.some((s) => s.columns.end - s.columns.start < image.width / 12)) {
+    issues.push('too-small');
+  }
+  if (stacks.some((s) => s.quantity === null)) {
+    issues.push('disagreement');
+  }
+
+  return { stacks, issues };
+}
+
+function analyseStack(
+  image: RgbaImage,
+  columns: Span,
+  colourCandidates: readonly ColourCandidate[],
+  ratio: number,
+): AnalysedStack {
+  const cropped = cropColumns(image, columns.start, columns.end);
+  const colourToken = matchDenominationColour(cropped, colourCandidates);
+
+  const swatch = colourCandidates.find((c) => c.token === colourToken)?.swatch;
+  const target = swatch ? hexToRgb(swatch) : ([128, 128, 128] as [number, number, number]);
+
+  // Generous tolerance: a chip photographed under room light is nowhere near
+  // its nominal swatch, and this only needs to separate chip from table.
+  const rows = verticalExtent(cropped, target, 120);
+
+  const stackWidth = columns.end - columns.start;
+  const stackHeight = rows.end - rows.start;
+
+  const byProportion = estimateFromProportion(stackWidth, stackHeight, ratio);
+  // One chip's thickness in pixels, less a margin, so two adjacent rims stay
+  // separable while a shadow within one chip does not become its own peak.
+  const minSpacing = Math.max(2, Math.floor((stackWidth / ratio) * 0.6));
+  const byRims = countRims(cropped, minSpacing);
+
+  return {
+    columns,
+    rows,
+    colourToken,
+    byProportion,
+    byRims,
+    quantity: reconcile(byProportion, byRims),
+    clipped: rows.start === 0 || rows.end === cropped.height,
+  };
+}
+
+/**
+ * The chip ratio implied by a stack the person has told us the true count of.
+ * This is the calibration: everything else about a chip cancels out, leaving
+ * only how tall N of them stand next to how wide one of them is.
+ */
+export function ratioFromKnownCount(
+  stackWidth: number,
+  stackHeight: number,
+  knownCount: number,
+): number | null {
+  if (stackWidth <= 0 || stackHeight <= 0 || knownCount <= 0) {
+    return null;
+  }
+
+  return (stackWidth / stackHeight) * knownCount;
 }

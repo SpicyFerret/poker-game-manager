@@ -1,11 +1,21 @@
-<h2 mat-dialog-title i18n="@@chipScan.heading">Escanear {{ data.label }}</h2>
+<h2 mat-dialog-title i18n="@@chipScan.heading">Escanear {{ data.title }}</h2>
 
-<mat-dialog-content class="content" [class.content--live]="phase() === 'live'">
+<mat-dialog-content
+  class="content"
+  [class.content--live]="phase() === 'live' || phase() === 'calibrating'"
+>
   @if (phase() === 'idle') {
     <p i18n="@@chipScan.instructions">
-      Empilhe as fichas de lado, aponte a câmera e encaixe a pilha na moldura. A contagem é só uma
-      sugestão — você confirma o número antes de enviar.
+      Separe as fichas em pilhas por cor, uma ao lado da outra, deitadas de lado. A câmera fica
+      aberta e vai te dizendo o que ajustar — quando a leitura ficar estável, ela trava sozinha.
     </p>
+
+    @if (!isCalibrated()) {
+      <p class="hint" i18n="@@chipScan.calibrationNeeded">
+        Ainda não sei o tamanho das suas fichas, então a contagem pode errar. Calibrar leva alguns
+        segundos e vale para todas as próximas contagens neste aparelho.
+      </p>
+    }
 
     @if (errorMessage(); as message) {
       <p role="alert" class="alert">{{ message }}</p>
@@ -23,57 +33,115 @@
     }
   }
 
+  @if (awaitingCalibrationCount()) {
+    <p i18n="@@chipScan.calibrationLocked">
+      Peguei a pilha. Agora conte à mão quantas fichas ela tem e informe abaixo — é com isso que eu
+      aprendo o tamanho da sua ficha.
+    </p>
+
+    <mat-form-field class="form-field-full">
+      <mat-label i18n="@@chipScan.calibrationCountLabel">Quantas fichas tem essa pilha?</mat-label>
+      <input
+        matInput
+        type="number"
+        inputmode="numeric"
+        min="1"
+        step="1"
+        [ngModel]="calibrationCount()"
+        (ngModelChange)="setCalibrationCount($event)"
+      />
+    </mat-form-field>
+
+    @if (errorMessage(); as message) {
+      <p role="alert" class="alert">{{ message }}</p>
+    }
+  }
+
   @if (phase() === 'confirm') {
-    <p i18n="@@chipScan.confirmExplanation">Confira o valor antes de enviar.</p>
+    @if (detectedCount() > 0) {
+      <p>
+        <span i18n="@@chipScan.stacksDetected"
+          >{detectedCount(), plural, =1 {1 pilha reconhecida} other {{{detectedCount()}} pilhas reconhecidas}}</span
+        >
+        <span i18n="@@chipScan.confirmExplanation">
+          Confira os valores antes de enviar — o que não foi reconhecido ficou como estava.
+        </span>
+      </p>
+    } @else {
+      <p i18n="@@chipScan.confirmNoneDetected">
+        Não reconhecemos nenhuma pilha. Você pode tentar de novo ou digitar direto abaixo.
+      </p>
+    }
 
-    <div class="confirm-row">
-      <mat-form-field class="confirm-row__quantity">
-        <mat-label i18n="@@chipScan.quantity">Quantidade</mat-label>
-        <input
-          matInput
-          type="number"
-          inputmode="numeric"
-          min="0"
-          step="1"
-          [ngModel]="quantity()"
-          (ngModelChange)="setQuantity($event)"
-        />
-      </mat-form-field>
+    <div class="count-rows">
+      @for (chip of data.chips; track chip.key) {
+        @let colour = colourOf(chip.colourToken);
+        <div class="count-row">
+          <span
+            class="count-row__chip"
+            [style.background]="colour?.swatch ?? 'var(--mat-sys-surface-container-high)'"
+            [style.color]="colour?.ink ?? 'var(--mat-sys-on-surface)'"
+          >
+            {{ chip.faceValue }}
+          </span>
 
-      <mat-form-field class="confirm-row__colour">
-        <mat-label i18n="@@field.colour">Cor</mat-label>
-        <mat-select [ngModel]="colourToken()" (ngModelChange)="colourToken.set($event)">
-          <mat-option [value]="null" i18n="@@chipSets.noColour">Sem cor</mat-option>
-          @for (option of palette; track option.token) {
-            <mat-option [value]="option.token">
-              <span class="swatch" [style.background]="option.swatch" aria-hidden="true"></span>
-              {{ option.label }}
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+          <mat-form-field class="count-row__field">
+            <mat-label i18n="@@chipScan.quantity">Quantidade</mat-label>
+            <input
+              matInput
+              type="number"
+              inputmode="numeric"
+              min="0"
+              step="1"
+              [ngModel]="quantities()[chip.key]"
+              (ngModelChange)="set(chip.key, $event)"
+            />
+          </mat-form-field>
+        </div>
+      }
     </div>
   }
 
   <!--
-    Always in the DOM, regardless of phase, and shown only via CSS: capture()
-    needs both elements to already exist (via viewChild) the moment "live"
-    turns into "confirm", which is one signal write earlier than an @if/@switch
-    would have re-rendered them into existence.
+    Always in the DOM, regardless of phase, and shown only via CSS: the frame
+    loop reads these through viewChild, and re-creating them on every phase
+    change would tear down the live stream along with them.
   -->
-  <div class="camera" [class.camera--hidden]="phase() !== 'live'">
+  <div
+    class="camera"
+    [class.camera--hidden]="!(phase() === 'live' || phase() === 'calibrating') || awaitingCalibrationCount()"
+  >
     <video #video class="camera__video" autoplay playsinline muted></video>
+
     <div
       class="camera__guide"
       [style.left.%]="guide.left * 100"
       [style.top.%]="guide.top * 100"
       [style.width.%]="guide.width * 100"
       [style.height.%]="guide.height * 100"
-    ></div>
+    >
+      <!--
+        One badge per stack the current frame found, positioned over it, so
+        it is obvious which reading belongs to which pile — and which pile the
+        app has not understood yet.
+      -->
+      @for (stack of analysis()?.stacks ?? []; track $index) {
+        @let colour = colourOf(stack.colourToken);
+        <span
+          class="camera__reading"
+          [class.camera__reading--unsure]="stack.quantity === null"
+          [style.left.%]="readingPosition(stack)"
+          [style.background]="colour?.swatch ?? 'rgb(0 0 0 / 70%)'"
+          [style.color]="colour?.ink ?? '#fff'"
+        >
+          {{ readingLabel(stack) }}
+        </span>
+      }
+    </div>
 
-    @if (tiltWarning()) {
-      <p class="camera__hint" i18n="@@chipScan.tiltHint">Nivele o celular</p>
-    }
+    <p class="camera__guidance">{{ guidance() }}</p>
+
+    <div class="camera__progress" [style.width.%]="progress()"></div>
   </div>
 
   <canvas #captureCanvas hidden></canvas>
@@ -82,29 +150,40 @@
 <mat-dialog-actions>
   <button matButton mat-dialog-close type="button" i18n="@@common.cancel">Cancelar</button>
 
-  @switch (phase()) {
-    @case ('idle') {
-      <button
-        matButton="filled"
-        type="button"
-        (click)="startCamera()"
-        i18n="@@chipScan.openCamera"
-      >
-        Abrir câmera
-      </button>
-    }
-    @case ('live') {
-      <button matButton="filled" type="button" (click)="capture()" i18n="@@chipScan.capture">
-        Capturar
-      </button>
-    }
-    @case ('confirm') {
-      <button matButton type="button" (click)="retry()" i18n="@@chipScan.retry">
-        Tentar de novo
-      </button>
-      <button matButton="filled" type="button" (click)="confirm()" i18n="@@chipScan.confirm">
-        Usar esta contagem
-      </button>
-    }
+  @if (phase() === 'idle') {
+    <button matButton type="button" (click)="startCalibration()" i18n="@@chipScan.calibrate">
+      Calibrar
+    </button>
+    <button matButton="filled" type="button" (click)="startCamera()" i18n="@@chipScan.openCamera">
+      Abrir câmera
+    </button>
+  }
+
+  @if (phase() === 'live' || (phase() === 'calibrating' && !awaitingCalibrationCount())) {
+    <button matButton type="button" (click)="retry()" i18n="@@common.back">Voltar</button>
+  }
+
+  @if (awaitingCalibrationCount()) {
+    <button matButton type="button" (click)="retry()" i18n="@@chipScan.retry">
+      Tentar de novo
+    </button>
+    <button
+      matButton="filled"
+      type="button"
+      [disabled]="calibrationCount() === null"
+      (click)="confirmCalibration()"
+      i18n="@@chipScan.saveCalibration"
+    >
+      Salvar calibração
+    </button>
+  }
+
+  @if (phase() === 'confirm') {
+    <button matButton type="button" (click)="retry()" i18n="@@chipScan.retry">
+      Tentar de novo
+    </button>
+    <button matButton="filled" type="button" (click)="confirm()" i18n="@@chipScan.confirm">
+      Usar estas contagens
+    </button>
   }
 </mat-dialog-actions>

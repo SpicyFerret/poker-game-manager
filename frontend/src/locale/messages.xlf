@@ -459,7 +459,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
-          <context context-type="linenumber">253</context>
+          <context context-type="linenumber">259</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/settings/settings.html</context>
@@ -489,11 +489,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
-          <context context-type="linenumber">200</context>
+          <context context-type="linenumber">206</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
-          <context context-type="linenumber">251</context>
+          <context context-type="linenumber">257</context>
         </context-group>
       </trans-unit>
       <trans-unit id="field.faceValue" datatype="html">
@@ -517,58 +517,54 @@
           <context context-type="linenumber">113,114</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="chipScan.scanStackAriaLabel" datatype="html">
-        <source>Escanear pilha</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.html</context>
-          <context context-type="linenumber">126,127</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="field.colour" datatype="html">
         <source>Cor</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.html</context>
-          <context context-type="linenumber">133,134</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.html</context>
-          <context context-type="linenumber">44,45</context>
+          <context context-type="linenumber">123,124</context>
         </context-group>
       </trans-unit>
       <trans-unit id="chipSets.noColour" datatype="html">
         <source>Sem cor</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.html</context>
-          <context context-type="linenumber">135,136</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.html</context>
-          <context context-type="linenumber">46,47</context>
+          <context context-type="linenumber">125,126</context>
         </context-group>
       </trans-unit>
       <trans-unit id="chipSets.removeDenomination" datatype="html">
         <source> Remover ficha </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.html</context>
-          <context context-type="linenumber">158,159</context>
+          <context context-type="linenumber">148,149</context>
         </context-group>
       </trans-unit>
       <trans-unit id="chipSets.addDenomination" datatype="html">
         <source> Adicionar ficha </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.html</context>
-          <context context-type="linenumber">171,174</context>
+          <context context-type="linenumber">161,164</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="chipScan.scanAllButton" datatype="html">
+        <source> 📷 Escanear todas as fichas </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.html</context>
+          <context context-type="linenumber">176,179</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/count-dialog.html</context>
+          <context context-type="linenumber">10,13</context>
         </context-group>
       </trans-unit>
       <trans-unit id="common.save" datatype="html">
         <source> Salvar </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.html</context>
-          <context context-type="linenumber">181,182</context>
+          <context context-type="linenumber">186,187</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
-          <context context-type="linenumber">206</context>
+          <context context-type="linenumber">212</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
@@ -595,7 +591,7 @@
         <source> Cancelar </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.html</context>
-          <context context-type="linenumber">184,185</context>
+          <context context-type="linenumber">189,190</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/invites/create-invite-dialog.html</context>
@@ -623,11 +619,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/count-dialog.html</context>
-          <context context-type="linenumber">68,69</context>
+          <context context-type="linenumber">62,63</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.html</context>
-          <context context-type="linenumber">83,85</context>
+          <context context-type="linenumber">151,153</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/confirm/confirm-dialog.html</context>
@@ -638,81 +634,70 @@
         <source>Não foi possível carregar as maletas.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
-          <context context-type="linenumber">92</context>
+          <context context-type="linenumber">97</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="chipScan.chipLabel" datatype="html">
-        <source>Ficha <x id="VALUE" equiv-text="faceValue"/></source>
+      <trans-unit id="chipSets.scanTitle" datatype="html">
+        <source>a maleta</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
-          <context context-type="linenumber">138</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/tables/live/count-dialog.ts</context>
-          <context context-type="linenumber">81</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="chipScan.newChip" datatype="html">
-        <source>Ficha nova</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
-          <context context-type="linenumber">139</context>
+          <context context-type="linenumber">148</context>
         </context-group>
       </trans-unit>
       <trans-unit id="chipSets.duplicateFaceValue" datatype="html">
         <source>Cada ficha da maleta precisa ter um valor impresso diferente.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
-          <context context-type="linenumber">188</context>
+          <context context-type="linenumber">194</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.chipSetCreateTitle" datatype="html">
         <source>Criar esta maleta?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
-          <context context-type="linenumber">197</context>
+          <context context-type="linenumber">203</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.chipSetSaveTitle" datatype="html">
         <source>Salvar a maleta?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
-          <context context-type="linenumber">198</context>
+          <context context-type="linenumber">204</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.chipSetDenominations" datatype="html">
         <source>tipos de ficha</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
-          <context context-type="linenumber">202</context>
+          <context context-type="linenumber">208</context>
         </context-group>
       </trans-unit>
       <trans-unit id="chipSets.saveFailed" datatype="html">
         <source>Não foi possível salvar a maleta.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
-          <context context-type="linenumber">240</context>
+          <context context-type="linenumber">246</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.chipSetDeleteTitle" datatype="html">
         <source>Excluir esta maleta?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
-          <context context-type="linenumber">249</context>
+          <context context-type="linenumber">255</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.chipSetDeleteMessage" datatype="html">
         <source>Maleta usada por alguma mesa não pode ser excluída — o histórico delas depende dela.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
-          <context context-type="linenumber">250</context>
+          <context context-type="linenumber">256</context>
         </context-group>
       </trans-unit>
       <trans-unit id="chipSets.deleteFailed" datatype="html">
         <source>Não foi possível excluir a maleta.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/chip-sets/chip-sets.ts</context>
-          <context context-type="linenumber">272</context>
+          <context context-type="linenumber">278</context>
         </context-group>
       </trans-unit>
       <trans-unit id="championship.rankingsToggle" datatype="html">
@@ -946,7 +931,7 @@
         <source>Revogar código <x id="INTERPOLATION" equiv-text="{{ invite.code }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/invites/invites.html</context>
-          <context context-type="linenumber">67,69</context>
+          <context context-type="linenumber">67,68</context>
         </context-group>
       </trans-unit>
       <trans-unit id="invites.loadFailed" datatype="html">
@@ -1048,7 +1033,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.html</context>
-          <context context-type="linenumber">15,19</context>
+          <context context-type="linenumber">15,17</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.ts</context>
@@ -1066,14 +1051,14 @@
         <source>Cargo de <x id="INTERPOLATION" equiv-text="{{ member.displayName }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.html</context>
-          <context context-type="linenumber">40,42</context>
+          <context context-type="linenumber">40,41</context>
         </context-group>
       </trans-unit>
       <trans-unit id="members.removeFor" datatype="html">
         <source>Remover <x id="INTERPOLATION" equiv-text="{{ member.displayName }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/members/members.html</context>
-          <context context-type="linenumber">65,67</context>
+          <context context-type="linenumber">65,66</context>
         </context-group>
       </trans-unit>
       <trans-unit id="members.loadFailed" datatype="html">
@@ -1609,7 +1594,7 @@
         <source> Nova mesa </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/championships/detail/tables/tables.html</context>
-          <context context-type="linenumber">94,96</context>
+          <context context-type="linenumber">94,95</context>
         </context-group>
       </trans-unit>
       <trans-unit id="tables.empty" datatype="html">
@@ -1993,46 +1978,46 @@
         <source>Ficha <x id="INTERPOLATION" equiv-text="{{ chip.faceValue }}"/> (vale <x id="INTERPOLATION_1" equiv-text="{{ chip.effectiveValue }}"/>)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/count-dialog.html</context>
-          <context context-type="linenumber">25,26</context>
+          <context context-type="linenumber">29,30</context>
         </context-group>
       </trans-unit>
       <trans-unit id="count.chip" datatype="html">
         <source>Ficha <x id="INTERPOLATION" equiv-text="{{ chip.faceValue }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/count-dialog.html</context>
-          <context context-type="linenumber">28,29</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="chipScan.scanAriaLabel" datatype="html">
-        <source>Escanear ficha <x id="INTERPOLATION" equiv-text="{{ chip.faceValue }}"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/tables/live/count-dialog.html</context>
-          <context context-type="linenumber">46,47</context>
+          <context context-type="linenumber">32,33</context>
         </context-group>
       </trans-unit>
       <trans-unit id="count.totalUnits" datatype="html">
         <source>Total em fichas</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/count-dialog.html</context>
-          <context context-type="linenumber">57,58</context>
+          <context context-type="linenumber">51,52</context>
         </context-group>
       </trans-unit>
       <trans-unit id="count.totalMoney" datatype="html">
         <source>Equivale a</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/count-dialog.html</context>
-          <context context-type="linenumber">61,62</context>
+          <context context-type="linenumber">55,56</context>
         </context-group>
       </trans-unit>
       <trans-unit id="count.confirm" datatype="html">
         <source> Informar contagem </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/count-dialog.html</context>
-          <context context-type="linenumber">70,72</context>
+          <context context-type="linenumber">64,66</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
           <context context-type="linenumber">784</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="count.scanTitle" datatype="html">
+        <source>a contagem</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/count-dialog.ts</context>
+          <context context-type="linenumber">95</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.buyIn" datatype="html">
@@ -2922,80 +2907,203 @@
         </context-group>
       </trans-unit>
       <trans-unit id="chipScan.heading" datatype="html">
-        <source>Escanear <x id="INTERPOLATION" equiv-text="{{ data.label }}"/></source>
+        <source>Escanear <x id="INTERPOLATION" equiv-text="{{ data.title }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.html</context>
           <context context-type="linenumber">1,3</context>
         </context-group>
       </trans-unit>
       <trans-unit id="chipScan.instructions" datatype="html">
-        <source> Empilhe as fichas de lado, aponte a câmera e encaixe a pilha na moldura. A contagem é só uma sugestão — você confirma o número antes de enviar. </source>
+        <source> Separe as fichas em pilhas por cor, uma ao lado da outra, deitadas de lado. A câmera fica aberta e vai te dizendo o que ajustar — quando a leitura ficar estável, ela trava sozinha. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.html</context>
-          <context context-type="linenumber">6,10</context>
+          <context context-type="linenumber">9,13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="chipScan.calibrationNeeded" datatype="html">
+        <source> Ainda não sei o tamanho das suas fichas, então a contagem pode errar. Calibrar leva alguns segundos e vale para todas as próximas contagens neste aparelho. </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.html</context>
+          <context context-type="linenumber">15,20</context>
         </context-group>
       </trans-unit>
       <trans-unit id="chipScan.unsupported" datatype="html">
         <source> A câmera não está disponível neste aparelho ou a permissão foi negada. Digite a contagem normalmente. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.html</context>
-          <context context-type="linenumber">17,21</context>
+          <context context-type="linenumber">27,31</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="chipScan.calibrationLocked" datatype="html">
+        <source> Peguei a pilha. Agora conte à mão quantas fichas ela tem e informe abaixo — é com isso que eu aprendo o tamanho da sua ficha. </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.html</context>
+          <context context-type="linenumber">38,42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="chipScan.calibrationCountLabel" datatype="html">
+        <source>Quantas fichas tem essa pilha?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.html</context>
+          <context context-type="linenumber">43,46</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="chipScan.stacksDetected" datatype="html">
+        <source>{VAR_PLURAL, plural, =1 {1 pilha reconhecida} other {<x id="INTERPOLATION"/> pilhas reconhecidas}}</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.html</context>
+          <context context-type="linenumber">64,66</context>
         </context-group>
       </trans-unit>
       <trans-unit id="chipScan.confirmExplanation" datatype="html">
-        <source>Confira o valor antes de enviar.</source>
+        <source> Confira os valores antes de enviar — o que não foi reconhecido ficou como estava. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.html</context>
-          <context context-type="linenumber">27,30</context>
+          <context context-type="linenumber">67,70</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="chipScan.confirmNoneDetected" datatype="html">
+        <source> Não reconhecemos nenhuma pilha. Você pode tentar de novo ou digitar direto abaixo. </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.html</context>
+          <context context-type="linenumber">72,76</context>
         </context-group>
       </trans-unit>
       <trans-unit id="chipScan.quantity" datatype="html">
         <source>Quantidade</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.html</context>
-          <context context-type="linenumber">31,33</context>
+          <context context-type="linenumber">89,91</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="chipScan.tiltHint" datatype="html">
-        <source>Nivele o celular</source>
+      <trans-unit id="chipScan.calibrate" datatype="html">
+        <source> Calibrar </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.html</context>
-          <context context-type="linenumber">75,79</context>
+          <context context-type="linenumber">155,157</context>
         </context-group>
       </trans-unit>
       <trans-unit id="chipScan.openCamera" datatype="html">
         <source> Abrir câmera </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.html</context>
-          <context context-type="linenumber">93,96</context>
+          <context context-type="linenumber">158,162</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="chipScan.capture" datatype="html">
-        <source> Capturar </source>
+      <trans-unit id="common.back" datatype="html">
+        <source>Voltar</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.html</context>
-          <context context-type="linenumber">98,100</context>
+          <context context-type="linenumber">163,166</context>
         </context-group>
       </trans-unit>
       <trans-unit id="chipScan.retry" datatype="html">
         <source> Tentar de novo </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.html</context>
-          <context context-type="linenumber">103,105</context>
+          <context context-type="linenumber">168,170</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.html</context>
+          <context context-type="linenumber">183,185</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="chipScan.saveCalibration" datatype="html">
+        <source> Salvar calibração </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.html</context>
+          <context context-type="linenumber">177,181</context>
         </context-group>
       </trans-unit>
       <trans-unit id="chipScan.confirm" datatype="html">
-        <source> Usar esta contagem </source>
+        <source> Usar estas contagens </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.html</context>
-          <context context-type="linenumber">106,108</context>
+          <context context-type="linenumber">186,189</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="chipScan.guideTilt" datatype="html">
+        <source>Incline o celular para ficar de frente para as pilhas.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.ts</context>
+          <context context-type="linenumber">133</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="chipScan.guideDark" datatype="html">
+        <source>Está escuro demais — acenda uma luz ou chegue mais perto.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.ts</context>
+          <context context-type="linenumber">140</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="chipScan.guideBright" datatype="html">
+        <source>Muita luz refletindo — tire o brilho direto das fichas.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.ts</context>
+          <context context-type="linenumber">143</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="chipScan.guideNoStacks" datatype="html">
+        <source>Coloque as pilhas de lado dentro da moldura, separadas por cor.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.ts</context>
+          <context context-type="linenumber">146</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="chipScan.guideClipped" datatype="html">
+        <source>A pilha está saindo da moldura — afaste um pouco o celular.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.ts</context>
+          <context context-type="linenumber">149</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="chipScan.guideTooSmall" datatype="html">
+        <source>As pilhas estão pequenas demais — chegue mais perto.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.ts</context>
+          <context context-type="linenumber">152</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="chipScan.guideUnsure" datatype="html">
+        <source>Ainda não consigo ter certeza — segure firme e enquadre a pilha inteira.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.ts</context>
+          <context context-type="linenumber">155</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="chipScan.guideHold" datatype="html">
+        <source>Segure assim...</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.ts</context>
+          <context context-type="linenumber">159</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="chipScan.guideAim" datatype="html">
+        <source>Aponte para as pilhas.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.ts</context>
+          <context context-type="linenumber">162</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="chipScan.readingUnsure" datatype="html">
+        <source>?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.ts</context>
+          <context context-type="linenumber">167</context>
         </context-group>
       </trans-unit>
       <trans-unit id="chipScan.cameraDenied" datatype="html">
         <source>Não foi possível abrir a câmera. Você pode digitar a contagem normalmente.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.ts</context>
-          <context context-type="linenumber">99</context>
+          <context context-type="linenumber">205</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="chipScan.calibrationFailed" datatype="html">
+        <source>Não deu para medir essa pilha. Tente de novo com a pilha inteira dentro da moldura.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/chip-scan/chip-scan-dialog.ts</context>
+          <context context-type="linenumber">342</context>
         </context-group>
       </trans-unit>
     </body>
