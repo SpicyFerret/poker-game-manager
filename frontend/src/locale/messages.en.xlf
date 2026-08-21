@@ -1495,6 +1495,66 @@
         <source> Todo mundo do campeonato já está nesta mesa. </source>
         <target> Everyone in the championship is already at this table. </target>
       </trans-unit>
+      <trans-unit id="chipScan.scanStackAriaLabel" datatype="html">
+        <source>Escanear pilha</source>
+        <target>Scan stack</target>
+      </trans-unit>
+      <trans-unit id="chipScan.chipLabel" datatype="html">
+        <source>Ficha <x id="VALUE" equiv-text="faceValue"/></source>
+        <target>Chip <x id="VALUE" equiv-text="faceValue"/></target>
+      </trans-unit>
+      <trans-unit id="chipScan.newChip" datatype="html">
+        <source>Ficha nova</source>
+        <target>New chip</target>
+      </trans-unit>
+      <trans-unit id="chipScan.scanAriaLabel" datatype="html">
+        <source>Escanear ficha <x id="INTERPOLATION" equiv-text="{{ chip.faceValue }}"/></source>
+        <target>Scan chip <x id="INTERPOLATION" equiv-text="{{ chip.faceValue }}"/></target>
+      </trans-unit>
+      <trans-unit id="chipScan.heading" datatype="html">
+        <source>Escanear <x id="INTERPOLATION" equiv-text="{{ data.label }}"/></source>
+        <target>Scan <x id="INTERPOLATION" equiv-text="{{ data.label }}"/></target>
+      </trans-unit>
+      <trans-unit id="chipScan.instructions" datatype="html">
+        <source> Empilhe as fichas de lado, aponte a câmera e encaixe a pilha na moldura. A contagem é só uma sugestão — você confirma o número antes de enviar. </source>
+        <target> Stack the chips on their side, point the camera, and fit the stack inside the frame. The count is only a suggestion — you confirm the number before sending it. </target>
+      </trans-unit>
+      <trans-unit id="chipScan.unsupported" datatype="html">
+        <source> A câmera não está disponível neste aparelho ou a permissão foi negada. Digite a contagem normalmente. </source>
+        <target> The camera is not available on this device, or permission was denied. Type the count in as usual. </target>
+      </trans-unit>
+      <trans-unit id="chipScan.confirmExplanation" datatype="html">
+        <source>Confira o valor antes de enviar.</source>
+        <target>Check the value before sending it.</target>
+      </trans-unit>
+      <trans-unit id="chipScan.quantity" datatype="html">
+        <source>Quantidade</source>
+        <target>Quantity</target>
+      </trans-unit>
+      <trans-unit id="chipScan.tiltHint" datatype="html">
+        <source>Nivele o celular</source>
+        <target>Level the phone</target>
+      </trans-unit>
+      <trans-unit id="chipScan.openCamera" datatype="html">
+        <source> Abrir câmera </source>
+        <target> Open camera </target>
+      </trans-unit>
+      <trans-unit id="chipScan.capture" datatype="html">
+        <source> Capturar </source>
+        <target> Capture </target>
+      </trans-unit>
+      <trans-unit id="chipScan.retry" datatype="html">
+        <source> Tentar de novo </source>
+        <target> Try again </target>
+      </trans-unit>
+      <trans-unit id="chipScan.confirm" datatype="html">
+        <source> Usar esta contagem </source>
+        <target> Use this count </target>
+      </trans-unit>
+      <trans-unit id="chipScan.cameraDenied" datatype="html">
+        <source>Não foi possível abrir a câmera. Você pode digitar a contagem normalmente.</source>
+        <target>Could not open the camera. You can still type the count in as usual.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
