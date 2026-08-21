@@ -1,0 +1,110 @@
+<h2 mat-dialog-title i18n="@@chipScan.heading">Escanear {{ data.label }}</h2>
+
+<mat-dialog-content class="content" [class.content--live]="phase() === 'live'">
+  @if (phase() === 'idle') {
+    <p i18n="@@chipScan.instructions">
+      Empilhe as fichas de lado, aponte a câmera e encaixe a pilha na moldura. A contagem é só uma
+      sugestão — você confirma o número antes de enviar.
+    </p>
+
+    @if (errorMessage(); as message) {
+      <p role="alert" class="alert">{{ message }}</p>
+    }
+  }
+
+  @if (phase() === 'unsupported') {
+    <p i18n="@@chipScan.unsupported">
+      A câmera não está disponível neste aparelho ou a permissão foi negada. Digite a contagem
+      normalmente.
+    </p>
+
+    @if (errorMessage(); as message) {
+      <p role="alert" class="alert">{{ message }}</p>
+    }
+  }
+
+  @if (phase() === 'confirm') {
+    <p i18n="@@chipScan.confirmExplanation">Confira o valor antes de enviar.</p>
+
+    <div class="confirm-row">
+      <mat-form-field class="confirm-row__quantity">
+        <mat-label i18n="@@chipScan.quantity">Quantidade</mat-label>
+        <input
+          matInput
+          type="number"
+          inputmode="numeric"
+          min="0"
+          step="1"
+          [ngModel]="quantity()"
+          (ngModelChange)="setQuantity($event)"
+        />
+      </mat-form-field>
+
+      <mat-form-field class="confirm-row__colour">
+        <mat-label i18n="@@field.colour">Cor</mat-label>
+        <mat-select [ngModel]="colourToken()" (ngModelChange)="colourToken.set($event)">
+          <mat-option [value]="null" i18n="@@chipSets.noColour">Sem cor</mat-option>
+          @for (option of palette; track option.token) {
+            <mat-option [value]="option.token">
+              <span class="swatch" [style.background]="option.swatch" aria-hidden="true"></span>
+              {{ option.label }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  }
+
+  <!--
+    Always in the DOM, regardless of phase, and shown only via CSS: capture()
+    needs both elements to already exist (via viewChild) the moment "live"
+    turns into "confirm", which is one signal write earlier than an @if/@switch
+    would have re-rendered them into existence.
+  -->
+  <div class="camera" [class.camera--hidden]="phase() !== 'live'">
+    <video #video class="camera__video" autoplay playsinline muted></video>
+    <div
+      class="camera__guide"
+      [style.left.%]="guide.left * 100"
+      [style.top.%]="guide.top * 100"
+      [style.width.%]="guide.width * 100"
+      [style.height.%]="guide.height * 100"
+    ></div>
+
+    @if (tiltWarning()) {
+      <p class="camera__hint" i18n="@@chipScan.tiltHint">Nivele o celular</p>
+    }
+  </div>
+
+  <canvas #captureCanvas hidden></canvas>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button matButton mat-dialog-close type="button" i18n="@@common.cancel">Cancelar</button>
+
+  @switch (phase()) {
+    @case ('idle') {
+      <button
+        matButton="filled"
+        type="button"
+        (click)="startCamera()"
+        i18n="@@chipScan.openCamera"
+      >
+        Abrir câmera
+      </button>
+    }
+    @case ('live') {
+      <button matButton="filled" type="button" (click)="capture()" i18n="@@chipScan.capture">
+        Capturar
+      </button>
+    }
+    @case ('confirm') {
+      <button matButton type="button" (click)="retry()" i18n="@@chipScan.retry">
+        Tentar de novo
+      </button>
+      <button matButton="filled" type="button" (click)="confirm()" i18n="@@chipScan.confirm">
+        Usar esta contagem
+      </button>
+    }
+  }
+</mat-dialog-actions>

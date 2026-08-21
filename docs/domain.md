@@ -159,6 +159,7 @@ role gate, because the gate cannot yet know whose row is being touched.
 | Generic payment handle | Pix by default, but nothing in the model is Brazil-only. |
 | Enums as strings over the wire | Reordering an enum member stops being a silent breaking change. |
 | Stack notices queued on the table payload | The notice is already waiting when the player opens the screen, and reaches whoever was not looking at their phone when the table started. A push would need infrastructure this does not have. |
+| Chip-stack scanning is client-side, no new endpoint | The count it produces is exactly what the existing form already accepted — a plain number, confirmed by a person. A camera is just another way to fill that number in, not a new source of truth, so nothing about the API or the domain needed to change. It also means no photo of a table ever crosses the network. |
 
 ## Delivery phases
 
@@ -181,4 +182,8 @@ Each phase ends with something usable end to end — backend, screen, tests.
 - Timestamps stored in UTC, converted for display (default `America/Sao_Paulo`).
 - No PWA/offline support planned yet. If phone signal at the table turns out to be a real problem, it
   would be read caching plus a write queue.
-- No photo/OCR of chips. Counts are typed in.
+- **Camera-assisted chip counting**, added after this was written. Photographing a side-on stack
+  estimates a count and a colour match entirely client-side (no photo ever leaves the phone — only
+  the resulting numbers do), and always lands in the same editable field a person would have typed
+  into, pre-filled rather than submitted. Available both for a player's final count and for a chip
+  set's stock quantity. See `frontend/src/app/shared/chip-scan/`.

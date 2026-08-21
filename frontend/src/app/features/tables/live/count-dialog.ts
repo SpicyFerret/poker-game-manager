@@ -2,12 +2,13 @@ import { DecimalPipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
 import { ChipCountEntry, ChipStock } from '../../../core/tables/table.models';
 import { ChipColour, chipColour } from '../../../shared/chip-colours';
+import { ChipScanDialog, ChipScanResult } from '../../../shared/chip-scan/chip-scan-dialog';
 
 export interface CountDialogData {
   playerName: string;
@@ -44,6 +45,7 @@ export interface CountDialogData {
 })
 export class CountDialog {
   private readonly dialogRef = inject(MatDialogRef<CountDialog>);
+  private readonly matDialog = inject(MatDialog);
 
   protected readonly data = inject<CountDialogData>(MAT_DIALOG_DATA);
 
@@ -70,6 +72,23 @@ export class CountDialog {
 
   protected colourOf(token: string | null): ChipColour | null {
     return chipColour(token);
+  }
+
+  /** Fills one box from a photo of the stack instead of typing it. */
+  protected scan(chip: ChipStock): void {
+    this.matDialog
+      .open(ChipScanDialog, {
+        data: { label: $localize`:@@chipScan.chipLabel:Ficha ${chip.faceValue}:VALUE:` },
+        maxWidth: '100vw',
+        width: '100vw',
+        height: '100dvh',
+      })
+      .afterClosed()
+      .subscribe((result: ChipScanResult | undefined) => {
+        if (result) {
+          this.set(chip.denominationId, result.quantity);
+        }
+      });
   }
 
   protected set(denominationId: string, value: number | null): void {

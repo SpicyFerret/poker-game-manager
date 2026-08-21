@@ -2,6 +2,7 @@ import { Component, OnInit, inject, input, signal } from '@angular/core';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -15,6 +16,7 @@ import {
 } from '../../../../core/championships/championship.models';
 import { ChampionshipsService } from '../../../../core/championships/championships.service';
 import { CHIP_COLOURS, ChipColour, chipColour } from '../../../../shared/chip-colours';
+import { ChipScanDialog, ChipScanResult } from '../../../../shared/chip-scan/chip-scan-dialog';
 import { Confirm } from '../../../../shared/confirm/confirm.service';
 
 @Component({
@@ -34,6 +36,7 @@ export class ChipSetsTab implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly championships = inject(ChampionshipsService);
   private readonly confirm = inject(Confirm);
+  private readonly matDialog = inject(MatDialog);
 
   readonly championshipId = input.required<string>();
   readonly callerRole = input.required<ChampionshipRole>();
@@ -120,6 +123,37 @@ export class ChipSetsTab implements OnInit {
   protected cancel(): void {
     this.editing.set(null);
     this.error.set(null);
+  }
+
+  /** Fills the count from a photo of the stack instead of typing it. */
+  protected scanDenomination(index: number): void {
+    const group = this.denominations.at(index);
+    const faceValue = Number(group.value.faceValue) || 0;
+
+    this.matDialog
+      .open(ChipScanDialog, {
+        data: {
+          label:
+            faceValue > 0
+              ? $localize`:@@chipScan.chipLabel:Ficha ${faceValue}:VALUE:`
+              : $localize`:@@chipScan.newChip:Ficha nova`,
+        },
+        maxWidth: '100vw',
+        width: '100vw',
+        height: '100dvh',
+      })
+      .afterClosed()
+      .subscribe((result: ChipScanResult | undefined) => {
+        if (!result) {
+          return;
+        }
+
+        group.patchValue({ quantity: result.quantity });
+
+        if (!group.value.colour && result.colourToken) {
+          group.patchValue({ colour: result.colourToken });
+        }
+      });
   }
 
   protected addDenomination(): void {

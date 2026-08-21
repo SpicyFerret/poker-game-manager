@@ -38,6 +38,16 @@
             (ngModelChange)="set(chip.denominationId, $event)"
           />
         </mat-form-field>
+
+        <button
+          matIconButton
+          type="button"
+          (click)="scan(chip)"
+          aria-label="Escanear ficha {{ chip.faceValue }}"
+          i18n-aria-label="@@chipScan.scanAriaLabel"
+        >
+          <span aria-hidden="true">📷</span>
+        </button>
       </div>
     }
   </div>
