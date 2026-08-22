@@ -223,6 +223,103 @@ public sealed class ChipDistributionCalculatorTests
         fullStacks.ShouldBe(3);
     }
 
+    /// <summary>
+    /// The reported bug, in the case it was reported with: a 5/25/50/100/1000
+    /// case of 50/50/50/50/5 and five players. Dealt one after another, the first
+    /// three players took 15 fives each — 45 of the 50 — and the fifth player got
+    /// none at all, unable to post a small blind at a table everyone paid the
+    /// same to sit at.
+    /// </summary>
+    [Fact]
+    public void CalculateEqualStacks_Should_GiveEveryPlayerTheSameStack_WithoutOverdrawingTheCase()
+    {
+        var thousand = Guid.NewGuid();
+        double[] profile = [.. ChipDistributionCalculator.DefaultProfile(5)];
+
+        List<DenominationStock> stock =
+        [
+            new DenominationStock { DenominationId = Five, EffectiveValue = 5, Available = 50, ProfileShare = profile[0] },
+            new DenominationStock { DenominationId = TwentyFive, EffectiveValue = 25, Available = 50, ProfileShare = profile[1] },
+            new DenominationStock { DenominationId = Fifty, EffectiveValue = 50, Available = 50, ProfileShare = profile[2] },
+            new DenominationStock { DenominationId = Hundred, EffectiveValue = 100, Available = 50, ProfileShare = profile[3] },
+            new DenominationStock { DenominationId = thousand, EffectiveValue = 1000, Available = 5, ProfileShare = profile[4] }
+        ];
+
+        ChipDistribution perPlayer = ChipDistributionCalculator.CalculateEqualStacks(1000, stock, 5);
+
+        perPlayer.IsComplete.ShouldBeTrue();
+        UnitsOf(perPlayer, stock).ShouldBe(1000);
+
+        // The whole point: five of this stack has to fit in the case.
+        foreach (ChipCount chip in perPlayer.Chips)
+        {
+            int available = stock.Single(d => d.DenominationId == chip.DenominationId).Available;
+            (chip.Quantity * 5).ShouldBeLessThanOrEqualTo(available);
+        }
+
+        // And it is still a playable stack, not just an affordable one.
+        CountOf(perPlayer, Five).ShouldBeGreaterThan(0);
+    }
+
+    [Fact]
+    public void CalculateEqualStacks_Should_MatchASingleStack_ForOnePlayer()
+    {
+        List<DenominationStock> stock = Case();
+
+        ChipDistribution single = ChipDistributionCalculator.Calculate(1000, stock);
+        ChipDistribution equal = ChipDistributionCalculator.CalculateEqualStacks(1000, stock, 1);
+
+        equal.Chips.OrderBy(c => c.DenominationId)
+            .ShouldBe(single.Chips.OrderBy(c => c.DenominationId));
+    }
+
+    /// <summary>
+    /// The deliberate trade-off. 15x100 + 1x1000 is 2500 units, and dealt one
+    /// after another it would cover two 1000-unit stacks — the first player
+    /// taking the single 1000 chip, the second taking ten 100s. But those are not
+    /// the same stack, and one of them cannot make change. Refused instead, so
+    /// the manager adds chips or lowers the buy-in rather than finding out at the
+    /// table that the deal was uneven.
+    /// </summary>
+    [Fact]
+    public void CalculateEqualStacks_Should_RefuseRatherThanDealUnequalStacks()
+    {
+        var thousand = Guid.NewGuid();
+
+        List<DenominationStock> stock =
+        [
+            new DenominationStock { DenominationId = Hundred, EffectiveValue = 100, Available = 15, ProfileShare = 0.5 },
+            new DenominationStock { DenominationId = thousand, EffectiveValue = 1000, Available = 1, ProfileShare = 0.5 }
+        ];
+
+        long totalUnits = stock.Sum(d => (long)d.Available * d.EffectiveValue);
+        totalUnits.ShouldBeGreaterThanOrEqualTo(2000);
+
+        ChipDistribution result = ChipDistributionCalculator.CalculateEqualStacks(1000, stock, 2);
+
+        result.IsComplete.ShouldBeFalse();
+        result.ShortfallUnits.ShouldBeGreaterThan(0);
+    }
+
+    [Theory]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(5)]
+    [InlineData(8)]
+    [InlineData(10)]
+    public void CalculateEqualStacks_Should_NeverPromiseMoreChipsThanExist(int players)
+    {
+        List<DenominationStock> stock = Case(60, 60, 60, 60);
+
+        ChipDistribution perPlayer = ChipDistributionCalculator.CalculateEqualStacks(1000, stock, players);
+
+        foreach (ChipCount chip in perPlayer.Chips)
+        {
+            int available = stock.Single(d => d.DenominationId == chip.DenominationId).Available;
+            (chip.Quantity * players).ShouldBeLessThanOrEqualTo(available);
+        }
+    }
+
     [Fact]
     public void DefaultProfile_Should_SumToOneAndRampUpwards()
     {

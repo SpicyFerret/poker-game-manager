@@ -128,6 +128,14 @@ public sealed record StackPreviewResponse
     /// </summary>
     public long ShortfallUnits { get; init; }
 
+    /// <summary>
+    /// How many identical stacks this mix is for — the players waiting to be
+    /// dealt in when a table starts, and 1 for a single buy-in or rebuy. The
+    /// screen needs it to say whose stack this is: the same list of chips means
+    /// something very different handed to one person or to five.
+    /// </summary>
+    public int StackCount { get; init; } = 1;
+
     public bool IsPossible => ShortfallUnits == 0;
 }
 
