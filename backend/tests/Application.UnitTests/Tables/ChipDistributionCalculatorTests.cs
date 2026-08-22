@@ -274,31 +274,33 @@ public sealed class ChipDistributionCalculatorTests
     }
 
     /// <summary>
-    /// The deliberate trade-off. 15x100 + 1x1000 is 2500 units, and dealt one
-    /// after another it would cover two 1000-unit stacks — the first player
-    /// taking the single 1000 chip, the second taking ten 100s. But those are not
-    /// the same stack, and one of them cannot make change. Refused instead, so
-    /// the manager adds chips or lowers the buy-in rather than finding out at the
-    /// table that the deal was uneven.
+    /// 4x50 + 29x100 is 3100 units, comfortably more than three 1000-unit
+    /// stacks. But a third of it is one 50 and nine 100s — 950, fifty short — so
+    /// there is no identical stack all three can have.
     /// </summary>
     [Fact]
-    public void CalculateEqualStacks_Should_RefuseRatherThanDealUnequalStacks()
+    public void CalculateEqualStacks_Should_ReportAShortfall_WhenTheCaseWillNotSplitEvenly()
     {
-        var thousand = Guid.NewGuid();
-
-        List<DenominationStock> stock =
-        [
-            new DenominationStock { DenominationId = Hundred, EffectiveValue = 100, Available = 15, ProfileShare = 0.5 },
-            new DenominationStock { DenominationId = thousand, EffectiveValue = 1000, Available = 1, ProfileShare = 0.5 }
-        ];
-
-        long totalUnits = stock.Sum(d => (long)d.Available * d.EffectiveValue);
-        totalUnits.ShouldBeGreaterThanOrEqualTo(2000);
-
-        ChipDistribution result = ChipDistributionCalculator.CalculateEqualStacks(1000, stock, 2);
+        ChipDistribution result = ChipDistributionCalculator.CalculateEqualStacks(1000, LopsidedCase(), 3);
 
         result.IsComplete.ShouldBeFalse();
         result.ShortfallUnits.ShouldBeGreaterThan(0);
+    }
+
+    /// <summary>
+    /// Enough units for three stacks, but not divisible into three identical
+    /// ones — the case that separates "cannot be shared out evenly" from
+    /// "cannot be covered at all".
+    /// </summary>
+    private static List<DenominationStock> LopsidedCase()
+    {
+        double[] shares = [.. ChipDistributionCalculator.DefaultProfile(2)];
+
+        return
+        [
+            new DenominationStock { DenominationId = Fifty, EffectiveValue = 50, Available = 4, ProfileShare = shares[0] },
+            new DenominationStock { DenominationId = Hundred, EffectiveValue = 100, Available = 29, ProfileShare = shares[1] }
+        ];
     }
 
     [Theory]
@@ -318,6 +320,86 @@ public sealed class ChipDistributionCalculatorTests
             int available = stock.Single(d => d.DenominationId == chip.DenominationId).Available;
             (chip.Quantity * players).ShouldBeLessThanOrEqualTo(available);
         }
+    }
+
+    // ------------------------------------------------------------ opening deal
+
+    [Fact]
+    public void DealOpeningStacks_Should_GiveEveryoneTheIdenticalStack_WhenTheCaseSplitsEvenly()
+    {
+        OpeningDeal deal = ChipDistributionCalculator.DealOpeningStacks(1000, Case(), 5);
+
+        deal.IsComplete.ShouldBeTrue();
+        deal.IsEqual.ShouldBeTrue();
+        deal.Stacks.Count.ShouldBe(5);
+        deal.Stacks.ShouldAllBe(s => s.Chips.Count == deal.Stacks[0].Chips.Count);
+        deal.Stacks.Skip(1).ShouldAllBe(s => s.Chips.OrderBy(c => c.DenominationId)
+            .SequenceEqual(deal.Stacks[0].Chips.OrderBy(c => c.DenominationId)));
+    }
+
+    /// <summary>
+    /// The case has the units for three stacks but will not divide into three
+    /// identical ones: the first player takes the four 50s, the rest get 100s
+    /// only. Unequal, and dealt anyway — a table that starts beats a table that
+    /// refuses to, and everyone still gets the same value for the same buy-in.
+    /// </summary>
+    [Fact]
+    public void DealOpeningStacks_Should_DealUnequalStacks_RatherThanRefuseATableItCanCover()
+    {
+        OpeningDeal deal = ChipDistributionCalculator.DealOpeningStacks(1000, LopsidedCase(), 3);
+
+        deal.IsComplete.ShouldBeTrue();
+        deal.IsEqual.ShouldBeFalse();
+        deal.Stacks.Count.ShouldBe(3);
+
+        // Different mixes, but nobody is short-changed: same units either way.
+        foreach (ChipDistribution stack in deal.Stacks)
+        {
+            stack.AllocatedUnits.ShouldBe(1000);
+        }
+    }
+
+    [Fact]
+    public void DealOpeningStacks_Should_NeverOverdrawTheCase_EvenWhenDealingUnequally()
+    {
+        List<DenominationStock> stock = LopsidedCase();
+
+        OpeningDeal deal = ChipDistributionCalculator.DealOpeningStacks(1000, stock, 3);
+
+        deal.IsEqual.ShouldBeFalse();
+
+        foreach (DenominationStock denomination in stock)
+        {
+            int used = deal.Stacks.Sum(s =>
+                s.Chips.SingleOrDefault(c => c.DenominationId == denomination.DenominationId)?.Quantity ?? 0);
+
+            used.ShouldBeLessThanOrEqualTo(denomination.Available);
+        }
+    }
+
+    [Fact]
+    public void DealOpeningStacks_Should_RefuseOnlyWhenItCannotCoverEverybody()
+    {
+        // 3x100 is 300 units against two 1000-unit stacks. No ordering helps.
+        List<DenominationStock> stock =
+        [
+            new DenominationStock { DenominationId = Hundred, EffectiveValue = 100, Available = 3, ProfileShare = 1 }
+        ];
+
+        OpeningDeal deal = ChipDistributionCalculator.DealOpeningStacks(1000, stock, 2);
+
+        deal.IsComplete.ShouldBeFalse();
+        deal.Stacks.ShouldBeEmpty();
+        deal.ShortfallUnits.ShouldBeGreaterThan(0);
+    }
+
+    [Fact]
+    public void DealOpeningStacks_Should_RefuseATableWithNobodyAtIt()
+    {
+        OpeningDeal deal = ChipDistributionCalculator.DealOpeningStacks(1000, Case(), 0);
+
+        deal.IsComplete.ShouldBeFalse();
+        deal.Stacks.ShouldBeEmpty();
     }
 
     [Fact]

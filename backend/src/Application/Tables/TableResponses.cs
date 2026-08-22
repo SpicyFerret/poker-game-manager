@@ -136,6 +136,14 @@ public sealed record StackPreviewResponse
     /// </summary>
     public int StackCount { get; init; } = 1;
 
+    /// <summary>
+    /// Whether every one of those stacks is the identical mix. False means the
+    /// case could not be split evenly, so the stacks were worked out one after
+    /// another — same value each, different chips — and <see cref="Chips"/> is
+    /// only the first player's. Each player's own stack notice carries theirs.
+    /// </summary>
+    public bool StacksAreEqual { get; init; } = true;
+
     public bool IsPossible => ShortfallUnits == 0;
 }
 

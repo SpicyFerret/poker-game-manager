@@ -117,15 +117,23 @@ rounding. Because it always works from current stock, the behaviour everyone exp
 run out, so later stacks come in bigger denominations — falls out without a special rule. An optional
 per-table small-chip reserve holds some back for the first rebuys.
 
-**The opening deal is not that, repeated.** `CalculateEqualStacks` divides the case by the number of
-players *first*, then runs the same profile against one player's share, so everyone gets the identical
-mix. Dealing stacks one after another from the whole case deducts correctly but is not fair: the
-profile hands out small chips first, so the earliest players take them all and the last player is left
-holding nothing under a 50, unable to post a small blind at a table everyone paid the same to sit at.
-Seating order should not decide who gets a playable stack. Dividing first also makes over-promising
-impossible by construction — a mix built from one share is affordable N times over. When the case
-cannot make N *equal* stacks the deal is refused, even in the cases where an uneven deal would have
-fit, because an uneven start is the thing being prevented.
+**The opening deal is not that, repeated.** `DealOpeningStacks` works the whole table out at once,
+because what the case can give the fifth player depends on what it already gave the first.
+
+It prefers equal stacks: `CalculateEqualStacks` divides the case by the number of players *first*,
+then runs the profile against one player's share, so everyone gets the identical mix. Dealing one
+after another from the whole case deducts correctly but is not fair — the profile hands out small
+chips first, so the earliest players take them all and the last is left holding nothing under a 50,
+unable to post a small blind at a table everyone paid the same to sit at. Seating order should not
+decide who gets a playable stack. Dividing first also makes over-promising impossible by construction:
+a mix built from one share is affordable N times over.
+
+When the case will not divide evenly, the stacks are dealt one after another instead — same value
+each, different chips — rather than refusing a table the case can actually cover. Unequal is only ever
+weighed against not playing, never against equal, and the screen says which of the two happened so the
+manager knows what they are counting out. Only when even that cannot cover everybody is the deal
+refused, all or nothing, since a table with some players dealt in and others not reconciles for
+nobody.
 
 **`TableReconciliationService`** — returns issued / counted / difference per denomination, plus who
 has not reported yet. Shown live during `Counting`, so the table can see *which* chip is off instead
