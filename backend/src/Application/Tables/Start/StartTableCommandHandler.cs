@@ -5,6 +5,7 @@ using Application.Abstractions.Messaging;
 using Domain.Championships;
 using Domain.ChipSets;
 using Domain.Tables;
+using Domain.Tables.Services;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
 
@@ -66,30 +67,42 @@ internal sealed class StartTableCommandHandler(
 
         Dictionary<Guid, int> issued = ChipStock.IssuedByDenomination(existing);
 
+        IReadOnlyList<DenominationStock> stock = ChipStock.Available(
+            denominations,
+            issued,
+            table.SmallChipReserve);
+
+        // One mix for the whole table, not one per player. Everyone pays the same
+        // buy-in, so everyone gets the same chips — and dividing the case first
+        // means the mix cannot promise a denomination more times than it exists.
+        ChipDistribution perPlayer = ChipDistributionCalculator.CalculateEqualStacks(
+            table.BuyInUnits,
+            stock,
+            players.Count);
+
+        if (!perPlayer.IsComplete)
+        {
+            // All or nothing. Starting with some players dealt in and others not
+            // would leave a table nobody can reconcile, so the manager gets told
+            // how short each stack is and decides what to change.
+            return Result.Failure(TableErrors.NotEnoughChipsForStacks(
+                perPlayer.ShortfallUnits,
+                players.Count));
+        }
+
         var entries = new List<LedgerEntry>();
 
         foreach (TablePlayer player in players)
         {
-            Result<LedgerEntry> issue = StackIssuer.Issue(
+            entries.Add(StackIssuer.BuildEntry(
                 table,
                 player,
                 LedgerEntryType.BuyIn,
                 table.BuyIn,
-                table.BuyInUnits,
-                denominations,
-                issued,
+                perPlayer,
                 userContext.UserId,
-                dateTimeProvider.UtcNow);
+                dateTimeProvider.UtcNow));
 
-            if (issue.IsFailure)
-            {
-                // All or nothing. Starting with some players dealt in and others
-                // not would leave a table nobody can reconcile, so the manager
-                // gets told how short the case is and decides what to change.
-                return Result.Failure(issue.Error);
-            }
-
-            entries.Add(issue.Value);
             player.Status = TablePlayerStatus.Playing;
         }
 

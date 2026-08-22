@@ -327,13 +327,24 @@ export class LiveTable implements OnInit {
       return;
     }
 
+    if (this.busy()) {
+      return;
+    }
+
     const waiting = table.players.filter((p) => p.status === 'Standby').length;
 
-    this.confirm
-      .ask({
-        title: $localize`:@@confirm.startTitle:Iniciar a mesa?`,
-        message: $localize`:@@confirm.startMessage:Cada jogador recebe um stack e as fichas saem da maleta. Se ela não cobrir todos, nada é entregue.`,
-        details: [
+    this.busy.set(true);
+    this.error.set(null);
+
+    // Asks the server for the opening deal before confirming, because the
+    // manager is the one who has to count these chips out of the case — and
+    // because the mix depends on how many people are waiting, which is exactly
+    // what makes it worth showing rather than guessing.
+    this.tables.stackPreview(this.championshipId(), this.tableId(), false).subscribe({
+      next: (preview) => {
+        this.busy.set(false);
+
+        const details: ConfirmDetail[] = [
           {
             label: $localize`:@@confirm.startPlayers:jogadores aguardando`,
             value: String(waiting),
@@ -342,14 +353,41 @@ export class LiveTable implements OnInit {
             label: $localize`:@@confirm.startBuyIn:buy-in cada`,
             value: `R$ ${table.buyIn}`,
           },
-        ],
-        confirmLabel: $localize`:@@table.start:Iniciar mesa`,
-      })
-      .subscribe(() => {
-        this.run(this.tables.start(this.championshipId(), this.tableId()), {
-          fallback: $localize`:@@table.startFailed:Não foi possível iniciar a mesa.`,
-        });
-      });
+          ...preview.chips.map((chip) => {
+            const colour = this.colourOf(chip.colour);
+
+            return {
+              label: $localize`:@@confirm.chipOf:ficha ${chip.faceValue}:VALUE:`,
+              value: `${chip.quantity}x`,
+              swatch: colour?.swatch,
+              ink: colour?.ink,
+            };
+          }),
+        ];
+
+        this.confirm
+          .ask({
+            title: $localize`:@@confirm.startTitle:Iniciar a mesa?`,
+            message: $localize`:@@confirm.startMessage:Todos recebem o mesmo stack, listado abaixo, e as fichas saem da maleta. Se ela não cobrir todos, nada é entregue.`,
+            details,
+            confirmLabel: $localize`:@@table.start:Iniciar mesa`,
+            blockedReason: preview.isPossible
+              ? undefined
+              : $localize`:@@confirm.startBlocked:A maleta não faz ${waiting}:PLAYERS: stacks iguais: faltam ${preview.shortfallUnits}:UNITS: unidades em cada um.`,
+          })
+          .subscribe(() => {
+            this.run(this.tables.start(this.championshipId(), this.tableId()), {
+              fallback: $localize`:@@table.startFailed:Não foi possível iniciar a mesa.`,
+            });
+          });
+      },
+      error: (err: unknown) => {
+        this.busy.set(false);
+        this.error.set(
+          describeError(err, $localize`:@@table.startFailed:Não foi possível iniciar a mesa.`),
+        );
+      },
+    });
   }
 
   protected join(): void {

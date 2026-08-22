@@ -144,6 +144,65 @@ public sealed class TablesTests(IntegrationTestWebAppFactory factory) : BaseInte
         issuedUnits.ShouldBe(2000);
     }
 
+    /// <summary>
+    /// The reported bug. A 50-of-each case and five players: dealing stacks one
+    /// after another gave the first three players 15 fives each and the fifth
+    /// player none, so the last to be seated could not post a small blind.
+    ///
+    /// Asserted through what the table itself reports rather than by re-running
+    /// the calculator: if every player got the identical stack, then every
+    /// denomination's issued total has to divide evenly by the number of players.
+    /// Under the old behaviour the 25s came to 26 across five players, which no
+    /// equal deal can produce.
+    /// </summary>
+    [Fact]
+    public async Task Start_Should_DealTheIdenticalStackToEveryPlayer()
+    {
+        // Arrange
+        (Guid _, AccessTokens tokens) = await RegisterAndLoginAsync();
+        Authenticate(tokens.AccessToken);
+        (Guid championshipId, Guid chipSetId) = await SetUpChampionshipAsync(50, 50, 50, 50);
+        Guid tableId = await CreateTableAsync(championshipId, chipSetId);
+
+        await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/tables/{tableId}/join", new { code = (string?)null });
+
+        for (int i = 0; i < 4; i++)
+        {
+            AccessTokens playerTokens = await AddSecondPlayerAsync(championshipId, tokens);
+            Authenticate(playerTokens.AccessToken);
+            await HttpClient.PostAsJsonAsync(
+                $"championships/{championshipId}/tables/{tableId}/join", new { code = (string?)null });
+            Authenticate(tokens.AccessToken);
+        }
+
+        // Act
+        HttpResponseMessage started = await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/tables/{tableId}/start", new { });
+
+        // Assert
+        started.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+
+        TableDetail? table = await GetTableAsync(championshipId, tableId);
+        table!.Players.Length.ShouldBe(5);
+
+        foreach (Stock stock in table.Stock)
+        {
+            // Equal stacks, so each denomination came out in multiples of five.
+            (stock.Issued % 5).ShouldBe(0, $"denomination {stock.FaceValue} was dealt unevenly");
+
+            // And the case was never overdrawn.
+            stock.Remaining.ShouldBeGreaterThanOrEqualTo(0);
+        }
+
+        // Everyone still got a full stack, and everyone got small chips to bet with.
+        long issuedUnits = table.Stock.Sum(s => (long)s.Issued * s.EffectiveValue);
+        issuedUnits.ShouldBe(5000);
+
+        Stock fives = table.Stock.Single(s => s.FaceValue == 5);
+        fives.Issued.ShouldBe(50);
+    }
+
     [Fact]
     public async Task Start_Should_Refuse_WhenNobodyIsAtTheTable()
     {

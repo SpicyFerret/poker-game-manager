@@ -155,6 +155,12 @@ export interface StackPreview {
   units: number;
   /** Non-zero means the case cannot make this stack; the API would refuse it. */
   shortfallUnits: number;
+  /**
+   * How many identical stacks this mix is for: the players waiting when a table
+   * starts, and 1 for a single buy-in or rebuy. The same list of chips means
+   * something very different handed to one person or to five.
+   */
+  stackCount: number;
   isPossible: boolean;
 }
 
