@@ -68,7 +68,21 @@ internal sealed class GetStackPreviewQueryHandler(
 
         long targetUnits = query.IsRebuy ? table.RebuyUnits : table.BuyInUnits;
 
-        ChipDistribution distribution = ChipDistributionCalculator.Calculate(targetUnits, stock);
+        // A buy-in preview on a table that has not started is previewing the
+        // opening deal — every waiting player gets a stack at once, not just the
+        // one person looking at the screen. Previewing a single stack against the
+        // whole case was the bug: it showed a mix built from small chips there
+        // were only enough of for the first player or two.
+        int stackCount = !query.IsRebuy && table.Status == TableStatus.Open
+            ? await context.TablePlayers.CountAsync(
+                p => p.TableId == table.Id && p.Status == TablePlayerStatus.Standby,
+                cancellationToken)
+            : 1;
+
+        ChipDistribution distribution = ChipDistributionCalculator.CalculateEqualStacks(
+            targetUnits,
+            stock,
+            Math.Max(stackCount, 1));
 
         var byId = denominations.ToDictionary(d => d.Id);
 
@@ -77,6 +91,7 @@ internal sealed class GetStackPreviewQueryHandler(
             Money = query.IsRebuy ? table.Rebuy : table.BuyIn,
             Units = targetUnits,
             ShortfallUnits = distribution.ShortfallUnits,
+            StackCount = Math.Max(stackCount, 1),
             Chips =
             [
                 .. distribution.Chips

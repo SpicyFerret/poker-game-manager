@@ -1,5 +1,5 @@
 import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { WritableSignal } from '@angular/core';
 
@@ -66,6 +66,7 @@ describe('LiveTable', () => {
     manageOthers: () => boolean;
     toggleManageOthers: () => void;
     canAddPlayer: () => boolean;
+    start: () => void;
   }
 
   function instance(): Exposed {
@@ -162,5 +163,37 @@ describe('LiveTable', () => {
     load(table({ canManage: true, status: 'Settled' }));
 
     expect(instance().canAddPlayer()).toBe(false);
+  });
+
+  /**
+   * The opening deal's mix depends on how many people are waiting — five equal
+   * stacks come out of the case differently from one. Starting therefore asks
+   * the server what everyone will get before confirming, rather than showing a
+   * buy-in figure and hoping.
+   */
+  it('should ask the server for the opening deal before confirming a start', () => {
+    load(table({ canManage: true, status: 'Open' }));
+
+    instance().start();
+
+    const http = TestBed.inject(HttpTestingController);
+    const request = http.expectOne(
+      (r) =>
+        r.method === 'GET' &&
+        r.url.includes(`/championships/${championshipId}/tables/${tableId}/stack-preview`),
+    );
+
+    // A buy-in, not a rebuy: this is the opening deal, which is the case the
+    // server counts the waiting players for.
+    expect(request.request.url).toContain('isRebuy=false');
+
+    request.flush({
+      chips: [],
+      money: 50,
+      units: 1000,
+      shortfallUnits: 0,
+      stackCount: 5,
+      isPossible: true,
+    });
   });
 });

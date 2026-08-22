@@ -884,8 +884,12 @@
         <target>Start the table?</target>
       </trans-unit>
       <trans-unit id="confirm.startMessage" datatype="html">
-        <source>Cada jogador recebe um stack e as fichas saem da maleta. Se ela não cobrir todos, nada é entregue.</source>
-        <target>Each player gets a stack and the chips leave the case. If it cannot cover everyone, nothing is dealt.</target>
+        <source>Todos recebem o mesmo stack, listado abaixo, e as fichas saem da maleta. Se ela não cobrir todos, nada é entregue.</source>
+        <target>Everyone gets the same stack, listed below, and the chips leave the case. If it cannot cover everyone, nothing is dealt.</target>
+      </trans-unit>
+      <trans-unit id="confirm.startBlocked" datatype="html">
+        <source>A maleta não faz <x id="PLAYERS" equiv-text="waiting"/> stacks iguais: faltam <x id="UNITS" equiv-text="preview.shortfallUnits"/> unidades em cada um.</source>
+        <target>The case cannot make <x id="PLAYERS" equiv-text="waiting"/> equal stacks: each one is <x id="UNITS" equiv-text="preview.shortfallUnits"/> units short.</target>
       </trans-unit>
       <trans-unit id="confirm.startPlayers" datatype="html">
         <source>jogadores aguardando</source>

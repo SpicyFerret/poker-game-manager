@@ -102,6 +102,47 @@ public static class ChipDistributionCalculator
     }
 
     /// <summary>
+    /// The mix for one stack when <paramref name="stackCount"/> of them are dealt
+    /// at once, as they are when a table starts.
+    ///
+    /// Dealing stacks one after another from the whole case does not work here,
+    /// even though it deducts correctly: the profile hands out the small chips
+    /// first, so the earliest players take them all and the last player is left
+    /// holding nothing under a 50 — unable to post a small blind at a table
+    /// everyone paid the same to sit at. Ordering decided who got a playable
+    /// stack, which is not a thing the seating order should decide.
+    ///
+    /// So each stack is dealt from its own equal share of the case instead. Every
+    /// player gets the identical mix, and because the share is what was divided,
+    /// the result is affordable <paramref name="stackCount"/> times over by
+    /// construction — no denomination can be promised more times than it exists.
+    ///
+    /// A shortfall here means the case cannot make this many equal stacks at all,
+    /// which is worth refusing: the alternative is a table that starts unfair.
+    /// </summary>
+    public static ChipDistribution CalculateEqualStacks(
+        long targetUnits,
+        IReadOnlyList<DenominationStock> stock,
+        int stackCount)
+    {
+        ArgumentNullException.ThrowIfNull(stock);
+
+        if (stackCount <= 1)
+        {
+            return Calculate(targetUnits, stock);
+        }
+
+        // Integer division on purpose: the remainder stays in the case rather
+        // than going to whoever happens to be dealt first.
+        List<DenominationStock> share =
+        [
+            .. stock.Select(d => d with { Available = d.Available / stackCount })
+        ];
+
+        return Calculate(targetUnits, share);
+    }
+
+    /// <summary>
     /// Default profile when a case has none: a linear ramp over the denominations
     /// sorted ascending, so the largest chip carries the most value and the
     /// smallest the least. For four denominations that is 10/20/30/40 percent.

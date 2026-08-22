@@ -42,7 +42,40 @@ internal static class StackIssuer
             return Result.Failure<LedgerEntry>(TableErrors.NotEnoughChips(distribution.ShortfallUnits));
         }
 
-        var entry = new LedgerEntry
+        LedgerEntry entry = BuildEntry(table, player, type, money, distribution, createdBy, nowUtc);
+
+        // Caller keeps issuing against the same map, so a bulk deal sees each
+        // stack come off the case before working out the next.
+        foreach (ChipCount chip in distribution.Chips)
+        {
+            issuedSoFar[chip.DenominationId] = issuedSoFar.GetValueOrDefault(chip.DenominationId) + chip.Quantity;
+        }
+
+        return entry;
+    }
+
+    /// <summary>
+    /// The ledger entry for a mix that has already been worked out.
+    ///
+    /// Separate from <see cref="Issue"/> because the opening deal computes one
+    /// mix for the whole table and hands every player that same one — there is
+    /// nothing left to calculate per player, and recalculating would reintroduce
+    /// exactly the ordering effect that made stacks unequal.
+    /// </summary>
+    public static LedgerEntry BuildEntry(
+        PokerTable table,
+        TablePlayer player,
+        LedgerEntryType type,
+        decimal money,
+        ChipDistribution distribution,
+        Guid createdBy,
+        DateTime nowUtc)
+    {
+        ArgumentNullException.ThrowIfNull(table);
+        ArgumentNullException.ThrowIfNull(player);
+        ArgumentNullException.ThrowIfNull(distribution);
+
+        return new LedgerEntry
         {
             Id = Guid.NewGuid(),
             TableId = table.Id,
@@ -61,14 +94,5 @@ internal static class StackIssuer
                 })
             ]
         };
-
-        // Caller keeps issuing against the same map, so a bulk deal sees each
-        // stack come off the case before working out the next.
-        foreach (ChipCount chip in distribution.Chips)
-        {
-            issuedSoFar[chip.DenominationId] = issuedSoFar.GetValueOrDefault(chip.DenominationId) + chip.Quantity;
-        }
-
-        return entry;
     }
 }

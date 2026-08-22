@@ -44,6 +44,16 @@ public static class TableErrors
         "Tables.NotEnoughChips",
         $"The chip case cannot cover this, {shortfallUnits} units short. Add chips to the case, or lower the buy-in");
 
+    /// <summary>
+    /// The opening deal, where the shortfall is per player rather than in total —
+    /// saying "300 units short" when every one of five stacks is 300 short would
+    /// send someone hunting for 300 units when the case needs 1500.
+    /// </summary>
+    public static Error NotEnoughChipsForStacks(long shortfallUnits, int playerCount) => Error.Conflict(
+        "Tables.NotEnoughChips",
+        $"The chip case cannot make {playerCount} equal stacks — each one is {shortfallUnits} units short. " +
+        "Add chips to the case, or lower the buy-in");
+
     public static readonly Error ChipSetEmpty = Error.Problem(
         "Tables.ChipSetEmpty",
         "The chosen chip case has no chips in it");
