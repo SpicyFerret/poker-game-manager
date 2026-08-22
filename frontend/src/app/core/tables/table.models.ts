@@ -161,6 +161,12 @@ export interface StackPreview {
    * something very different handed to one person or to five.
    */
   stackCount: number;
+  /**
+   * Whether all those stacks are the identical mix. False means the case would
+   * not split evenly, so the stacks were worked out one after another — same
+   * value each, different chips — and `chips` is only the first player's.
+   */
+  stacksAreEqual: boolean;
   isPossible: boolean;
 }
 

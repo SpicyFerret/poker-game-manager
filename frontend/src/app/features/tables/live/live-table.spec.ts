@@ -193,6 +193,7 @@ describe('LiveTable', () => {
       units: 1000,
       shortfallUnits: 0,
       stackCount: 5,
+      stacksAreEqual: true,
       isPossible: true,
     });
   });

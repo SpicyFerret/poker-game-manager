@@ -203,6 +203,75 @@ public sealed class TablesTests(IntegrationTestWebAppFactory factory) : BaseInte
         fives.Issued.ShouldBe(50);
     }
 
+    /// <summary>
+    /// A case with plenty of chips that will not divide into equal stacks: 4x50
+    /// and 29x100 covers three 1000-unit stacks, but a third of it is only 950.
+    /// The table still starts — everyone gets the same value, just not the same
+    /// chips — because refusing to start a table the case can actually cover
+    /// helps nobody.
+    /// </summary>
+    [Fact]
+    public async Task Start_Should_DealUnevenStacks_RatherThanRefuseATableTheCaseCanCover()
+    {
+        // Arrange
+        (Guid _, AccessTokens tokens) = await RegisterAndLoginAsync();
+        Authenticate(tokens.AccessToken);
+
+        HttpResponseMessage created = await HttpClient.PostAsJsonAsync("championships", new
+        {
+            name = "Quinta-feira",
+            defaultBuyIn = 50m,
+            defaultRebuy = 50m,
+            enforceDefaults = false,
+            moneyPerUnit = 0.05m
+        });
+        Guid championshipId = await created.Content.ReadFromJsonAsync<Guid>();
+
+        HttpResponseMessage chipSet = await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/chip-sets",
+            new
+            {
+                name = "Maleta torta",
+                denominations = new[]
+                {
+                    new { faceValue = 50, effectiveValue = 50, quantity = 4, colour = (string?)null },
+                    new { faceValue = 100, effectiveValue = 100, quantity = 29, colour = (string?)null }
+                }
+            });
+        Guid chipSetId = await chipSet.Content.ReadFromJsonAsync<Guid>();
+
+        Guid tableId = await CreateTableAsync(championshipId, chipSetId);
+
+        await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/tables/{tableId}/join", new { code = (string?)null });
+
+        for (int i = 0; i < 2; i++)
+        {
+            AccessTokens playerTokens = await AddSecondPlayerAsync(championshipId, tokens);
+            Authenticate(playerTokens.AccessToken);
+            await HttpClient.PostAsJsonAsync(
+                $"championships/{championshipId}/tables/{tableId}/join", new { code = (string?)null });
+            Authenticate(tokens.AccessToken);
+        }
+
+        // Act
+        HttpResponseMessage started = await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/tables/{tableId}/start", new { });
+
+        // Assert
+        started.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+
+        TableDetail? table = await GetTableAsync(championshipId, tableId);
+        table!.Status.ShouldBe("Running");
+        table.Players.Length.ShouldBe(3);
+        table.Players.ShouldAllBe(p => p.Status == "Playing");
+
+        // Three full stacks came out, and the case was never overdrawn.
+        long issuedUnits = table.Stock.Sum(s => (long)s.Issued * s.EffectiveValue);
+        issuedUnits.ShouldBe(3000);
+        table.Stock.ShouldAllBe(s => s.Remaining >= 0);
+    }
+
     [Fact]
     public async Task Start_Should_Refuse_WhenNobodyIsAtTheTable()
     {

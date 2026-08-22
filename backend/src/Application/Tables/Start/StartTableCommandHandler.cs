@@ -72,34 +72,34 @@ internal sealed class StartTableCommandHandler(
             issued,
             table.SmallChipReserve);
 
-        // One mix for the whole table, not one per player. Everyone pays the same
-        // buy-in, so everyone gets the same chips — and dividing the case first
-        // means the mix cannot promise a denomination more times than it exists.
-        ChipDistribution perPlayer = ChipDistributionCalculator.CalculateEqualStacks(
+        // The whole table at once, not a stack at a time: everyone pays the same
+        // buy-in, so equal mixes are preferred, and what the case can still give
+        // the last player depends on what it already gave the first.
+        OpeningDeal deal = ChipDistributionCalculator.DealOpeningStacks(
             table.BuyInUnits,
             stock,
             players.Count);
 
-        if (!perPlayer.IsComplete)
+        if (!deal.IsComplete)
         {
             // All or nothing. Starting with some players dealt in and others not
             // would leave a table nobody can reconcile, so the manager gets told
-            // how short each stack is and decides what to change.
+            // how short it fell and decides what to change.
             return Result.Failure(TableErrors.NotEnoughChipsForStacks(
-                perPlayer.ShortfallUnits,
+                deal.ShortfallUnits,
                 players.Count));
         }
 
         var entries = new List<LedgerEntry>();
 
-        foreach (TablePlayer player in players)
+        foreach ((TablePlayer player, ChipDistribution stack) in players.Zip(deal.Stacks))
         {
             entries.Add(StackIssuer.BuildEntry(
                 table,
                 player,
                 LedgerEntryType.BuyIn,
                 table.BuyIn,
-                perPlayer,
+                stack,
                 userContext.UserId,
                 dateTimeProvider.UtcNow));
 

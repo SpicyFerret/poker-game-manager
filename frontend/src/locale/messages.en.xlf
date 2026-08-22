@@ -888,8 +888,12 @@
         <target>Everyone gets the same stack, listed below, and the chips leave the case. If it cannot cover everyone, nothing is dealt.</target>
       </trans-unit>
       <trans-unit id="confirm.startBlocked" datatype="html">
-        <source>A maleta não faz <x id="PLAYERS" equiv-text="waiting"/> stacks iguais: faltam <x id="UNITS" equiv-text="preview.shortfallUnits"/> unidades em cada um.</source>
-        <target>The case cannot make <x id="PLAYERS" equiv-text="waiting"/> equal stacks: each one is <x id="UNITS" equiv-text="preview.shortfallUnits"/> units short.</target>
+        <source>A maleta não cobre <x id="PLAYERS" equiv-text="waiting"/> stacks: faltam <x id="UNITS" equiv-text="preview.shortfallUnits"/> unidades.</source>
+        <target>The case cannot cover <x id="PLAYERS" equiv-text="waiting"/> stacks: <x id="UNITS" equiv-text="preview.shortfallUnits"/> units short.</target>
+      </trans-unit>
+      <trans-unit id="confirm.startMessageUneven" datatype="html">
+        <source>A maleta não dá para dividir por igual, então os stacks saem diferentes entre si — todos com o mesmo valor. Cada jogador vê as fichas dele no aviso ao entrar.</source>
+        <target>The case will not divide evenly, so the stacks differ from each other — all worth the same. Each player sees their own chips in the notice when they sit down.</target>
       </trans-unit>
       <trans-unit id="confirm.startPlayers" datatype="html">
         <source>jogadores aguardando</source>
