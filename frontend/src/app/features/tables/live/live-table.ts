@@ -353,27 +353,38 @@ export class LiveTable implements OnInit {
             label: $localize`:@@confirm.startBuyIn:buy-in cada`,
             value: `R$ ${table.buyIn}`,
           },
-          ...preview.chips.map((chip) => {
-            const colour = this.colourOf(chip.colour);
-
-            return {
-              label: $localize`:@@confirm.chipOf:ficha ${chip.faceValue}:VALUE:`,
-              value: `${chip.quantity}x`,
-              swatch: colour?.swatch,
-              ink: colour?.ink,
-            };
-          }),
         ];
+
+        // The chip list is only worth showing when it is everyone's. When the
+        // case will not divide evenly the stacks differ from each other, and
+        // listing the first player's would read as the whole table's — each
+        // player's own stack notice carries theirs instead.
+        if (preview.stacksAreEqual) {
+          details.push(
+            ...preview.chips.map((chip) => {
+              const colour = this.colourOf(chip.colour);
+
+              return {
+                label: $localize`:@@confirm.chipOf:ficha ${chip.faceValue}:VALUE:`,
+                value: `${chip.quantity}x`,
+                swatch: colour?.swatch,
+                ink: colour?.ink,
+              };
+            }),
+          );
+        }
 
         this.confirm
           .ask({
             title: $localize`:@@confirm.startTitle:Iniciar a mesa?`,
-            message: $localize`:@@confirm.startMessage:Todos recebem o mesmo stack, listado abaixo, e as fichas saem da maleta. Se ela não cobrir todos, nada é entregue.`,
+            message: preview.stacksAreEqual
+              ? $localize`:@@confirm.startMessage:Todos recebem o mesmo stack, listado abaixo, e as fichas saem da maleta. Se ela não cobrir todos, nada é entregue.`
+              : $localize`:@@confirm.startMessageUneven:A maleta não dá para dividir por igual, então os stacks saem diferentes entre si — todos com o mesmo valor. Cada jogador vê as fichas dele no aviso ao entrar.`,
             details,
             confirmLabel: $localize`:@@table.start:Iniciar mesa`,
             blockedReason: preview.isPossible
               ? undefined
-              : $localize`:@@confirm.startBlocked:A maleta não faz ${waiting}:PLAYERS: stacks iguais: faltam ${preview.shortfallUnits}:UNITS: unidades em cada um.`,
+              : $localize`:@@confirm.startBlocked:A maleta não cobre ${waiting}:PLAYERS: stacks: faltam ${preview.shortfallUnits}:UNITS: unidades.`,
           })
           .subscribe(() => {
             this.run(this.tables.start(this.championshipId(), this.tableId()), {

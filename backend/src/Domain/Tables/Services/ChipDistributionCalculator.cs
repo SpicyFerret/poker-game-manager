@@ -143,6 +143,89 @@ public static class ChipDistributionCalculator
     }
 
     /// <summary>
+    /// The opening deal: a stack for every player, worked out together.
+    ///
+    /// Equal stacks are the goal, and <see cref="CalculateEqualStacks"/> is tried
+    /// first. When the case cannot be split evenly, the stacks are dealt one
+    /// after another from a shrinking case instead — everyone still gets a stack
+    /// of the same value, just built from different chips. A table that starts
+    /// beats a table that refuses to, so unequal is only ever compared against
+    /// not playing, never against equal.
+    ///
+    /// Only when even that cannot cover everybody is the deal refused, and then
+    /// it names how short the stack it gave up on was.
+    /// </summary>
+    public static OpeningDeal DealOpeningStacks(
+        long targetUnits,
+        IReadOnlyList<DenominationStock> stock,
+        int playerCount)
+    {
+        ArgumentNullException.ThrowIfNull(stock);
+
+        if (playerCount <= 0)
+        {
+            return new OpeningDeal { ShortfallUnits = targetUnits > 0 ? targetUnits : 0 };
+        }
+
+        // Nothing to share out: one player's stack is the whole question, and
+        // dividing by one would only hide the partial mix behind an empty deal.
+        if (playerCount == 1)
+        {
+            ChipDistribution only = Calculate(targetUnits, stock);
+
+            return only.IsComplete
+                ? new OpeningDeal { Stacks = [only], IsEqual = true }
+                : new OpeningDeal { ShortfallUnits = only.ShortfallUnits, Attempted = only };
+        }
+
+        ChipDistribution equal = CalculateEqualStacks(targetUnits, stock, playerCount);
+
+        if (equal.IsComplete)
+        {
+            return new OpeningDeal
+            {
+                Stacks = [.. Enumerable.Repeat(equal, playerCount)],
+                IsEqual = true
+            };
+        }
+
+        var remaining = stock.ToDictionary(d => d.DenominationId, d => d.Available);
+        var stacks = new List<ChipDistribution>(playerCount);
+
+        for (int i = 0; i < playerCount; i++)
+        {
+            List<DenominationStock> current =
+            [
+                .. stock.Select(d => d with { Available = remaining[d.DenominationId] })
+            ];
+
+            ChipDistribution stack = Calculate(targetUnits, current);
+
+            if (!stack.IsComplete)
+            {
+                // All or nothing: a table where some players were dealt in and
+                // others were not is worse than one that has not started. The
+                // partial mix goes back with it so the screen can show how close
+                // the case got rather than only how short it fell.
+                return new OpeningDeal
+                {
+                    ShortfallUnits = stack.ShortfallUnits,
+                    Attempted = stack
+                };
+            }
+
+            foreach (ChipCount chip in stack.Chips)
+            {
+                remaining[chip.DenominationId] -= chip.Quantity;
+            }
+
+            stacks.Add(stack);
+        }
+
+        return new OpeningDeal { Stacks = stacks, IsEqual = false };
+    }
+
+    /// <summary>
     /// Default profile when a case has none: a linear ramp over the denominations
     /// sorted ascending, so the largest chip carries the most value and the
     /// smallest the least. For four denominations that is 10/20/30/40 percent.

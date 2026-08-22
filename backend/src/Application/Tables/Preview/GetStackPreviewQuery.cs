@@ -79,10 +79,21 @@ internal sealed class GetStackPreviewQueryHandler(
                 cancellationToken)
             : 1;
 
-        ChipDistribution distribution = ChipDistributionCalculator.CalculateEqualStacks(
+        stackCount = Math.Max(stackCount, 1);
+
+        // Runs the same deal the start would, so the preview cannot promise a
+        // mix the real thing would not produce — including falling back to
+        // unequal stacks when the case cannot be split evenly.
+        OpeningDeal deal = ChipDistributionCalculator.DealOpeningStacks(
             targetUnits,
             stock,
-            Math.Max(stackCount, 1));
+            stackCount);
+
+        // The first player's stack. It is every player's when the deal came out
+        // equal, and the response says which of the two this is. When the deal
+        // was refused it is how far the case got before falling short, which is
+        // the more useful half of "it does not fit".
+        ChipDistribution distribution = deal.Stacks.Count > 0 ? deal.Stacks[0] : deal.Attempted;
 
         var byId = denominations.ToDictionary(d => d.Id);
 
@@ -90,8 +101,9 @@ internal sealed class GetStackPreviewQueryHandler(
         {
             Money = query.IsRebuy ? table.Rebuy : table.BuyIn,
             Units = targetUnits,
-            ShortfallUnits = distribution.ShortfallUnits,
-            StackCount = Math.Max(stackCount, 1),
+            ShortfallUnits = deal.ShortfallUnits,
+            StackCount = stackCount,
+            StacksAreEqual = deal.IsEqual || stackCount == 1,
             Chips =
             [
                 .. distribution.Chips
