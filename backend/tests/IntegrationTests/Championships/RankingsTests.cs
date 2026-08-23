@@ -126,7 +126,7 @@ public sealed class RankingsTests(IntegrationTestWebAppFactory factory) : BaseIn
                 buyIn = 50m,
                 rebuy = 50m,
                 joinPolicy = "AnyMember",
-                allowLateEntry = true,
+                lateEntry = "Open",
                 smallChipReserve = 0
             });
         Guid tableId = await table.Content.ReadFromJsonAsync<Guid>();
@@ -296,7 +296,7 @@ public sealed class RankingsTests(IntegrationTestWebAppFactory factory) : BaseIn
                 buyIn = 50m,
                 rebuy = 50m,
                 joinPolicy = "AnyMember",
-                allowLateEntry = true,
+                lateEntry = "Open",
                 smallChipReserve = 0
             });
         Guid tableId = await table.Content.ReadFromJsonAsync<Guid>();

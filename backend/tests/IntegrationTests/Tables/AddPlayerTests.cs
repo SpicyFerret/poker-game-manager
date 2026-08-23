@@ -54,7 +54,7 @@ public sealed class AddPlayerTests(IntegrationTestWebAppFactory factory) : BaseI
                 buyIn = 50m,
                 rebuy = 50m,
                 joinPolicy,
-                allowLateEntry = false,
+                lateEntry = "Blocked",
                 smallChipReserve = 0
             });
         Guid tableId = await table.Content.ReadFromJsonAsync<Guid>();
@@ -174,7 +174,7 @@ public sealed class AddPlayerTests(IntegrationTestWebAppFactory factory) : BaseI
 
         (Guid userId, AccessTokens _) = await AddChampionshipMemberAsync(championshipId, owner);
 
-        // The table was created with allowLateEntry: false, so Running refuses too.
+        // The table was created with lateEntry Blocked, so Running refuses too.
         HttpResponseMessage response = await HttpClient.PostAsJsonAsync(
             $"championships/{championshipId}/tables/{tableId}/players", new { userId });
 

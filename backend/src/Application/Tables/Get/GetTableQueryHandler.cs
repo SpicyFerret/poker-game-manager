@@ -89,7 +89,7 @@ internal sealed class GetTableQueryHandler(
             MoneyPerUnit = table.MoneyPerUnit,
             BuyInUnits = table.BuyInUnits,
             JoinPolicy = table.JoinPolicy,
-            AllowLateEntry = table.AllowLateEntry,
+            LateEntry = table.LateEntry,
             JoinCode = canManage ? table.JoinCode : null,
             SmallChipReserve = table.SmallChipReserve,
             StartedAtUtc = table.StartedAtUtc,

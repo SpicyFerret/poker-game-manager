@@ -57,7 +57,12 @@ confused: what is printed, what it counts as, and what it is worth in cash.
 ### Table
 
 - **`Table`** — championship, chip set, buy-in, rebuy, money-per-unit, join policy
-  (`AnyMember | InviteOnly | Code`), whether late entry is allowed, blind structure, status.
+  (`AnyMember | InviteOnly | Code`), late-entry policy, blind structure, status.
+  **Late entry is three answers, not a yes/no**: `Blocked` turns latecomers away, `Open` seats them
+  like anyone else, and `Request` parks them as `Requested` for a manager to answer. A boolean was the
+  wrong shape — "no" is what a table wants early on and "yes" is what it wants when a friend turns up
+  at ten, and nobody goes and edits a setting at the moment it matters. Asking leaves the decision
+  with whoever is running the night, at the time it comes up.
   `InviteOnly` has no code and lets nobody self-serve; a manager seats each player by hand
   (`POST .../players`), which is the only door onto that kind of table and works on any table
   regardless of its join policy — a manual add is strictly narrower than letting someone self-join,
@@ -69,7 +74,10 @@ confused: what is printed, what it counts as, and what it is worth in cash.
 - Status runs `Draft → Open → Running → Counting → Reconciled → Settled → Closed` (plus `Cancelled`).
   **`Reconciled` is the gate**: it is only reachable once the count matches, and only from there can
   a settlement be produced.
-- **`TablePlayer`** — `Standby | Playing | Left`, seat order, joined-at.
+- **`TablePlayer`** — `Requested | Standby | Playing | Left`, seat order, joined-at. `Requested` is
+  someone waiting on a manager's answer: not at the table in any sense that counts, so the
+  reconciliation and the settlement both ask who has *played* rather than who is not in standby —
+  otherwise one unanswered request would block the night from ever settling.
 - **`BlindStructure` / `BlindLevel`** — order, small blind, big blind, ante, duration.
 - **`TableClock`** — current level, `LevelStartedAtUtc`, `PausedAtUtc`, accumulated pause. The server
   stores **timestamps, never a counting-down number**: each phone computes the remainder itself, so

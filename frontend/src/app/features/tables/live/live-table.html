@@ -151,9 +151,30 @@
             @let showRebuy = running && manageOthers() && player.status === 'Playing';
             @let showDealIn = running && !showRebuy && player.status === 'Standby';
             @let showRemove = canRemovePlayer(player);
+            @let showDecision = canDecideRequest(player);
 
-            @if (showRebuy || showDealIn || showRemove) {
+            @if (showRebuy || showDealIn || showRemove || showDecision) {
               <mat-card-actions align="end">
+                @if (showDecision) {
+                  <button
+                    matButton
+                    type="button"
+                    [disabled]="busy()"
+                    (click)="decideRequest(player, false)"
+                    i18n="@@table.denyJoin"
+                  >
+                    Recusar
+                  </button>
+                  <button
+                    matButton="filled"
+                    type="button"
+                    [disabled]="busy()"
+                    (click)="decideRequest(player, true)"
+                    i18n="@@table.approveJoin"
+                  >
+                    Deixar entrar
+                  </button>
+                }
                 @if (showRebuy) {
                   <button
                     matButton

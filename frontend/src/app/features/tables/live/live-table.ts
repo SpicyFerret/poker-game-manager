@@ -316,8 +316,52 @@ export class LiveTable implements OnInit {
     return (
       table !== null &&
       table.canManage &&
-      (table.status === 'Open' || (table.status === 'Running' && table.allowLateEntry))
+      (table.status === 'Open' ||
+        (table.status === 'Running' && table.lateEntry !== 'Blocked'))
     );
+  }
+
+  /**
+   * Someone waiting on an answer to join a table already in play. Only a
+   * manager sees the buttons — letting people wave themselves through would
+   * make the whole policy decorative.
+   */
+  protected canDecideRequest(player: TablePlayer): boolean {
+    const table = this.table();
+
+    return table !== null && table.canManage && player.status === 'Requested';
+  }
+
+  protected decideRequest(player: TablePlayer, approved: boolean): void {
+    this.confirm
+      .ask({
+        title: approved
+          ? $localize`:@@confirm.approveJoinTitle:Deixar entrar?`
+          : $localize`:@@confirm.denyJoinTitle:Recusar a entrada?`,
+        message: approved
+          ? $localize`:@@confirm.approveJoinMessage:Ela passa a aguardar, e continua sem fichas até você entregar o stack.`
+          : $localize`:@@confirm.denyJoinMessage:O pedido some da lista. Ela pode pedir de novo depois.`,
+        details: [
+          { label: $localize`:@@confirm.removePlayerWho:jogador`, value: player.displayName },
+        ],
+        destructive: !approved,
+        confirmLabel: approved
+          ? $localize`:@@table.approveJoin:Deixar entrar`
+          : $localize`:@@table.denyJoin:Recusar`,
+      })
+      .subscribe(() => {
+        this.run(
+          this.tables.decideJoinRequest(
+            this.championshipId(),
+            this.tableId(),
+            player.tablePlayerId,
+            approved,
+          ),
+          {
+            fallback: $localize`:@@table.decideJoinFailed:Não foi possível responder ao pedido.`,
+          },
+        );
+      });
   }
 
   /**

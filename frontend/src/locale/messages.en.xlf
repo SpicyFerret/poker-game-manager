@@ -523,10 +523,6 @@
         <source>Só quem for adicionado</source>
         <target>Only people who are added</target>
       </trans-unit>
-      <trans-unit id="field.allowLateEntry" datatype="html">
-        <source> Permitir entrar com a mesa já rolando </source>
-        <target> Allow joining after play has started </target>
-      </trans-unit>
       <trans-unit id="field.smallChipReserve" datatype="html">
         <source>Reserva de fichas pequenas</source>
         <target>Small-chip reserve</target>
@@ -1654,6 +1650,58 @@
       <trans-unit id="table.removePlayerFailed" datatype="html">
         <source>Não foi possível tirar o jogador da mesa.</source>
         <target>Could not remove the player from the table.</target>
+      </trans-unit>
+      <trans-unit id="field.lateEntry" datatype="html">
+        <source>Quem chega com a mesa rolando</source>
+        <target>Someone arriving mid-game</target>
+      </trans-unit>
+      <trans-unit id="lateEntry.request" datatype="html">
+        <source>Pede para entrar</source>
+        <target>Asks to join</target>
+      </trans-unit>
+      <trans-unit id="lateEntry.open" datatype="html">
+        <source>Entra liberado</source>
+        <target>Walks straight in</target>
+      </trans-unit>
+      <trans-unit id="lateEntry.blocked" datatype="html">
+        <source>Não entra</source>
+        <target>Cannot join</target>
+      </trans-unit>
+      <trans-unit id="tables.lateEntryHint" datatype="html">
+        <source>Pedindo, um gerente libera na hora — sem ter que mexer nesta opção depois.</source>
+        <target>With asking, a manager waves them in on the spot — no need to come back and change this setting.</target>
+      </trans-unit>
+      <trans-unit id="playerStatus.requested" datatype="html">
+        <source>Pediu para entrar</source>
+        <target>Asked to join</target>
+      </trans-unit>
+      <trans-unit id="table.approveJoin" datatype="html">
+        <source> Deixar entrar </source>
+        <target> Let them in </target>
+      </trans-unit>
+      <trans-unit id="table.denyJoin" datatype="html">
+        <source> Recusar </source>
+        <target> Turn away </target>
+      </trans-unit>
+      <trans-unit id="confirm.approveJoinTitle" datatype="html">
+        <source>Deixar entrar?</source>
+        <target>Let them in?</target>
+      </trans-unit>
+      <trans-unit id="confirm.denyJoinTitle" datatype="html">
+        <source>Recusar a entrada?</source>
+        <target>Turn them away?</target>
+      </trans-unit>
+      <trans-unit id="confirm.approveJoinMessage" datatype="html">
+        <source>Ela passa a aguardar, e continua sem fichas até você entregar o stack.</source>
+        <target>They move to waiting, and stay without chips until you hand them a stack.</target>
+      </trans-unit>
+      <trans-unit id="confirm.denyJoinMessage" datatype="html">
+        <source>O pedido some da lista. Ela pode pedir de novo depois.</source>
+        <target>The request disappears from the list. They can ask again later.</target>
+      </trans-unit>
+      <trans-unit id="table.decideJoinFailed" datatype="html">
+        <source>Não foi possível responder ao pedido.</source>
+        <target>Could not answer the request.</target>
       </trans-unit>
     </body>
   </file>

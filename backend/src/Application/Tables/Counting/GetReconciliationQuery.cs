@@ -119,9 +119,12 @@ internal sealed class GetReconciliationQueryHandler(
             .ToListAsync(cancellationToken);
 
         // Everyone who was ever dealt in owes a count, including anyone who left
-        // early — their chips left the case just the same.
+        // early — their chips left the case just the same. Stated as who has
+        // played rather than as who has not sat down, so someone still waiting
+        // on a manager's answer is never counted as owing anything.
         List<Guid> expected = await context.TablePlayers
-            .Where(p => p.TableId == table.Id && p.Status != TablePlayerStatus.Standby)
+            .Where(p => p.TableId == table.Id &&
+                        (p.Status == TablePlayerStatus.Playing || p.Status == TablePlayerStatus.Left))
             .Select(p => p.Id)
             .ToListAsync(cancellationToken);
 

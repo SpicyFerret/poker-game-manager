@@ -11,7 +11,14 @@ public enum TablePlayerStatus
     Playing = 1,
 
     /// <summary>Walked away. Still owed a final count and a settlement.</summary>
-    Left = 2
+    Left = 2,
+
+    /// <summary>
+    /// Asked to join a table already in play, waiting on a manager. Not at the
+    /// table yet in any sense that counts: no chips, no stack owed, and nothing
+    /// for the reconciliation to expect from them.
+    /// </summary>
+    Requested = 3
 }
 
 public sealed class TablePlayer

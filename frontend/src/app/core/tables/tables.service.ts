@@ -45,6 +45,19 @@ export class TablesService {
     return this.http.post<void>(`${this.base(championshipId)}/${tableId}/players`, { userId });
   }
 
+  /** A manager answering someone who asked to join a table already in play. */
+  decideJoinRequest(
+    championshipId: string,
+    tableId: string,
+    tablePlayerId: string,
+    approved: boolean,
+  ): Observable<void> {
+    return this.http.post<void>(
+      `${this.base(championshipId)}/${tableId}/players/${tablePlayerId}/decision`,
+      { approved },
+    );
+  }
+
   /**
    * Takes someone back off the table. The API refuses once chips have left the
    * case for them — at that point they are part of the night's books.
