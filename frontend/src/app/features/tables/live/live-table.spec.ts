@@ -68,6 +68,7 @@ describe('LiveTable', () => {
     canAddPlayer: () => boolean;
     canRemovePlayer: (player: TablePlayer) => boolean;
     canDecideRequest: (player: TablePlayer) => boolean;
+    canCashOut: (player: TablePlayer) => boolean;
     start: () => void;
   }
 
@@ -206,6 +207,40 @@ describe('LiveTable', () => {
     load(table({ canManage: true, status: 'Running' }));
 
     expect(instance().canDecideRequest(me)).toBe(false);
+  });
+
+  /** Going home is your own decision, the same way a rebuy is. */
+  it('should let a player cash themselves out', () => {
+    load(table({ canManage: false }));
+
+    expect(instance().canCashOut(me)).toBe(true);
+  });
+
+  it('should not let a plain player cash out somebody else', () => {
+    load(table({ canManage: false }));
+
+    expect(instance().canCashOut(other)).toBe(false);
+  });
+
+  it('should let a manager cash out anyone at the door', () => {
+    load(table({ canManage: true }));
+
+    expect(instance().canCashOut(other)).toBe(true);
+  });
+
+  it('should not offer cashing out someone who is not in the game', () => {
+    const gone = { ...me, status: 'Left' as const };
+
+    load(table({ canManage: true, players: [gone, other] }));
+
+    expect(instance().canCashOut(gone)).toBe(false);
+  });
+
+  /** Once counting has started everyone is reporting anyway; that is the path to use. */
+  it('should stop offering a cash-out once the table has stopped running', () => {
+    load(table({ canManage: true, status: 'Counting' }));
+
+    expect(instance().canCashOut(me)).toBe(false);
   });
 
   it('should stop offering removal once the table has started', () => {

@@ -828,6 +828,88 @@ export class LiveTable implements OnInit {
   }
 
   /**
+   * Going home before the night ends. Your own decision, the same way a rebuy
+   * is; a manager can do it for whoever is already at the door.
+   */
+  protected canCashOut(player: TablePlayer): boolean {
+    const table = this.table();
+
+    if (table === null || table.status !== 'Running' || player.status !== 'Playing') {
+      return false;
+    }
+
+    return table.canManage || player.tablePlayerId === table.myPlayerId;
+  }
+
+  /**
+   * Reuses the very same counting dialog the end of the night uses — it is the
+   * same question ("what is in front of you, chip by chip"), and the camera
+   * scanner comes along with it for free.
+   */
+  protected cashOut(player: TablePlayer): void {
+    const table = this.table();
+
+    if (!table) {
+      return;
+    }
+
+    this.dialog
+      .open(CountDialog, {
+        data: {
+          playerName: player.displayName,
+          chips: table.stock,
+          moneyPerUnit: table.moneyPerUnit,
+        },
+      })
+      .afterClosed()
+      .subscribe((counts: ChipCountEntry[] | undefined) => {
+        if (counts) {
+          this.confirmCashOut(player, counts, table);
+        }
+      });
+  }
+
+  private confirmCashOut(
+    player: TablePlayer,
+    counts: readonly ChipCountEntry[],
+    table: TableDetail,
+  ): void {
+    const units = counts.reduce((total, count) => {
+      const chip = table.stock.find((s) => s.denominationId === count.denominationId);
+
+      return total + count.quantity * (chip?.effectiveValue ?? 0);
+    }, 0);
+
+    const money = units * table.moneyPerUnit;
+
+    this.confirm
+      .ask({
+        title: $localize`:@@confirm.cashOutTitle:Encerrar a noite de ${player.displayName}:NAME:?`,
+        message: $localize`:@@confirm.cashOutMessage:As fichas voltam para a maleta e podem ser distribuídas de novo. O saldo fica congelado neste valor, e ela aparece no acerto no fim.`,
+        details: [
+          {
+            label: $localize`:@@confirm.cashOutValue:leva`,
+            value: `R$ ${money.toFixed(2)}`,
+          },
+        ],
+        confirmLabel: $localize`:@@table.cashOut:Encerrar e devolver`,
+      })
+      .subscribe(() => {
+        this.run(
+          this.tables.cashOut(
+            this.championshipId(),
+            this.tableId(),
+            player.tablePlayerId,
+            counts,
+          ),
+          {
+            fallback: $localize`:@@table.cashOutFailed:Não foi possível encerrar a noite deste jogador.`,
+          },
+        );
+      });
+  }
+
+  /**
    * The least anyone can post. Taken from the case rather than guessed: a blind
    * below the smallest chip cannot be paid.
    */

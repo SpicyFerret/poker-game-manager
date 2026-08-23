@@ -139,6 +139,23 @@ export class TablesService {
     });
   }
 
+  /**
+   * Going home early: hand the chips back, take the money for them now. Counted
+   * per denomination like the end-of-night count, because those chips return to
+   * the case and the reconciliation has to know which ones.
+   */
+  cashOut(
+    championshipId: string,
+    tableId: string,
+    tablePlayerId: string,
+    counts: readonly ChipCountEntry[],
+  ): Observable<void> {
+    return this.http.post<void>(`${this.base(championshipId)}/${tableId}/cash-outs`, {
+      tablePlayerId,
+      counts,
+    });
+  }
+
   reconciliation(championshipId: string, tableId: string): Observable<Reconciliation> {
     return this.http.get<Reconciliation>(`${this.base(championshipId)}/${tableId}/reconciliation`);
   }

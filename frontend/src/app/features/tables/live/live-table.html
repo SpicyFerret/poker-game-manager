@@ -194,6 +194,15 @@
                   >
                     Comprar de jogador
                   </button>
+                  <button
+                    matButton
+                    type="button"
+                    [disabled]="busy()"
+                    (click)="cashOut(player)"
+                    i18n="@@table.cashOut"
+                  >
+                    Encerrar e devolver
+                  </button>
                 }
                 @if (showDealIn) {
                   <button
@@ -545,6 +554,15 @@
           i18n="@@table.tradeChips"
         >
           Comprar de jogador
+        </button>
+        <button
+          matButton
+          type="button"
+          [disabled]="busy()"
+          (click)="cashOut(ownPlayer()!)"
+          i18n="@@table.cashOut"
+        >
+          Encerrar e devolver
         </button>
       </div>
     </div>

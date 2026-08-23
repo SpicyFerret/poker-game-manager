@@ -4,6 +4,7 @@ using Application.Tables.Acknowledge;
 using Application.Tables.AddPlayer;
 using Application.Tables.Blinds;
 using Application.Tables.BuyChips;
+using Application.Tables.CashOut;
 using Application.Tables.Counting;
 using Application.Tables.Create;
 using Application.Tables.Delete;
@@ -51,6 +52,8 @@ internal sealed class Tables : IEndpoint
     public sealed record DeleteTableRequest(string ConfirmName);
 
     public sealed record DecideJoinRequest(bool Approved);
+
+    public sealed record CashOutRequest(Guid TablePlayerId, IReadOnlyList<ChipCountEntry> Counts);
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -202,6 +205,20 @@ internal sealed class Tables : IEndpoint
                 request.Amount);
 
             Result result = await handler.Handle(command, cancellationToken);
+
+            return result.Match(Results.NoContent, CustomResults.Problem);
+        });
+
+        group.MapPost("{tableId:guid}/cash-outs", async (
+            Guid championshipId,
+            Guid tableId,
+            CashOutRequest request,
+            ICommandHandler<CashOutCommand> handler,
+            CancellationToken cancellationToken) =>
+        {
+            Result result = await handler.Handle(
+                new CashOutCommand(championshipId, tableId, request.TablePlayerId, request.Counts),
+                cancellationToken);
 
             return result.Match(Results.NoContent, CustomResults.Problem);
         });
