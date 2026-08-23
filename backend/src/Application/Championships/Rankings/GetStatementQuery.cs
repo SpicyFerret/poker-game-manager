@@ -3,6 +3,7 @@ using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
 using Domain.Championships;
+using Application.Tables;
 using Domain.Tables;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
@@ -91,9 +92,7 @@ internal sealed class GetStatementQueryHandler(
         ILookup<Guid, decimal> paid = ledger
             .ToLookup(
                 entry => entry.TablePlayerId,
-                entry => entry.Type == LedgerEntryType.ChipSaleToPlayer
-                    ? -entry.MoneyAmount
-                    : entry.MoneyAmount);
+                entry => LedgerMath.SignedPaidIn(entry.Type, entry.MoneyAmount));
 
         ILookup<Guid, int> rebuys = ledger
             .Where(entry => entry.Type == LedgerEntryType.Rebuy)

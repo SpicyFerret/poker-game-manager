@@ -478,7 +478,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">979</context>
+          <context context-type="linenumber">1061</context>
         </context-group>
       </trans-unit>
       <trans-unit id="chipSets.editHeading" datatype="html">
@@ -2045,7 +2045,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">918</context>
+          <context context-type="linenumber">1000</context>
         </context-group>
       </trans-unit>
       <trans-unit id="count.scanTitle" datatype="html">
@@ -2127,7 +2127,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">859</context>
+          <context context-type="linenumber">941</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.settle" datatype="html">
@@ -2138,7 +2138,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">947</context>
+          <context context-type="linenumber">1029</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.manageOthersToggle" datatype="html">
@@ -2206,7 +2206,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">538,539</context>
+          <context context-type="linenumber">547,548</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.tradeChips" datatype="html">
@@ -2217,21 +2217,36 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">547,549</context>
+          <context context-type="linenumber">556,558</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="table.cashOut" datatype="html">
+        <source> Encerrar e devolver </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
+          <context context-type="linenumber">204,205</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
+          <context context-type="linenumber">565,566</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">895</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.dealIn" datatype="html">
         <source> Dar fichas </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">206,207</context>
+          <context context-type="linenumber">215,216</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.removePlayer" datatype="html">
         <source> Tirar da mesa </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">217,218</context>
+          <context context-type="linenumber">226,227</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
@@ -2242,249 +2257,249 @@
         <source>sem tempo</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">234,237</context>
+          <context context-type="linenumber">243,246</context>
         </context-group>
       </trans-unit>
       <trans-unit id="blinds.level" datatype="html">
         <source>Nível <x id="INTERPOLATION" equiv-text="{{ level.order }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">238,239</context>
+          <context context-type="linenumber">247,248</context>
         </context-group>
       </trans-unit>
       <trans-unit id="blinds.paused" datatype="html">
         <source>pausado</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">240,241</context>
+          <context context-type="linenumber">249,250</context>
         </context-group>
       </trans-unit>
       <trans-unit id="blinds.anteOf" datatype="html">
         <source>ante <x id="INTERPOLATION" equiv-text="{{ level.ante }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">247,248</context>
+          <context context-type="linenumber">256,257</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">337,338</context>
+          <context context-type="linenumber">346,347</context>
         </context-group>
       </trans-unit>
       <trans-unit id="blinds.next" datatype="html">
         <source> Próximo: <x id="INTERPOLATION" equiv-text="{{ next.smallBlind }}"/> / <x id="INTERPOLATION_1" equiv-text="{{ next.bigBlind }}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">253,254</context>
+          <context context-type="linenumber">262,263</context>
         </context-group>
       </trans-unit>
       <trans-unit id="blinds.lastLevel" datatype="html">
         <source>Último nível.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">256,258</context>
+          <context context-type="linenumber">265,267</context>
         </context-group>
       </trans-unit>
       <trans-unit id="blinds.notStarted" datatype="html">
         <source> A estrutura está pronta. O cronômetro começa quando o gerente iniciar. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">261,262</context>
+          <context context-type="linenumber">270,271</context>
         </context-group>
       </trans-unit>
       <trans-unit id="blinds.none" datatype="html">
         <source>Esta mesa não tem estrutura de blinds.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">264,266</context>
+          <context context-type="linenumber">273,275</context>
         </context-group>
       </trans-unit>
       <trans-unit id="blinds.pause" datatype="html">
         <source> Pausar </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">279,280</context>
+          <context context-type="linenumber">288,289</context>
         </context-group>
       </trans-unit>
       <trans-unit id="blinds.start" datatype="html">
         <source> Iniciar </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">289,290</context>
+          <context context-type="linenumber">298,299</context>
         </context-group>
       </trans-unit>
       <trans-unit id="blinds.previous" datatype="html">
         <source> Nível anterior </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">299,300</context>
+          <context context-type="linenumber">308,309</context>
         </context-group>
       </trans-unit>
       <trans-unit id="blinds.nextLevel" datatype="html">
         <source> Próximo nível </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">308,309</context>
+          <context context-type="linenumber">317,318</context>
         </context-group>
       </trans-unit>
       <trans-unit id="blinds.edit" datatype="html">
         <source> Editar estrutura </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">318,319</context>
+          <context context-type="linenumber">327,328</context>
         </context-group>
       </trans-unit>
       <trans-unit id="counting.heading" datatype="html">
         <source>Conferência</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">353,354</context>
+          <context context-type="linenumber">362,363</context>
         </context-group>
       </trans-unit>
       <trans-unit id="counting.balances" datatype="html">
         <source>Bate com o que saiu da maleta.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">356,357</context>
+          <context context-type="linenumber">365,366</context>
         </context-group>
       </trans-unit>
       <trans-unit id="counting.waiting" datatype="html">
         <source>Faltam <x id="INTERPOLATION" equiv-text="{{ reconciliation.awaitingCountFrom.length }}"/> contagem(ns).</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">359,360</context>
+          <context context-type="linenumber">368,369</context>
         </context-group>
       </trans-unit>
       <trans-unit id="counting.doesNotBalance" datatype="html">
         <source>A contagem não bate com o que saiu da maleta.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">363,365</context>
+          <context context-type="linenumber">372,374</context>
         </context-group>
       </trans-unit>
       <trans-unit id="counting.awaitingFrom" datatype="html">
         <source>Ainda não informaram:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">371,372</context>
+          <context context-type="linenumber">380,381</context>
         </context-group>
       </trans-unit>
       <trans-unit id="counting.offBy" datatype="html">
         <source>Fichas que não fecham:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">380,381</context>
+          <context context-type="linenumber">389,390</context>
         </context-group>
       </trans-unit>
       <trans-unit id="counting.chipLine" datatype="html">
         <source>Ficha <x id="INTERPOLATION" equiv-text="{{ line.faceValue }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">384,385</context>
+          <context context-type="linenumber">393,394</context>
         </context-group>
       </trans-unit>
       <trans-unit id="counting.difference" datatype="html">
         <source> <x id="INTERPOLATION" equiv-text="{{ line.counted }}"/> de <x id="INTERPOLATION_1" equiv-text="{{ line.issued }}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">386,387</context>
+          <context context-type="linenumber">395,396</context>
         </context-group>
       </trans-unit>
       <trans-unit id="counting.allTally" datatype="html">
         <source>Todas as fichas fecham.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">392,394</context>
+          <context context-type="linenumber">401,403</context>
         </context-group>
       </trans-unit>
       <trans-unit id="counting.counted" datatype="html">
         <source>contagem informada</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">404,405</context>
+          <context context-type="linenumber">413,414</context>
         </context-group>
       </trans-unit>
       <trans-unit id="counting.notCounted" datatype="html">
         <source>ainda não contou</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">406,408</context>
+          <context context-type="linenumber">415,417</context>
         </context-group>
       </trans-unit>
       <trans-unit id="counting.report" datatype="html">
         <source> Informar contagem </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">420,421</context>
+          <context context-type="linenumber">429,430</context>
         </context-group>
       </trans-unit>
       <trans-unit id="settlement.heading" datatype="html">
         <source>Quem paga quem</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">432,433</context>
+          <context context-type="linenumber">441,442</context>
         </context-group>
       </trans-unit>
       <trans-unit id="settlement.transferCount" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{ settlement.transfers.length }}"/> transferência(s)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">434</context>
+          <context context-type="linenumber">443</context>
         </context-group>
       </trans-unit>
       <trans-unit id="settlement.copied" datatype="html">
         <source>copiado</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">456,457</context>
+          <context context-type="linenumber">465,466</context>
         </context-group>
       </trans-unit>
       <trans-unit id="settlement.noHandle" datatype="html">
         <source> sem chave cadastrada — combine com <x id="INTERPOLATION" equiv-text="{{ transfer.toDisplayName }}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">461,462</context>
+          <context context-type="linenumber">470,471</context>
         </context-group>
       </trans-unit>
       <trans-unit id="settlement.nothingToPay" datatype="html">
         <source>Ninguém deve nada a ninguém.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">466,468</context>
+          <context context-type="linenumber">475,477</context>
         </context-group>
       </trans-unit>
       <trans-unit id="settlement.resultsHeading" datatype="html">
         <source>Resultado</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">473,474</context>
+          <context context-type="linenumber">482,483</context>
         </context-group>
       </trans-unit>
       <trans-unit id="settlement.points" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{ result.points }}"/> pts</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">483,484</context>
+          <context context-type="linenumber">492,493</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.chipCountsAs" datatype="html">
         <source>vale <x id="INTERPOLATION" equiv-text="{{ chip.effectiveValue }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">510,511</context>
+          <context context-type="linenumber">519,520</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.chipRemaining" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{ chip.remaining }}"/> na maleta</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">514,515</context>
+          <context context-type="linenumber">523,524</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.chipIssued" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{ chip.issued }}"/> em jogo</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.html</context>
-          <context context-type="linenumber">517,518</context>
+          <context context-type="linenumber">526,527</context>
         </context-group>
       </trans-unit>
       <trans-unit id="tableSection.players" datatype="html">
@@ -2622,7 +2637,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">904</context>
+          <context context-type="linenumber">986</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.startTitle" datatype="html">
@@ -2832,123 +2847,151 @@
           <context context-type="linenumber">825</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="confirm.cashOutTitle" datatype="html">
+        <source>Encerrar a noite de <x id="NAME" equiv-text="player.displayName"/>?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">887</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.cashOutMessage" datatype="html">
+        <source>As fichas voltam para a maleta e podem ser distribuídas de novo. O saldo fica congelado neste valor, e ela aparece no acerto no fim.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">888</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.cashOutValue" datatype="html">
+        <source>leva</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">891</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="table.cashOutFailed" datatype="html">
+        <source>Não foi possível encerrar a noite deste jogador.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
+          <context context-type="linenumber">906</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="confirm.countingTitle" datatype="html">
         <source>Encerrar o jogo e contar?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">857</context>
+          <context context-type="linenumber">939</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.countingMessage" datatype="html">
         <source>Ninguém mais compra fichas. Cada jogador conta o que tem na frente e informa aqui.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">858</context>
+          <context context-type="linenumber">940</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.countingFailed" datatype="html">
         <source>Não foi possível encerrar o jogo.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">863</context>
+          <context context-type="linenumber">945</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.countTitle" datatype="html">
         <source>Confirmar a contagem?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">913</context>
+          <context context-type="linenumber">995</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.countMessage" datatype="html">
         <source>É com isto que o acerto vai ser calculado. Dá para corrigir enquanto a mesa não fecha.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">915</context>
+          <context context-type="linenumber">997</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.countEmptyMessage" datatype="html">
         <source>Você está informando que não sobrou nenhuma ficha.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">916</context>
+          <context context-type="linenumber">998</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.countFailed" datatype="html">
         <source>Não foi possível informar a contagem.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">928</context>
+          <context context-type="linenumber">1010</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.settleTitle" datatype="html">
         <source>Fechar a conta da mesa?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">938</context>
+          <context context-type="linenumber">1020</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.settleMessage" datatype="html">
         <source>Calcula quem paga quem, com o menor número de Pix, e a posição de cada um. É feito uma vez só.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">939</context>
+          <context context-type="linenumber">1021</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.settleWaiting" datatype="html">
         <source>Ainda falta gente informar a contagem.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">945</context>
+          <context context-type="linenumber">1027</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.settleUnbalanced" datatype="html">
         <source>A contagem não bate com o que saiu da maleta.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">946</context>
+          <context context-type="linenumber">1028</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.settleFailed" datatype="html">
         <source>Não foi possível fechar a conta.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">951</context>
+          <context context-type="linenumber">1033</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.deleteTableTitle" datatype="html">
         <source>Excluir a mesa?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">974</context>
+          <context context-type="linenumber">1056</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.deleteTableMessage" datatype="html">
         <source>Some tudo desta noite: jogadores, lançamentos, contagens e o acerto. Não dá para desfazer.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">975</context>
+          <context context-type="linenumber">1057</context>
         </context-group>
       </trans-unit>
       <trans-unit id="confirm.typeTableName" datatype="html">
         <source>Digite o nome da mesa</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">978</context>
+          <context context-type="linenumber">1060</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.deleteFailed" datatype="html">
         <source>Não foi possível excluir a mesa.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">989</context>
+          <context context-type="linenumber">1071</context>
         </context-group>
       </trans-unit>
       <trans-unit id="table.codePrompt" datatype="html">
         <source>Código da mesa</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/tables/live/live-table.ts</context>
-          <context context-type="linenumber">997</context>
+          <context context-type="linenumber">1079</context>
         </context-group>
       </trans-unit>
       <trans-unit id="notice.rebuyHeading" datatype="html">

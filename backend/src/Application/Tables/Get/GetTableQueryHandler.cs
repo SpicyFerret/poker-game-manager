@@ -70,7 +70,7 @@ internal sealed class GetTableQueryHandler(
                 DisplayName = player.User.DisplayName,
                 Status = player.Status,
                 SeatOrder = player.SeatOrder,
-                PaidIn = PaidInFor(byPlayer[player.Id]),
+                PaidIn = LedgerMath.PaidIn(byPlayer[player.Id]),
                 RebuyCount = byPlayer[player.Id].Count(e => e.Type == LedgerEntryType.Rebuy),
                 HasPaymentHandle = player.User.PaymentHandle != null
             })
@@ -117,6 +117,7 @@ internal sealed class GetTableQueryHandler(
         };
     }
 
+
     /// <summary>
     /// The caller's own unacknowledged stacks, oldest first. Only entries that
     /// actually took chips out of the case: there is nothing to count for a trade
@@ -157,21 +158,4 @@ internal sealed class GetTableQueryHandler(
                 ]
             })
     ];
-
-    /// <summary>
-    /// PaidIn = buy-ins + rebuys + chips bought off others, less anything credited
-    /// for chips sold. Selling chips to someone whose rebuy the case could not
-    /// cover reduces what you are down, which is what stops the seller being out
-    /// of pocket for bailing the table out.
-    /// </summary>
-    private static decimal PaidInFor(IEnumerable<LedgerEntry> entries) =>
-        entries.Sum(entry => entry.Type switch
-        {
-            LedgerEntryType.BuyIn or
-            LedgerEntryType.Rebuy or
-            LedgerEntryType.ChipPurchaseFromPlayer => entry.MoneyAmount,
-            LedgerEntryType.ChipSaleToPlayer => -entry.MoneyAmount,
-            LedgerEntryType.Adjustment => entry.MoneyAmount,
-            _ => 0m
-        });
 }

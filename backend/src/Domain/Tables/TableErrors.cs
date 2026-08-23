@@ -147,6 +147,20 @@ public static class TableErrors
         "Tables.CannotDealInSomeoneElse",
         "Only a table manager can deal a player in");
 
+    /// <summary>Going home is your own decision; sending someone else home is not.</summary>
+    public static readonly Error CannotCashOutSomeoneElse = Error.Forbidden(
+        "Tables.CannotCashOutSomeoneElse",
+        "You can only cash out for yourself. A table manager can cash out anyone");
+
+    /// <summary>
+    /// More of a chip handed back than the whole table was ever given. That is a
+    /// miscount, and letting it through would drive the issued total negative and
+    /// quietly break the reconciliation for everyone still playing.
+    /// </summary>
+    public static readonly Error CashOutMoreThanIsInPlay = Error.Problem(
+        "Tables.CashOutMoreThanIsInPlay",
+        "That is more chips than this table has in play. Count again");
+
     /// <summary>
     /// Chips left the case for this player and they paid in for them. Removing
     /// the row would leave those chips belonging to nobody and the night unable

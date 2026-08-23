@@ -106,7 +106,7 @@ internal sealed class SettleTableCommandHandler(
                         .ToDictionary(g => g.Key, g => g.Sum(c => c.Quantity)),
                     effectiveValues,
                     table.MoneyPerUnit),
-                PaidIn = PaidIn(entriesByPlayer[player.Id]),
+                PaidIn = LedgerMath.PaidIn(entriesByPlayer[player.Id]),
                 JoinedAtUtc = player.JoinedAtUtc
             })
         ];
@@ -157,14 +157,4 @@ internal sealed class SettleTableCommandHandler(
         return Result.Success();
     }
 
-    private static decimal PaidIn(IEnumerable<LedgerEntry> entries) =>
-        entries.Sum(entry => entry.Type switch
-        {
-            LedgerEntryType.BuyIn or
-            LedgerEntryType.Rebuy or
-            LedgerEntryType.ChipPurchaseFromPlayer or
-            LedgerEntryType.Adjustment => entry.MoneyAmount,
-            LedgerEntryType.ChipSaleToPlayer => -entry.MoneyAmount,
-            _ => 0m
-        });
 }

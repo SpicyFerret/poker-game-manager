@@ -48,6 +48,12 @@ public static class ChipStock
     /// Chips issued per denomination so far, counted straight off the ledger.
     /// Entries that moved no chips out of the case — a trade between two players —
     /// carry no chip rows, so they correctly contribute nothing.
+    ///
+    /// A cash-out is the one entry that moves chips the other way: they are back
+    /// in the case and can be dealt to somebody else, so they come off the total
+    /// rather than adding to it. Without that, the same physical chip would be
+    /// counted as issued twice — once to whoever handed it back and again to
+    /// whoever received it next — and the night could never reconcile.
     /// </summary>
     public static Dictionary<Guid, int> IssuedByDenomination(
         IEnumerable<Domain.Tables.LedgerEntry> entries)
@@ -55,7 +61,13 @@ public static class ChipStock
         ArgumentNullException.ThrowIfNull(entries);
 
         return entries
-            .SelectMany(entry => entry.Chips)
+            .SelectMany(entry => entry.Chips.Select(chip => new
+            {
+                chip.ChipDenominationId,
+                Quantity = entry.Type == Domain.Tables.LedgerEntryType.CashOut
+                    ? -chip.Quantity
+                    : chip.Quantity
+            }))
             .GroupBy(chip => chip.ChipDenominationId)
             .ToDictionary(group => group.Key, group => group.Sum(chip => chip.Quantity));
     }

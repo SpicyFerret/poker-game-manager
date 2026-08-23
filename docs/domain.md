@@ -86,7 +86,18 @@ confused: what is printed, what it counts as, and what it is worth in cash.
 ### Ledger
 
 - **`LedgerEntry`** — player, type, money amount, optional counterparty.
-  Types: `BuyIn`, `Rebuy`, `ChipPurchaseFromPlayer`, `ChipSaleToPlayer`, `Adjustment`.
+  Types: `BuyIn`, `Rebuy`, `ChipPurchaseFromPlayer`, `ChipSaleToPlayer`, `Adjustment`, `CashOut`.
+- **`CashOut`** — going home before the night ends. The only entry whose chips move *back into* the
+  case, so the issued totals **subtract** it: those chips are dealable again, and counting them as
+  still out would have the same physical chip issued twice — once to whoever handed it back and again
+  to whoever got it next — and the night could never reconcile. It also credits the player, exactly
+  like selling chips to another player does: their final count will be nothing, and without the credit
+  that would read as having lost the lot. A zero `FinalCount` is written at the same time, so the
+  reconciliation is not left waiting on a count from someone who already went home.
+- **How each entry moves a stake lives in one place** (`Application/Tables/LedgerMath.cs`). Three
+  screens need it — the live table, the settlement, a player's statement — and three copies of a money
+  rule is three chances for them to disagree about what someone is owed. Cash-out was nearly the
+  fourth copy.
 - **`LedgerEntryChip`** — the per-denomination quantities for an entry. **Only exists when chips
   actually left the case.** A purchase between players produces none: those chips were already in
   play, they just changed hands.

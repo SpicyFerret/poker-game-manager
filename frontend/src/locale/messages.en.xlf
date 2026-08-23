@@ -1703,6 +1703,26 @@
         <source>Não foi possível responder ao pedido.</source>
         <target>Could not answer the request.</target>
       </trans-unit>
+      <trans-unit id="table.cashOut" datatype="html">
+        <source> Encerrar e devolver </source>
+        <target> Cash out </target>
+      </trans-unit>
+      <trans-unit id="confirm.cashOutTitle" datatype="html">
+        <source>Encerrar a noite de <x id="NAME" equiv-text="player.displayName"/>?</source>
+        <target>End <x id="NAME" equiv-text="player.displayName"/>'s night?</target>
+      </trans-unit>
+      <trans-unit id="confirm.cashOutMessage" datatype="html">
+        <source>As fichas voltam para a maleta e podem ser distribuídas de novo. O saldo fica congelado neste valor, e ela aparece no acerto no fim.</source>
+        <target>The chips go back into the case and can be dealt again. Their balance freezes at this figure, and they still appear in the settlement at the end.</target>
+      </trans-unit>
+      <trans-unit id="confirm.cashOutValue" datatype="html">
+        <source>leva</source>
+        <target>takes</target>
+      </trans-unit>
+      <trans-unit id="table.cashOutFailed" datatype="html">
+        <source>Não foi possível encerrar a noite deste jogador.</source>
+        <target>Could not end this player's night.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
