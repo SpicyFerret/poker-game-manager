@@ -1635,6 +1635,26 @@
         <source>Não foi possível abrir a câmera. Você pode digitar a contagem normalmente.</source>
         <target>Could not open the camera. You can still type the count in as usual.</target>
       </trans-unit>
+      <trans-unit id="table.removePlayer" datatype="html">
+        <source> Tirar da mesa </source>
+        <target> Remove from table </target>
+      </trans-unit>
+      <trans-unit id="confirm.removePlayerTitle" datatype="html">
+        <source>Tirar da mesa?</source>
+        <target>Remove from the table?</target>
+      </trans-unit>
+      <trans-unit id="confirm.removePlayerMessage" datatype="html">
+        <source>Ninguém entregou fichas a esta pessoa ainda, então nada da contabilidade muda. Ela pode entrar de novo depois.</source>
+        <target>Nobody has handed this person any chips yet, so none of the bookkeeping changes. They can join again later.</target>
+      </trans-unit>
+      <trans-unit id="confirm.removePlayerWho" datatype="html">
+        <source>jogador</source>
+        <target>player</target>
+      </trans-unit>
+      <trans-unit id="table.removePlayerFailed" datatype="html">
+        <source>Não foi possível tirar o jogador da mesa.</source>
+        <target>Could not remove the player from the table.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

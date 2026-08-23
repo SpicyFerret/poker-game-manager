@@ -66,6 +66,7 @@ describe('LiveTable', () => {
     manageOthers: () => boolean;
     toggleManageOthers: () => void;
     canAddPlayer: () => boolean;
+    canRemovePlayer: (player: TablePlayer) => boolean;
     start: () => void;
   }
 
@@ -163,6 +164,43 @@ describe('LiveTable', () => {
     load(table({ canManage: true, status: 'Settled' }));
 
     expect(instance().canAddPlayer()).toBe(false);
+  });
+
+  /**
+   * Removal is bounded by the ledger, not by the clock: someone still in
+   * standby never received chips, so taking them off changes nothing about
+   * what the night has to add up to.
+   */
+  it('should let a manager remove someone still waiting, open or running', () => {
+    const waiting = { ...me, status: 'Standby' as const };
+
+    load(table({ canManage: true, status: 'Open', players: [waiting] }));
+    expect(instance().canRemovePlayer(waiting)).toBe(true);
+
+    load(table({ canManage: true, status: 'Running', players: [waiting] }));
+    expect(instance().canRemovePlayer(waiting)).toBe(true);
+  });
+
+  it('should not offer removing someone who has already been dealt in', () => {
+    load(table({ canManage: true, status: 'Running' }));
+
+    expect(instance().canRemovePlayer(me)).toBe(false);
+  });
+
+  it('should not let a plain player remove anyone', () => {
+    const waiting = { ...me, status: 'Standby' as const };
+
+    load(table({ canManage: false, status: 'Open', players: [waiting] }));
+
+    expect(instance().canRemovePlayer(waiting)).toBe(false);
+  });
+
+  it('should not offer removing once the table has stopped running', () => {
+    const waiting = { ...me, status: 'Standby' as const };
+
+    load(table({ canManage: true, status: 'Counting', players: [waiting] }));
+
+    expect(instance().canRemovePlayer(waiting)).toBe(false);
   });
 
   /**

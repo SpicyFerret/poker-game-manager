@@ -45,6 +45,16 @@ export class TablesService {
     return this.http.post<void>(`${this.base(championshipId)}/${tableId}/players`, { userId });
   }
 
+  /**
+   * Takes someone back off the table. The API refuses once chips have left the
+   * case for them — at that point they are part of the night's books.
+   */
+  removePlayer(championshipId: string, tableId: string, tablePlayerId: string): Observable<void> {
+    return this.http.delete<void>(
+      `${this.base(championshipId)}/${tableId}/players/${tablePlayerId}`,
+    );
+  }
+
   /** What chips a buy-in or rebuy would hand over, without handing them over. */
   stackPreview(
     championshipId: string,

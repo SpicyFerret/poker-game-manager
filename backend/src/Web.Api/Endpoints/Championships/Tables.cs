@@ -11,6 +11,7 @@ using Application.Tables.Get;
 using Application.Tables.IssueStack;
 using Application.Tables.Join;
 using Application.Tables.Preview;
+using Application.Tables.RemovePlayer;
 using Application.Tables.Settle;
 using Application.Tables.Start;
 using Domain.Tables;
@@ -122,6 +123,20 @@ internal sealed class Tables : IEndpoint
         {
             Result result = await handler.Handle(
                 new AddPlayerCommand(championshipId, tableId, request.UserId),
+                cancellationToken);
+
+            return result.Match(Results.NoContent, CustomResults.Problem);
+        });
+
+        group.MapDelete("{tableId:guid}/players/{tablePlayerId:guid}", async (
+            Guid championshipId,
+            Guid tableId,
+            Guid tablePlayerId,
+            ICommandHandler<RemovePlayerCommand> handler,
+            CancellationToken cancellationToken) =>
+        {
+            Result result = await handler.Handle(
+                new RemovePlayerCommand(championshipId, tableId, tablePlayerId),
                 cancellationToken);
 
             return result.Match(Results.NoContent, CustomResults.Problem);
