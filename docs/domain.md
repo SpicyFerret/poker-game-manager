@@ -117,6 +117,15 @@ rounding. Because it always works from current stock, the behaviour everyone exp
 run out, so later stacks come in bigger denominations — falls out without a special rule. An optional
 per-table small-chip reserve holds some back for the first rebuys.
 
+Those two passes are a *guess*, and a greedy one: the profile pass takes as many small chips as it is
+allowed, and if that leaves a gap the rest of the stock cannot close, the stack fails even though some
+other split of the very same chips would have worked. So when they fall short, a bounded-knapsack DP
+over units searches for a combination that hits the target exactly, picking the one closest to the
+profile. It only ever turns a refusal into a stack — a mix the passes already found is kept as is. The
+target is divided by the chips' common divisor first (5/25/50/100 share 5), which shrinks the table for
+free. **"The profile could not place it" is not "the case cannot make it"**, and only the second is
+worth refusing a buy-in over.
+
 **The opening deal is not that, repeated.** `DealOpeningStacks` works the whole table out at once,
 because what the case can give the fifth player depends on what it already gave the first.
 
