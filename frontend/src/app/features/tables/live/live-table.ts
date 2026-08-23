@@ -316,8 +316,93 @@ export class LiveTable implements OnInit {
     return (
       table !== null &&
       table.canManage &&
-      (table.status === 'Open' || (table.status === 'Running' && table.allowLateEntry))
+      (table.status === 'Open' ||
+        (table.status === 'Running' && table.lateEntry !== 'Blocked'))
     );
+  }
+
+  /**
+   * Someone waiting on an answer to join a table already in play. Only a
+   * manager sees the buttons — letting people wave themselves through would
+   * make the whole policy decorative.
+   */
+  protected canDecideRequest(player: TablePlayer): boolean {
+    const table = this.table();
+
+    return table !== null && table.canManage && player.status === 'Requested';
+  }
+
+  protected decideRequest(player: TablePlayer, approved: boolean): void {
+    this.confirm
+      .ask({
+        title: approved
+          ? $localize`:@@confirm.approveJoinTitle:Deixar entrar?`
+          : $localize`:@@confirm.denyJoinTitle:Recusar a entrada?`,
+        message: approved
+          ? $localize`:@@confirm.approveJoinMessage:Ela passa a aguardar, e continua sem fichas até você entregar o stack.`
+          : $localize`:@@confirm.denyJoinMessage:O pedido some da lista. Ela pode pedir de novo depois.`,
+        details: [
+          { label: $localize`:@@confirm.removePlayerWho:jogador`, value: player.displayName },
+        ],
+        destructive: !approved,
+        confirmLabel: approved
+          ? $localize`:@@table.approveJoin:Deixar entrar`
+          : $localize`:@@table.denyJoin:Recusar`,
+      })
+      .subscribe(() => {
+        this.run(
+          this.tables.decideJoinRequest(
+            this.championshipId(),
+            this.tableId(),
+            player.tablePlayerId,
+            approved,
+          ),
+          {
+            fallback: $localize`:@@table.decideJoinFailed:Não foi possível responder ao pedido.`,
+          },
+        );
+      });
+  }
+
+  /**
+   * The mirror of adding someone by hand, and only before the night starts:
+   * this is a correction to who turned up, not a decision about a table in
+   * progress. The way out of a running table is to cash out.
+   */
+  protected canRemovePlayer(player: TablePlayer): boolean {
+    const table = this.table();
+
+    return (
+      table !== null &&
+      table.canManage &&
+      table.status === 'Open' &&
+      player.status === 'Standby'
+    );
+  }
+
+  protected removePlayer(player: TablePlayer): void {
+    this.confirm
+      .ask({
+        title: $localize`:@@confirm.removePlayerTitle:Tirar da mesa?`,
+        message: $localize`:@@confirm.removePlayerMessage:Ninguém entregou fichas a esta pessoa ainda, então nada da contabilidade muda. Ela pode entrar de novo depois.`,
+        details: [
+          { label: $localize`:@@confirm.removePlayerWho:jogador`, value: player.displayName },
+        ],
+        destructive: true,
+        confirmLabel: $localize`:@@table.removePlayer:Tirar da mesa`,
+      })
+      .subscribe(() => {
+        this.run(
+          this.tables.removePlayer(
+            this.championshipId(),
+            this.tableId(),
+            player.tablePlayerId,
+          ),
+          {
+            fallback: $localize`:@@table.removePlayerFailed:Não foi possível tirar o jogador da mesa.`,
+          },
+        );
+      });
   }
 
   protected start(): void {
@@ -739,6 +824,88 @@ export class LiveTable implements OnInit {
         this.run(this.tables.setBlindLevels(this.championshipId(), this.tableId(), levels), {
           fallback: $localize`:@@blinds.saveFailed:Não foi possível salvar a estrutura de blinds.`,
         });
+      });
+  }
+
+  /**
+   * Going home before the night ends. Your own decision, the same way a rebuy
+   * is; a manager can do it for whoever is already at the door.
+   */
+  protected canCashOut(player: TablePlayer): boolean {
+    const table = this.table();
+
+    if (table === null || table.status !== 'Running' || player.status !== 'Playing') {
+      return false;
+    }
+
+    return table.canManage || player.tablePlayerId === table.myPlayerId;
+  }
+
+  /**
+   * Reuses the very same counting dialog the end of the night uses — it is the
+   * same question ("what is in front of you, chip by chip"), and the camera
+   * scanner comes along with it for free.
+   */
+  protected cashOut(player: TablePlayer): void {
+    const table = this.table();
+
+    if (!table) {
+      return;
+    }
+
+    this.dialog
+      .open(CountDialog, {
+        data: {
+          playerName: player.displayName,
+          chips: table.stock,
+          moneyPerUnit: table.moneyPerUnit,
+        },
+      })
+      .afterClosed()
+      .subscribe((counts: ChipCountEntry[] | undefined) => {
+        if (counts) {
+          this.confirmCashOut(player, counts, table);
+        }
+      });
+  }
+
+  private confirmCashOut(
+    player: TablePlayer,
+    counts: readonly ChipCountEntry[],
+    table: TableDetail,
+  ): void {
+    const units = counts.reduce((total, count) => {
+      const chip = table.stock.find((s) => s.denominationId === count.denominationId);
+
+      return total + count.quantity * (chip?.effectiveValue ?? 0);
+    }, 0);
+
+    const money = units * table.moneyPerUnit;
+
+    this.confirm
+      .ask({
+        title: $localize`:@@confirm.cashOutTitle:Encerrar a noite de ${player.displayName}:NAME:?`,
+        message: $localize`:@@confirm.cashOutMessage:As fichas voltam para a maleta e podem ser distribuídas de novo. O saldo fica congelado neste valor, e ela aparece no acerto no fim.`,
+        details: [
+          {
+            label: $localize`:@@confirm.cashOutValue:leva`,
+            value: `R$ ${money.toFixed(2)}`,
+          },
+        ],
+        confirmLabel: $localize`:@@table.cashOut:Encerrar e devolver`,
+      })
+      .subscribe(() => {
+        this.run(
+          this.tables.cashOut(
+            this.championshipId(),
+            this.tableId(),
+            player.tablePlayerId,
+            counts,
+          ),
+          {
+            fallback: $localize`:@@table.cashOutFailed:Não foi possível encerrar a noite deste jogador.`,
+          },
+        );
       });
   }
 

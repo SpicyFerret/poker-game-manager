@@ -39,7 +39,9 @@ internal sealed class AddPlayerCommandHandler(
         // around the table being closed for new players.
         if (table.Status == TableStatus.Running)
         {
-            if (!table.AllowLateEntry)
+            // A manager seating someone by hand *is* the approval, so Request
+            // needs no second step here — only Blocked closes the door.
+            if (table.LateEntry == LateEntryPolicy.Blocked)
             {
                 return Result.Failure(TableErrors.LateEntryNotAllowed);
             }

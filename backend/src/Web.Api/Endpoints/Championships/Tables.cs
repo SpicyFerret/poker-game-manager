@@ -4,6 +4,7 @@ using Application.Tables.Acknowledge;
 using Application.Tables.AddPlayer;
 using Application.Tables.Blinds;
 using Application.Tables.BuyChips;
+using Application.Tables.CashOut;
 using Application.Tables.Counting;
 using Application.Tables.Create;
 using Application.Tables.Delete;
@@ -11,6 +12,8 @@ using Application.Tables.Get;
 using Application.Tables.IssueStack;
 using Application.Tables.Join;
 using Application.Tables.Preview;
+using Application.Tables.RemovePlayer;
+using Application.Tables.Requests;
 using Application.Tables.Settle;
 using Application.Tables.Start;
 using Domain.Tables;
@@ -29,7 +32,7 @@ internal sealed class Tables : IEndpoint
         decimal? BuyIn,
         decimal? Rebuy,
         JoinPolicy JoinPolicy,
-        bool AllowLateEntry,
+        LateEntryPolicy LateEntry,
         int SmallChipReserve);
 
     public sealed record JoinRequest(string? Code);
@@ -47,6 +50,10 @@ internal sealed class Tables : IEndpoint
     public sealed record ClockRequest(ClockAction Action);
 
     public sealed record DeleteTableRequest(string ConfirmName);
+
+    public sealed record DecideJoinRequest(bool Approved);
+
+    public sealed record CashOutRequest(Guid TablePlayerId, IReadOnlyList<ChipCountEntry> Counts);
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -91,7 +98,7 @@ internal sealed class Tables : IEndpoint
                 request.BuyIn,
                 request.Rebuy,
                 request.JoinPolicy,
-                request.AllowLateEntry,
+                request.LateEntry,
                 request.SmallChipReserve);
 
             Result<Guid> result = await handler.Handle(command, cancellationToken);
@@ -122,6 +129,35 @@ internal sealed class Tables : IEndpoint
         {
             Result result = await handler.Handle(
                 new AddPlayerCommand(championshipId, tableId, request.UserId),
+                cancellationToken);
+
+            return result.Match(Results.NoContent, CustomResults.Problem);
+        });
+
+        group.MapDelete("{tableId:guid}/players/{tablePlayerId:guid}", async (
+            Guid championshipId,
+            Guid tableId,
+            Guid tablePlayerId,
+            ICommandHandler<RemovePlayerCommand> handler,
+            CancellationToken cancellationToken) =>
+        {
+            Result result = await handler.Handle(
+                new RemovePlayerCommand(championshipId, tableId, tablePlayerId),
+                cancellationToken);
+
+            return result.Match(Results.NoContent, CustomResults.Problem);
+        });
+
+        group.MapPost("{tableId:guid}/players/{tablePlayerId:guid}/decision", async (
+            Guid championshipId,
+            Guid tableId,
+            Guid tablePlayerId,
+            DecideJoinRequest request,
+            ICommandHandler<DecideJoinRequestCommand> handler,
+            CancellationToken cancellationToken) =>
+        {
+            Result result = await handler.Handle(
+                new DecideJoinRequestCommand(championshipId, tableId, tablePlayerId, request.Approved),
                 cancellationToken);
 
             return result.Match(Results.NoContent, CustomResults.Problem);
@@ -169,6 +205,20 @@ internal sealed class Tables : IEndpoint
                 request.Amount);
 
             Result result = await handler.Handle(command, cancellationToken);
+
+            return result.Match(Results.NoContent, CustomResults.Problem);
+        });
+
+        group.MapPost("{tableId:guid}/cash-outs", async (
+            Guid championshipId,
+            Guid tableId,
+            CashOutRequest request,
+            ICommandHandler<CashOutCommand> handler,
+            CancellationToken cancellationToken) =>
+        {
+            Result result = await handler.Handle(
+                new CashOutCommand(championshipId, tableId, request.TablePlayerId, request.Counts),
+                cancellationToken);
 
             return result.Match(Results.NoContent, CustomResults.Problem);
         });

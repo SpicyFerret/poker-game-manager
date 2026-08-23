@@ -86,6 +86,21 @@ public static class ChipDistributionCalculator
             remaining -= (long)extra * denomination.EffectiveValue;
         }
 
+        // The two passes above are one guess, and a greedy one: pass 1 takes as
+        // many small chips as the profile asks for, and if that leaves a gap the
+        // remaining stock cannot close, the stack fails even when some other
+        // split of the very same chips would have worked. Before giving up,
+        // search properly.
+        if (remaining > 0)
+        {
+            ChipDistribution? exact = FindExactCombination(targetUnits, ascending);
+
+            if (exact is not null)
+            {
+                return exact;
+            }
+        }
+
         // Whatever is left is genuinely unreachable with this case: either the
         // stock ran out, or the target is not a multiple of anything left in it
         // (a 3-unit gap with nothing smaller than a 5). Reported rather than
@@ -98,6 +113,140 @@ public static class ChipDistributionCalculator
                 .Select(pair => new ChipCount(pair.Key, pair.Value))],
             AllocatedUnits = targetUnits - remaining,
             ShortfallUnits = remaining
+        };
+    }
+
+    /// <summary>
+    /// Beyond this many (divided-down) units the search is skipped and the
+    /// greedy answer stands. Nothing a poker night produces comes close — a
+    /// R$50 buy-in at a hundredth of a real per unit is 5,000 — but a table
+    /// configured absurdly should get a worse stack, never a hung request.
+    /// </summary>
+    private const int MaxSearchUnits = 50_000;
+
+    private static long GreatestCommonDivisor(long a, long b)
+    {
+        while (b != 0)
+        {
+            (a, b) = (b, a % b);
+        }
+
+        return Math.Abs(a);
+    }
+
+    /// <summary>
+    /// A combination of the chips actually available that hits the target
+    /// exactly, or null when no such combination exists.
+    ///
+    /// Where the profile passes guess once and live with it, this considers
+    /// every split — so "the case cannot make this stack" stops meaning "the
+    /// first thing we tried did not work". Among the combinations that do hit
+    /// the target it picks the one closest to the profile, denomination by
+    /// denomination, so the answer is still a playable stack and not merely an
+    /// arithmetically correct one.
+    ///
+    /// Bounded-knapsack DP over units. Chip values almost always share a factor
+    /// (5/25/50/100 share 5), so the target is divided down by their common
+    /// divisor first, which shrinks the table by that factor and costs nothing.
+    /// </summary>
+    private static ChipDistribution? FindExactCombination(
+        long targetUnits,
+        List<DenominationStock> ascending)
+    {
+        long divisor = targetUnits;
+
+        foreach (DenominationStock denomination in ascending)
+        {
+            divisor = GreatestCommonDivisor(divisor, denomination.EffectiveValue);
+        }
+
+        // A target that shares no factor with the chips is unreachable anyway,
+        // but the arithmetic below needs a positive divisor either way.
+        if (divisor <= 0)
+        {
+            return null;
+        }
+
+        long scaledTarget = targetUnits / divisor;
+
+        if (scaledTarget > MaxSearchUnits)
+        {
+            return null;
+        }
+
+        int count = ascending.Count;
+        int target = (int)scaledTarget;
+        const long Unreachable = long.MaxValue / 4;
+
+        // cost[i][u] — the smallest total distance from the profile that reaches
+        // exactly u units using only the first i denominations.
+        long[][] cost = new long[count + 1][];
+        int[][] taken = new int[count + 1][];
+
+        for (int i = 0; i <= count; i++)
+        {
+            cost[i] = new long[target + 1];
+            taken[i] = new int[target + 1];
+
+            Array.Fill(cost[i], Unreachable);
+        }
+
+        cost[0][0] = 0;
+
+        for (int i = 0; i < count; i++)
+        {
+            DenominationStock denomination = ascending[i];
+            int value = (int)(denomination.EffectiveValue / divisor);
+            long wanted = (long)(denomination.ProfileShare * scaledTarget);
+
+            for (int units = 0; units <= target; units++)
+            {
+                if (cost[i][units] >= Unreachable)
+                {
+                    continue;
+                }
+
+                int most = Math.Min(denomination.Available, (target - units) / value);
+
+                for (int quantity = 0; quantity <= most; quantity++)
+                {
+                    int reached = units + quantity * value;
+                    long distance = cost[i][units] + Math.Abs((long)quantity * value - wanted);
+
+                    if (distance < cost[i + 1][reached])
+                    {
+                        cost[i + 1][reached] = distance;
+                        taken[i + 1][reached] = quantity;
+                    }
+                }
+            }
+        }
+
+        if (cost[count][target] >= Unreachable)
+        {
+            return null;
+        }
+
+        var chips = new List<ChipCount>();
+        int left = target;
+
+        for (int i = count; i > 0; i--)
+        {
+            int quantity = taken[i][left];
+
+            if (quantity > 0)
+            {
+                chips.Add(new ChipCount(ascending[i - 1].DenominationId, quantity));
+            }
+
+            left -= quantity * (int)(ascending[i - 1].EffectiveValue / divisor);
+        }
+
+        return new ChipDistribution
+        {
+            Chips = chips,
+            AllocatedUnits = targetUnits,
+            ShortfallUnits = 0
         };
     }
 

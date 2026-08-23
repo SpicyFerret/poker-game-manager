@@ -43,7 +43,7 @@ describe('LiveTable', () => {
       moneyPerUnit: 0.05,
       buyInUnits: 1000,
       joinPolicy: 'AnyMember',
-      allowLateEntry: true,
+      lateEntry: 'Open',
       joinCode: null,
       smallChipReserve: 0,
       startedAtUtc: '2026-08-20T00:00:00Z',
@@ -66,6 +66,9 @@ describe('LiveTable', () => {
     manageOthers: () => boolean;
     toggleManageOthers: () => void;
     canAddPlayer: () => boolean;
+    canRemovePlayer: (player: TablePlayer) => boolean;
+    canDecideRequest: (player: TablePlayer) => boolean;
+    canCashOut: (player: TablePlayer) => boolean;
     start: () => void;
   }
 
@@ -146,10 +149,10 @@ describe('LiveTable', () => {
   });
 
   it('should let a manager add a player once running, only if late entry is allowed', () => {
-    load(table({ canManage: true, status: 'Running', allowLateEntry: true }));
+    load(table({ canManage: true, status: 'Running', lateEntry: 'Open' }));
     expect(instance().canAddPlayer()).toBe(true);
 
-    load(table({ canManage: true, status: 'Running', allowLateEntry: false }));
+    load(table({ canManage: true, status: 'Running', lateEntry: 'Blocked' }));
     expect(instance().canAddPlayer()).toBe(false);
   });
 
@@ -163,6 +166,111 @@ describe('LiveTable', () => {
     load(table({ canManage: true, status: 'Settled' }));
 
     expect(instance().canAddPlayer()).toBe(false);
+  });
+
+  /** A correction to who turned up, so only while the table is still open. */
+  it('should let a manager remove someone waiting at a table that has not started', () => {
+    const waiting = { ...me, status: 'Standby' as const };
+
+    load(table({ canManage: true, status: 'Open', players: [waiting] }));
+
+    expect(instance().canRemovePlayer(waiting)).toBe(true);
+  });
+
+  /** Request is not a refusal — the door is still open, it just has someone behind it. */
+  it('should still offer adding under a request policy, but not a blocked one', () => {
+    load(table({ canManage: true, status: 'Running', lateEntry: 'Request' }));
+    expect(instance().canAddPlayer()).toBe(true);
+
+    load(table({ canManage: true, status: 'Running', lateEntry: 'Blocked' }));
+    expect(instance().canAddPlayer()).toBe(false);
+  });
+
+  it('should offer a manager the answer to a pending request', () => {
+    const asking = { ...me, status: 'Requested' as const };
+
+    load(table({ canManage: true, status: 'Running', lateEntry: 'Request', players: [asking] }));
+
+    expect(instance().canDecideRequest(asking)).toBe(true);
+  });
+
+  /** Waving yourself through would make the whole policy decorative. */
+  it('should not let the person who asked answer their own request', () => {
+    const asking = { ...me, status: 'Requested' as const };
+
+    load(table({ canManage: false, status: 'Running', lateEntry: 'Request', players: [asking] }));
+
+    expect(instance().canDecideRequest(asking)).toBe(false);
+  });
+
+  it('should not offer a decision on someone who is not asking', () => {
+    load(table({ canManage: true, status: 'Running' }));
+
+    expect(instance().canDecideRequest(me)).toBe(false);
+  });
+
+  /** Going home is your own decision, the same way a rebuy is. */
+  it('should let a player cash themselves out', () => {
+    load(table({ canManage: false }));
+
+    expect(instance().canCashOut(me)).toBe(true);
+  });
+
+  it('should not let a plain player cash out somebody else', () => {
+    load(table({ canManage: false }));
+
+    expect(instance().canCashOut(other)).toBe(false);
+  });
+
+  it('should let a manager cash out anyone at the door', () => {
+    load(table({ canManage: true }));
+
+    expect(instance().canCashOut(other)).toBe(true);
+  });
+
+  it('should not offer cashing out someone who is not in the game', () => {
+    const gone = { ...me, status: 'Left' as const };
+
+    load(table({ canManage: true, players: [gone, other] }));
+
+    expect(instance().canCashOut(gone)).toBe(false);
+  });
+
+  /** Once counting has started everyone is reporting anyway; that is the path to use. */
+  it('should stop offering a cash-out once the table has stopped running', () => {
+    load(table({ canManage: true, status: 'Counting' }));
+
+    expect(instance().canCashOut(me)).toBe(false);
+  });
+
+  it('should stop offering removal once the table has started', () => {
+    const waiting = { ...me, status: 'Standby' as const };
+
+    load(table({ canManage: true, status: 'Running', players: [waiting] }));
+
+    expect(instance().canRemovePlayer(waiting)).toBe(false);
+  });
+
+  it('should not offer removing someone who has already been dealt in', () => {
+    load(table({ canManage: true, status: 'Running' }));
+
+    expect(instance().canRemovePlayer(me)).toBe(false);
+  });
+
+  it('should not let a plain player remove anyone', () => {
+    const waiting = { ...me, status: 'Standby' as const };
+
+    load(table({ canManage: false, status: 'Open', players: [waiting] }));
+
+    expect(instance().canRemovePlayer(waiting)).toBe(false);
+  });
+
+  it('should not offer removing once the table has stopped running', () => {
+    const waiting = { ...me, status: 'Standby' as const };
+
+    load(table({ canManage: true, status: 'Counting', players: [waiting] }));
+
+    expect(instance().canRemovePlayer(waiting)).toBe(false);
   });
 
   /**

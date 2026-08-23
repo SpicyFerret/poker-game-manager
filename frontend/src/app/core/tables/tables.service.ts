@@ -45,6 +45,29 @@ export class TablesService {
     return this.http.post<void>(`${this.base(championshipId)}/${tableId}/players`, { userId });
   }
 
+  /** A manager answering someone who asked to join a table already in play. */
+  decideJoinRequest(
+    championshipId: string,
+    tableId: string,
+    tablePlayerId: string,
+    approved: boolean,
+  ): Observable<void> {
+    return this.http.post<void>(
+      `${this.base(championshipId)}/${tableId}/players/${tablePlayerId}/decision`,
+      { approved },
+    );
+  }
+
+  /**
+   * Takes someone back off the table. The API refuses once chips have left the
+   * case for them — at that point they are part of the night's books.
+   */
+  removePlayer(championshipId: string, tableId: string, tablePlayerId: string): Observable<void> {
+    return this.http.delete<void>(
+      `${this.base(championshipId)}/${tableId}/players/${tablePlayerId}`,
+    );
+  }
+
   /** What chips a buy-in or rebuy would hand over, without handing them over. */
   stackPreview(
     championshipId: string,
@@ -111,6 +134,23 @@ export class TablesService {
     counts: readonly ChipCountEntry[],
   ): Observable<void> {
     return this.http.post<void>(`${this.base(championshipId)}/${tableId}/counts`, {
+      tablePlayerId,
+      counts,
+    });
+  }
+
+  /**
+   * Going home early: hand the chips back, take the money for them now. Counted
+   * per denomination like the end-of-night count, because those chips return to
+   * the case and the reconciliation has to know which ones.
+   */
+  cashOut(
+    championshipId: string,
+    tableId: string,
+    tablePlayerId: string,
+    counts: readonly ChipCountEntry[],
+  ): Observable<void> {
+    return this.http.post<void>(`${this.base(championshipId)}/${tableId}/cash-outs`, {
       tablePlayerId,
       counts,
     });

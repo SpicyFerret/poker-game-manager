@@ -57,15 +57,27 @@ confused: what is printed, what it counts as, and what it is worth in cash.
 ### Table
 
 - **`Table`** — championship, chip set, buy-in, rebuy, money-per-unit, join policy
-  (`AnyMember | InviteOnly | Code`), whether late entry is allowed, blind structure, status.
+  (`AnyMember | InviteOnly | Code`), late-entry policy, blind structure, status.
+  **Late entry is three answers, not a yes/no**: `Blocked` turns latecomers away, `Open` seats them
+  like anyone else, and `Request` parks them as `Requested` for a manager to answer. A boolean was the
+  wrong shape — "no" is what a table wants early on and "yes" is what it wants when a friend turns up
+  at ten, and nobody goes and edits a setting at the moment it matters. Asking leaves the decision
+  with whoever is running the night, at the time it comes up.
   `InviteOnly` has no code and lets nobody self-serve; a manager seats each player by hand
   (`POST .../players`), which is the only door onto that kind of table and works on any table
   regardless of its join policy — a manual add is strictly narrower than letting someone self-join,
-  never wider.
+  never wider. A manager can take someone back off (`DELETE .../players/{id}`), but only while the table is
+  still `Open`: that is a correction to who turned up, not a decision about a night in progress. The
+  way out of a running table is to cash out, which leaves a record. Guarded against the books as well
+  as the status — an entry for a player means chips left the case for them, and deleting the row would
+  leave those chips belonging to nobody.
 - Status runs `Draft → Open → Running → Counting → Reconciled → Settled → Closed` (plus `Cancelled`).
   **`Reconciled` is the gate**: it is only reachable once the count matches, and only from there can
   a settlement be produced.
-- **`TablePlayer`** — `Standby | Playing | Left`, seat order, joined-at.
+- **`TablePlayer`** — `Requested | Standby | Playing | Left`, seat order, joined-at. `Requested` is
+  someone waiting on a manager's answer: not at the table in any sense that counts, so the
+  reconciliation and the settlement both ask who has *played* rather than who is not in standby —
+  otherwise one unanswered request would block the night from ever settling.
 - **`BlindStructure` / `BlindLevel`** — order, small blind, big blind, ante, duration.
 - **`TableClock`** — current level, `LevelStartedAtUtc`, `PausedAtUtc`, accumulated pause. The server
   stores **timestamps, never a counting-down number**: each phone computes the remainder itself, so
@@ -74,7 +86,18 @@ confused: what is printed, what it counts as, and what it is worth in cash.
 ### Ledger
 
 - **`LedgerEntry`** — player, type, money amount, optional counterparty.
-  Types: `BuyIn`, `Rebuy`, `ChipPurchaseFromPlayer`, `ChipSaleToPlayer`, `Adjustment`.
+  Types: `BuyIn`, `Rebuy`, `ChipPurchaseFromPlayer`, `ChipSaleToPlayer`, `Adjustment`, `CashOut`.
+- **`CashOut`** — going home before the night ends. The only entry whose chips move *back into* the
+  case, so the issued totals **subtract** it: those chips are dealable again, and counting them as
+  still out would have the same physical chip issued twice — once to whoever handed it back and again
+  to whoever got it next — and the night could never reconcile. It also credits the player, exactly
+  like selling chips to another player does: their final count will be nothing, and without the credit
+  that would read as having lost the lot. A zero `FinalCount` is written at the same time, so the
+  reconciliation is not left waiting on a count from someone who already went home.
+- **How each entry moves a stake lives in one place** (`Application/Tables/LedgerMath.cs`). Three
+  screens need it — the live table, the settlement, a player's statement — and three copies of a money
+  rule is three chances for them to disagree about what someone is owed. Cash-out was nearly the
+  fourth copy.
 - **`LedgerEntryChip`** — the per-denomination quantities for an entry. **Only exists when chips
   actually left the case.** A purchase between players produces none: those chips were already in
   play, they just changed hands.
@@ -116,6 +139,15 @@ to hit the target **exactly**; if the remaining stock cannot, it reports the def
 rounding. Because it always works from current stock, the behaviour everyone expects — small chips
 run out, so later stacks come in bigger denominations — falls out without a special rule. An optional
 per-table small-chip reserve holds some back for the first rebuys.
+
+Those two passes are a *guess*, and a greedy one: the profile pass takes as many small chips as it is
+allowed, and if that leaves a gap the rest of the stock cannot close, the stack fails even though some
+other split of the very same chips would have worked. So when they fall short, a bounded-knapsack DP
+over units searches for a combination that hits the target exactly, picking the one closest to the
+profile. It only ever turns a refusal into a stack — a mix the passes already found is kept as is. The
+target is divided by the chips' common divisor first (5/25/50/100 share 5), which shrinks the table for
+free. **"The profile could not place it" is not "the case cannot make it"**, and only the second is
+worth refusing a buy-in over.
 
 **The opening deal is not that, repeated.** `DealOpeningStacks` works the whole table out at once,
 because what the case can give the fifth player depends on what it already gave the first.

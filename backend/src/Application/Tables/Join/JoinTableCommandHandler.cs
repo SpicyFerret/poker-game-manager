@@ -55,14 +55,19 @@ internal sealed class JoinTableCommandHandler(
 
         int seats = await context.TablePlayers.CountAsync(p => p.TableId == table.Id, cancellationToken);
 
+        // Joining a table that is already running under a Request policy is
+        // asking, not arriving — a manager still has to say yes. Everywhere
+        // else, sitting down is Standby: it is not the same as being dealt in,
+        // and chips only move when a manager says so either way.
+        bool needsApproval =
+            table.Status == TableStatus.Running && table.LateEntry == LateEntryPolicy.Request;
+
         context.TablePlayers.Add(new TablePlayer
         {
             Id = Guid.NewGuid(),
             TableId = table.Id,
             UserId = userContext.UserId,
-            // Standby whether or not play has started: sitting down is not the same
-            // as being dealt in, and chips only move when a manager says so.
-            Status = TablePlayerStatus.Standby,
+            Status = needsApproval ? TablePlayerStatus.Requested : TablePlayerStatus.Standby,
             SeatOrder = seats,
             JoinedAtUtc = dateTimeProvider.UtcNow
         });
@@ -80,7 +85,9 @@ internal sealed class JoinTableCommandHandler(
         }
         else if (table.Status == TableStatus.Running)
         {
-            if (!table.AllowLateEntry)
+            // Request is not a refusal — the row is created as Requested and a
+            // manager decides. Only Blocked closes the door outright.
+            if (table.LateEntry == LateEntryPolicy.Blocked)
             {
                 return Result.Failure(TableErrors.LateEntryNotAllowed);
             }

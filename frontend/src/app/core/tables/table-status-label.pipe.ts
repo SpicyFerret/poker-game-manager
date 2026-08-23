@@ -40,6 +40,8 @@ export class PlayerStatusLabelPipe implements PipeTransform {
         return $localize`:@@playerStatus.playing:Jogando`;
       case 'Left':
         return $localize`:@@playerStatus.left:Saiu`;
+      case 'Requested':
+        return $localize`:@@playerStatus.requested:Pediu para entrar`;
     }
   }
 }

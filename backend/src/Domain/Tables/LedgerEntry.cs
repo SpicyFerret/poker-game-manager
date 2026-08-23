@@ -21,7 +21,16 @@ public enum LedgerEntryType
     ChipSaleToPlayer = 3,
 
     /// <summary>Manual correction, for when the table and the books disagree.</summary>
-    Adjustment = 4
+    Adjustment = 4,
+
+    /// <summary>
+    /// Cashed out and went home before the night ended. The only entry whose
+    /// chips move *back into* the case rather than out of it, which is why the
+    /// issued totals subtract them: those chips are in the case again and can be
+    /// dealt to somebody else, and counting them as still out would put the
+    /// night's reconciliation out by exactly that much.
+    /// </summary>
+    CashOut = 5
 }
 
 /// <summary>

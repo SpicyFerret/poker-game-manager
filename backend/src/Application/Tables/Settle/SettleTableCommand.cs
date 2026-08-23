@@ -73,8 +73,11 @@ internal sealed class SettleTableCommandHandler(
         Championship championship = await context.Championships
             .SingleAsync(c => c.Id == table.ChampionshipId, cancellationToken);
 
+        // Who actually played, rather than who is not in standby: someone still
+        // waiting on a manager's answer never sat down and has nothing to settle.
         List<TablePlayer> players = await context.TablePlayers
-            .Where(p => p.TableId == table.Id && p.Status != TablePlayerStatus.Standby)
+            .Where(p => p.TableId == table.Id &&
+                        (p.Status == TablePlayerStatus.Playing || p.Status == TablePlayerStatus.Left))
             .ToListAsync(cancellationToken);
 
         List<LedgerEntry> entries = await context.LedgerEntries
@@ -103,7 +106,7 @@ internal sealed class SettleTableCommandHandler(
                         .ToDictionary(g => g.Key, g => g.Sum(c => c.Quantity)),
                     effectiveValues,
                     table.MoneyPerUnit),
-                PaidIn = PaidIn(entriesByPlayer[player.Id]),
+                PaidIn = LedgerMath.PaidIn(entriesByPlayer[player.Id]),
                 JoinedAtUtc = player.JoinedAtUtc
             })
         ];
@@ -154,14 +157,4 @@ internal sealed class SettleTableCommandHandler(
         return Result.Success();
     }
 
-    private static decimal PaidIn(IEnumerable<LedgerEntry> entries) =>
-        entries.Sum(entry => entry.Type switch
-        {
-            LedgerEntryType.BuyIn or
-            LedgerEntryType.Rebuy or
-            LedgerEntryType.ChipPurchaseFromPlayer or
-            LedgerEntryType.Adjustment => entry.MoneyAmount,
-            LedgerEntryType.ChipSaleToPlayer => -entry.MoneyAmount,
-            _ => 0m
-        });
 }

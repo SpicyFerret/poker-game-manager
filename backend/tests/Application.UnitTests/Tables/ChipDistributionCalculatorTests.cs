@@ -322,6 +322,52 @@ public sealed class ChipDistributionCalculatorTests
         }
     }
 
+    /// <summary>
+    /// Found against the live table: 50 of each and three players used to fall
+    /// back to uneven stacks. It should not have. The profile pass takes as many
+    /// fives as it is allowed — all sixteen of the third it may spend — and then
+    /// nothing left can close the last 20 units, so it declared equality
+    /// impossible while an equal stack plainly existed. Taking one fewer five is
+    /// all it needed.
+    /// </summary>
+    [Fact]
+    public void CalculateEqualStacks_Should_FindAnEqualStack_WhereTheProfilePassGaveUp()
+    {
+        List<DenominationStock> stock = Case(50, 50, 50, 50);
+
+        ChipDistribution perPlayer = ChipDistributionCalculator.CalculateEqualStacks(1000, stock, 3);
+
+        perPlayer.IsComplete.ShouldBeTrue();
+        UnitsOf(perPlayer, stock).ShouldBe(1000);
+
+        foreach (ChipCount chip in perPlayer.Chips)
+        {
+            int available = stock.Single(d => d.DenominationId == chip.DenominationId).Available;
+            (chip.Quantity * 3).ShouldBeLessThanOrEqualTo(available);
+        }
+
+        // Still a playable stack, not just an arithmetically correct one.
+        CountOf(perPlayer, Five).ShouldBeGreaterThan(0);
+    }
+
+    /// <summary>
+    /// The same weakness on a single stack, which is the worse half: a rebuy was
+    /// refused as impossible when ten hundreds were sitting in the case. Nothing
+    /// about the profile makes 10x100 unreachable — the greedy pass just never
+    /// tried it.
+    /// </summary>
+    [Fact]
+    public void Calculate_Should_FindAnExactStack_WhereTheGreedyPassesFallShort()
+    {
+        List<DenominationStock> stock = Case(fives: 2);
+
+        ChipDistribution result = ChipDistributionCalculator.Calculate(1000, stock);
+
+        result.IsComplete.ShouldBeTrue();
+        UnitsOf(result, stock).ShouldBe(1000);
+        CountOf(result, Five).ShouldBeLessThanOrEqualTo(2);
+    }
+
     // ------------------------------------------------------------ opening deal
 
     [Fact]

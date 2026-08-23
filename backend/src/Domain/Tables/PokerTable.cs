@@ -25,8 +25,8 @@ public sealed class PokerTable
 
     public JoinPolicy JoinPolicy { get; set; }
 
-    /// <summary>Whether someone can still sit down after play has started.</summary>
-    public bool AllowLateEntry { get; set; }
+    /// <summary>What happens when someone tries to sit down after play has started.</summary>
+    public LateEntryPolicy LateEntry { get; set; }
 
     /// <summary>Set only when <see cref="JoinPolicy"/> is Code.</summary>
     public string? JoinCode { get; set; }

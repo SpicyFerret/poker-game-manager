@@ -10,6 +10,6 @@ public sealed record CreateTableCommand(
     decimal? BuyIn,
     decimal? Rebuy,
     JoinPolicy JoinPolicy,
-    bool AllowLateEntry,
+    LateEntryPolicy LateEntry,
     int SmallChipReserve)
     : ICommand<Guid>;

@@ -56,7 +56,7 @@ public sealed class DeleteAndPreviewTests(IntegrationTestWebAppFactory factory)
                 buyIn = 50m,
                 rebuy = 50m,
                 joinPolicy = "AnyMember",
-                allowLateEntry = true,
+                lateEntry = "Open",
                 smallChipReserve = 0
             });
 
@@ -90,8 +90,78 @@ public sealed class DeleteAndPreviewTests(IntegrationTestWebAppFactory factory)
         preview.Chips.Single(c => c.FaceValue == 5).Colour.ShouldBe("red");
     }
 
+    /// <summary>
+    /// A case worth 1,500 units against a 1,000-unit stack, which it still cannot
+    /// make: every chip in it is worth 3, and no number of 3s is 1,000.
+    ///
+    /// This is exactly what the preview is for. "Plenty of chips" and "can deal
+    /// this stack" are different questions, and only the second one matters when
+    /// someone is about to tap the button.
+    /// </summary>
     [Fact]
     public async Task Preview_Should_SayWhenTheStackCannotBeMadeExactly_BeforeAnythingIsTapped()
+    {
+        (Guid _, AccessTokens tokens) = await RegisterAndLoginAsync();
+        Authenticate(tokens.AccessToken);
+
+        HttpResponseMessage created = await HttpClient.PostAsJsonAsync("championships", new
+        {
+            name = "Quinta",
+            defaultBuyIn = 50m,
+            defaultRebuy = 50m,
+            enforceDefaults = false,
+            moneyPerUnit = 0.05m
+        });
+        Guid championshipId = await created.Content.ReadFromJsonAsync<Guid>();
+
+        HttpResponseMessage chipSet = await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/chip-sets",
+            new
+            {
+                name = "Maleta de 3",
+                denominations = new[]
+                {
+                    new { faceValue = 3, effectiveValue = 3, quantity = 500, colour = "red" }
+                }
+            });
+        Guid chipSetId = await chipSet.Content.ReadFromJsonAsync<Guid>();
+
+        HttpResponseMessage table = await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/tables",
+            new
+            {
+                name = "Mesa 1",
+                chipSetId,
+                buyIn = 50m,
+                rebuy = 50m,
+                joinPolicy = "AnyMember",
+                lateEntry = "Open",
+                smallChipReserve = 0
+            });
+        Guid tableId = await table.Content.ReadFromJsonAsync<Guid>();
+
+        Preview? preview = await HttpClient.GetFromJsonAsync<Preview>(
+            $"championships/{championshipId}/tables/{tableId}/stack-preview?isRebuy=false");
+
+        preview!.Units.ShouldBe(1000);
+        preview.IsPossible.ShouldBeFalse();
+        preview.ShortfallUnits.ShouldBeGreaterThan(0);
+
+        // What it can allocate is still coherent, so the screen can show how
+        // close the case got rather than only how short it fell.
+        preview.Chips.Sum(c => (long)c.Quantity * c.EffectiveValue)
+            .ShouldBe(preview.Units - preview.ShortfallUnits);
+    }
+
+    /// <summary>
+    /// The counterpart, and the reason the one above had to be rebuilt: with two
+    /// 5s and two hundred 100s the profile's own first guess falls 90 units
+    /// short, but ten 100s make the stack exactly. "The profile could not place
+    /// it" is not the same as "the case cannot make it", and only the second is
+    /// worth refusing a buy-in over.
+    /// </summary>
+    [Fact]
+    public async Task Preview_Should_FindAStackTheProfilesFirstGuessMisses()
     {
         (Guid _, AccessTokens tokens) = await RegisterAndLoginAsync();
         Authenticate(tokens.AccessToken);
@@ -100,19 +170,15 @@ public sealed class DeleteAndPreviewTests(IntegrationTestWebAppFactory factory)
         Preview? preview = await HttpClient.GetFromJsonAsync<Preview>(
             $"championships/{championshipId}/tables/{tableId}/stack-preview?isRebuy=false");
 
-        // The case is worth 20,010 units, far more than the 1,000 needed — and it
-        // still cannot make this stack. With only two 5s available the mix lands
-        // 90 units short, and nothing smaller than a 100 can close that gap.
-        //
-        // This is exactly what the preview is for: "plenty of chips" and "can deal
-        // this stack" are different questions, and only the second one matters
-        // when someone is about to tap the button.
-        preview!.IsPossible.ShouldBeFalse();
-        preview.ShortfallUnits.ShouldBe(90);
+        preview!.IsPossible.ShouldBeTrue();
+        preview.ShortfallUnits.ShouldBe(0);
+        preview.Chips.Sum(c => (long)c.Quantity * c.EffectiveValue).ShouldBe(1000);
 
-        // What it can allocate is still coherent.
-        preview.Chips.Sum(c => (long)c.Quantity * c.EffectiveValue)
-            .ShouldBe(preview.Units - preview.ShortfallUnits);
+        // Ten 100s and nothing else, as it happens: with only two 5s in the case
+        // there is no other exact combination, so the search leaves them alone
+        // rather than forcing them in and missing the target.
+        (preview.Chips.SingleOrDefault(c => c.FaceValue == 5)?.Quantity ?? 0)
+            .ShouldBeLessThanOrEqualTo(2);
     }
 
     [Fact]
