@@ -320,6 +320,47 @@ export class LiveTable implements OnInit {
     );
   }
 
+  /**
+   * The mirror of adding someone by hand, and only before the night starts:
+   * this is a correction to who turned up, not a decision about a table in
+   * progress. The way out of a running table is to cash out.
+   */
+  protected canRemovePlayer(player: TablePlayer): boolean {
+    const table = this.table();
+
+    return (
+      table !== null &&
+      table.canManage &&
+      table.status === 'Open' &&
+      player.status === 'Standby'
+    );
+  }
+
+  protected removePlayer(player: TablePlayer): void {
+    this.confirm
+      .ask({
+        title: $localize`:@@confirm.removePlayerTitle:Tirar da mesa?`,
+        message: $localize`:@@confirm.removePlayerMessage:Ninguém entregou fichas a esta pessoa ainda, então nada da contabilidade muda. Ela pode entrar de novo depois.`,
+        details: [
+          { label: $localize`:@@confirm.removePlayerWho:jogador`, value: player.displayName },
+        ],
+        destructive: true,
+        confirmLabel: $localize`:@@table.removePlayer:Tirar da mesa`,
+      })
+      .subscribe(() => {
+        this.run(
+          this.tables.removePlayer(
+            this.championshipId(),
+            this.tableId(),
+            player.tablePlayerId,
+          ),
+          {
+            fallback: $localize`:@@table.removePlayerFailed:Não foi possível tirar o jogador da mesa.`,
+          },
+        );
+      });
+  }
+
   protected start(): void {
     const table = this.table();
 

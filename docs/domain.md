@@ -61,7 +61,11 @@ confused: what is printed, what it counts as, and what it is worth in cash.
   `InviteOnly` has no code and lets nobody self-serve; a manager seats each player by hand
   (`POST .../players`), which is the only door onto that kind of table and works on any table
   regardless of its join policy — a manual add is strictly narrower than letting someone self-join,
-  never wider.
+  never wider. A manager can take someone back off (`DELETE .../players/{id}`), but only while the table is
+  still `Open`: that is a correction to who turned up, not a decision about a night in progress. The
+  way out of a running table is to cash out, which leaves a record. Guarded against the books as well
+  as the status — an entry for a player means chips left the case for them, and deleting the row would
+  leave those chips belonging to nobody.
 - Status runs `Draft → Open → Running → Counting → Reconciled → Settled → Closed` (plus `Cancelled`).
   **`Reconciled` is the gate**: it is only reachable once the count matches, and only from there can
   a settlement be produced.

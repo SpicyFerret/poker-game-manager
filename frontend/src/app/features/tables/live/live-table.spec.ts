@@ -66,6 +66,7 @@ describe('LiveTable', () => {
     manageOthers: () => boolean;
     toggleManageOthers: () => void;
     canAddPlayer: () => boolean;
+    canRemovePlayer: (player: TablePlayer) => boolean;
     start: () => void;
   }
 
@@ -163,6 +164,45 @@ describe('LiveTable', () => {
     load(table({ canManage: true, status: 'Settled' }));
 
     expect(instance().canAddPlayer()).toBe(false);
+  });
+
+  /** A correction to who turned up, so only while the table is still open. */
+  it('should let a manager remove someone waiting at a table that has not started', () => {
+    const waiting = { ...me, status: 'Standby' as const };
+
+    load(table({ canManage: true, status: 'Open', players: [waiting] }));
+
+    expect(instance().canRemovePlayer(waiting)).toBe(true);
+  });
+
+  it('should stop offering removal once the table has started', () => {
+    const waiting = { ...me, status: 'Standby' as const };
+
+    load(table({ canManage: true, status: 'Running', players: [waiting] }));
+
+    expect(instance().canRemovePlayer(waiting)).toBe(false);
+  });
+
+  it('should not offer removing someone who has already been dealt in', () => {
+    load(table({ canManage: true, status: 'Running' }));
+
+    expect(instance().canRemovePlayer(me)).toBe(false);
+  });
+
+  it('should not let a plain player remove anyone', () => {
+    const waiting = { ...me, status: 'Standby' as const };
+
+    load(table({ canManage: false, status: 'Open', players: [waiting] }));
+
+    expect(instance().canRemovePlayer(waiting)).toBe(false);
+  });
+
+  it('should not offer removing once the table has stopped running', () => {
+    const waiting = { ...me, status: 'Standby' as const };
+
+    load(table({ canManage: true, status: 'Counting', players: [waiting] }));
+
+    expect(instance().canRemovePlayer(waiting)).toBe(false);
   });
 
   /**

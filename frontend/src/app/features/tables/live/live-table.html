@@ -147,9 +147,14 @@
               </mat-card-subtitle>
             </mat-card-header>
 
-            @if (table.canManage && table.status === 'Running') {
-              @if (manageOthers() && player.status === 'Playing') {
-                <mat-card-actions align="end">
+            @let running = table.canManage && table.status === 'Running';
+            @let showRebuy = running && manageOthers() && player.status === 'Playing';
+            @let showDealIn = running && !showRebuy && player.status === 'Standby';
+            @let showRemove = canRemovePlayer(player);
+
+            @if (showRebuy || showDealIn || showRemove) {
+              <mat-card-actions align="end">
+                @if (showRebuy) {
                   <button
                     matButton
                     type="button"
@@ -168,9 +173,8 @@
                   >
                     Comprar de jogador
                   </button>
-                </mat-card-actions>
-              } @else if (player.status === 'Standby') {
-                <mat-card-actions align="end">
+                }
+                @if (showDealIn) {
                   <button
                     matButton
                     type="button"
@@ -180,8 +184,19 @@
                   >
                     Dar fichas
                   </button>
-                </mat-card-actions>
-              }
+                }
+                @if (showRemove) {
+                  <button
+                    matButton
+                    type="button"
+                    [disabled]="busy()"
+                    (click)="removePlayer(player)"
+                    i18n="@@table.removePlayer"
+                  >
+                    Tirar da mesa
+                  </button>
+                }
+              </mat-card-actions>
             }
           </mat-card>
         }
