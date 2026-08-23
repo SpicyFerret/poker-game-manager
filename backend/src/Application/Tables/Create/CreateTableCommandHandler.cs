@@ -78,7 +78,7 @@ internal sealed class CreateTableCommandHandler(
             // last month has to keep the rate it was played at.
             MoneyPerUnit = championship.MoneyPerUnit,
             JoinPolicy = command.JoinPolicy,
-            AllowLateEntry = command.AllowLateEntry,
+            LateEntry = command.LateEntry,
             JoinCode = command.JoinPolicy == JoinPolicy.Code ? await GenerateJoinCodeAsync(cancellationToken) : null,
             SmallChipReserve = command.SmallChipReserve,
             CreatedAtUtc = dateTimeProvider.UtcNow

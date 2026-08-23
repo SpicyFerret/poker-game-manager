@@ -3,7 +3,16 @@ export type TableStatus =
 
 export type JoinPolicy = 'AnyMember' | 'InviteOnly' | 'Code';
 
-export type TablePlayerStatus = 'Standby' | 'Playing' | 'Left';
+export type TablePlayerStatus = 'Standby' | 'Playing' | 'Left' | 'Requested';
+
+/**
+ * What happens when someone tries to sit down at a table already in play. A
+ * yes/no answer was the wrong shape: "no" is what a table wants early and
+ * "yes" is what it wants when a friend turns up at ten, and nobody edits a
+ * setting at the moment it matters. Asking leaves the decision with whoever is
+ * running the night, at the time it comes up.
+ */
+export type LateEntryPolicy = 'Blocked' | 'Open' | 'Request';
 
 export interface TableSummary {
   id: string;
@@ -55,7 +64,7 @@ export interface TableDetail {
   moneyPerUnit: number;
   buyInUnits: number;
   joinPolicy: JoinPolicy;
-  allowLateEntry: boolean;
+  lateEntry: LateEntryPolicy;
   /** Only present for someone who can manage the table. */
   joinCode: string | null;
   smallChipReserve: number;
@@ -79,7 +88,7 @@ export interface CreateTableRequest {
   buyIn: number | null;
   rebuy: number | null;
   joinPolicy: JoinPolicy;
-  allowLateEntry: boolean;
+  lateEntry: LateEntryPolicy;
   smallChipReserve: number;
 }
 

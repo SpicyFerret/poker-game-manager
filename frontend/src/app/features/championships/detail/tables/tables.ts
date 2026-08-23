@@ -18,6 +18,7 @@ import { ChampionshipsService } from '../../../../core/championships/championshi
 import { TableStatusLabelPipe } from '../../../../core/tables/table-status-label.pipe';
 import {
   JoinPolicy,
+  LateEntryPolicy,
   TableMood,
   TableSummary,
   isActive,
@@ -67,7 +68,7 @@ export class TablesTab implements OnInit {
     buyIn: this.formBuilder.control<number | null>(null),
     rebuy: this.formBuilder.control<number | null>(null),
     joinPolicy: this.formBuilder.nonNullable.control<JoinPolicy>('AnyMember'),
-    allowLateEntry: this.formBuilder.nonNullable.control(true),
+    lateEntry: this.formBuilder.nonNullable.control<LateEntryPolicy>('Request'),
     smallChipReserve: this.formBuilder.control<number | null>(0),
   });
 
@@ -107,7 +108,7 @@ export class TablesTab implements OnInit {
       name: '',
       chipSetId: this.chipSets()[0]?.id ?? '',
       joinPolicy: 'AnyMember',
-      allowLateEntry: true,
+      lateEntry: 'Request',
       smallChipReserve: 0,
     });
     this.creating.set(true);
@@ -150,7 +151,7 @@ export class TablesTab implements OnInit {
     buyIn: number | null;
     rebuy: number | null;
     joinPolicy: JoinPolicy;
-    allowLateEntry: boolean;
+    lateEntry: LateEntryPolicy;
     smallChipReserve: number | null;
   }): void {
     this.busy.set(true);
@@ -165,7 +166,7 @@ export class TablesTab implements OnInit {
         buyIn: value.buyIn,
         rebuy: value.rebuy,
         joinPolicy: value.joinPolicy,
-        allowLateEntry: value.allowLateEntry,
+        lateEntry: value.lateEntry,
         smallChipReserve: value.smallChipReserve ?? 0,
       })
       .subscribe({

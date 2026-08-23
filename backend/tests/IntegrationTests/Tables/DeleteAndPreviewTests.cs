@@ -56,7 +56,7 @@ public sealed class DeleteAndPreviewTests(IntegrationTestWebAppFactory factory)
                 buyIn = 50m,
                 rebuy = 50m,
                 joinPolicy = "AnyMember",
-                allowLateEntry = true,
+                lateEntry = "Open",
                 smallChipReserve = 0
             });
 
@@ -135,7 +135,7 @@ public sealed class DeleteAndPreviewTests(IntegrationTestWebAppFactory factory)
                 buyIn = 50m,
                 rebuy = 50m,
                 joinPolicy = "AnyMember",
-                allowLateEntry = true,
+                lateEntry = "Open",
                 smallChipReserve = 0
             });
         Guid tableId = await table.Content.ReadFromJsonAsync<Guid>();

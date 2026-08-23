@@ -32,6 +32,10 @@ public static class TableErrors
         "Tables.LateEntryNotAllowed",
         "This table does not allow joining after it has started");
 
+    public static readonly Error NoJoinRequestPending = Error.Conflict(
+        "Tables.NoJoinRequestPending",
+        "There is no request from this person waiting to be answered");
+
     public static readonly Error NoPlayers = Error.Problem(
         "Tables.NoPlayers",
         "A table cannot start with nobody at it");

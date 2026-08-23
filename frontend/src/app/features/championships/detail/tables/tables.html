@@ -54,9 +54,19 @@
             </mat-select>
           </mat-form-field>
 
-          <mat-checkbox formControlName="allowLateEntry" i18n="@@field.allowLateEntry">
-            Permitir entrar com a mesa já rolando
-          </mat-checkbox>
+          <mat-form-field class="form-field-full">
+            <mat-label i18n="@@field.lateEntry">Quem chega com a mesa rolando</mat-label>
+            <mat-select formControlName="lateEntry">
+              <mat-option value="Request" i18n="@@lateEntry.request"
+                >Pede para entrar</mat-option
+              >
+              <mat-option value="Open" i18n="@@lateEntry.open">Entra liberado</mat-option>
+              <mat-option value="Blocked" i18n="@@lateEntry.blocked">Não entra</mat-option>
+            </mat-select>
+            <mat-hint i18n="@@tables.lateEntryHint"
+              >Pedindo, um gerente libera na hora — sem ter que mexer nesta opção depois.</mat-hint
+            >
+          </mat-form-field>
 
           <mat-form-field class="form-field-full">
             <mat-label i18n="@@field.smallChipReserve">Reserva de fichas pequenas</mat-label>

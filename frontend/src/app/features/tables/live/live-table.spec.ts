@@ -43,7 +43,7 @@ describe('LiveTable', () => {
       moneyPerUnit: 0.05,
       buyInUnits: 1000,
       joinPolicy: 'AnyMember',
-      allowLateEntry: true,
+      lateEntry: 'Open',
       joinCode: null,
       smallChipReserve: 0,
       startedAtUtc: '2026-08-20T00:00:00Z',
@@ -67,6 +67,7 @@ describe('LiveTable', () => {
     toggleManageOthers: () => void;
     canAddPlayer: () => boolean;
     canRemovePlayer: (player: TablePlayer) => boolean;
+    canDecideRequest: (player: TablePlayer) => boolean;
     start: () => void;
   }
 
@@ -147,10 +148,10 @@ describe('LiveTable', () => {
   });
 
   it('should let a manager add a player once running, only if late entry is allowed', () => {
-    load(table({ canManage: true, status: 'Running', allowLateEntry: true }));
+    load(table({ canManage: true, status: 'Running', lateEntry: 'Open' }));
     expect(instance().canAddPlayer()).toBe(true);
 
-    load(table({ canManage: true, status: 'Running', allowLateEntry: false }));
+    load(table({ canManage: true, status: 'Running', lateEntry: 'Blocked' }));
     expect(instance().canAddPlayer()).toBe(false);
   });
 
@@ -173,6 +174,38 @@ describe('LiveTable', () => {
     load(table({ canManage: true, status: 'Open', players: [waiting] }));
 
     expect(instance().canRemovePlayer(waiting)).toBe(true);
+  });
+
+  /** Request is not a refusal — the door is still open, it just has someone behind it. */
+  it('should still offer adding under a request policy, but not a blocked one', () => {
+    load(table({ canManage: true, status: 'Running', lateEntry: 'Request' }));
+    expect(instance().canAddPlayer()).toBe(true);
+
+    load(table({ canManage: true, status: 'Running', lateEntry: 'Blocked' }));
+    expect(instance().canAddPlayer()).toBe(false);
+  });
+
+  it('should offer a manager the answer to a pending request', () => {
+    const asking = { ...me, status: 'Requested' as const };
+
+    load(table({ canManage: true, status: 'Running', lateEntry: 'Request', players: [asking] }));
+
+    expect(instance().canDecideRequest(asking)).toBe(true);
+  });
+
+  /** Waving yourself through would make the whole policy decorative. */
+  it('should not let the person who asked answer their own request', () => {
+    const asking = { ...me, status: 'Requested' as const };
+
+    load(table({ canManage: false, status: 'Running', lateEntry: 'Request', players: [asking] }));
+
+    expect(instance().canDecideRequest(asking)).toBe(false);
+  });
+
+  it('should not offer a decision on someone who is not asking', () => {
+    load(table({ canManage: true, status: 'Running' }));
+
+    expect(instance().canDecideRequest(me)).toBe(false);
   });
 
   it('should stop offering removal once the table has started', () => {

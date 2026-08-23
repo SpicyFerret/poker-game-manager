@@ -54,7 +54,7 @@ public sealed class BlindClockTests(IntegrationTestWebAppFactory factory) : Base
                 buyIn = 5m,
                 rebuy = 5m,
                 joinPolicy = "AnyMember",
-                allowLateEntry = true,
+                lateEntry = "Open",
                 smallChipReserve = 0
             });
 

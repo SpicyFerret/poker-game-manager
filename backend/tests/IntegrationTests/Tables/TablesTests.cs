@@ -77,7 +77,7 @@ public sealed class TablesTests(IntegrationTestWebAppFactory factory) : BaseInte
                 buyIn = 50m,
                 rebuy = 50m,
                 joinPolicy,
-                allowLateEntry = true,
+                lateEntry = "Open",
                 smallChipReserve = 0
             });
 
@@ -659,7 +659,7 @@ public sealed class TablesTests(IntegrationTestWebAppFactory factory) : BaseInte
                 buyIn = 50m,
                 rebuy = 50m,
                 joinPolicy = "AnyMember",
-                allowLateEntry = true,
+                lateEntry = "Open",
                 smallChipReserve = 0
             });
 

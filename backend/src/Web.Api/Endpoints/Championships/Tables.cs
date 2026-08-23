@@ -12,6 +12,7 @@ using Application.Tables.IssueStack;
 using Application.Tables.Join;
 using Application.Tables.Preview;
 using Application.Tables.RemovePlayer;
+using Application.Tables.Requests;
 using Application.Tables.Settle;
 using Application.Tables.Start;
 using Domain.Tables;
@@ -30,7 +31,7 @@ internal sealed class Tables : IEndpoint
         decimal? BuyIn,
         decimal? Rebuy,
         JoinPolicy JoinPolicy,
-        bool AllowLateEntry,
+        LateEntryPolicy LateEntry,
         int SmallChipReserve);
 
     public sealed record JoinRequest(string? Code);
@@ -48,6 +49,8 @@ internal sealed class Tables : IEndpoint
     public sealed record ClockRequest(ClockAction Action);
 
     public sealed record DeleteTableRequest(string ConfirmName);
+
+    public sealed record DecideJoinRequest(bool Approved);
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -92,7 +95,7 @@ internal sealed class Tables : IEndpoint
                 request.BuyIn,
                 request.Rebuy,
                 request.JoinPolicy,
-                request.AllowLateEntry,
+                request.LateEntry,
                 request.SmallChipReserve);
 
             Result<Guid> result = await handler.Handle(command, cancellationToken);
@@ -137,6 +140,21 @@ internal sealed class Tables : IEndpoint
         {
             Result result = await handler.Handle(
                 new RemovePlayerCommand(championshipId, tableId, tablePlayerId),
+                cancellationToken);
+
+            return result.Match(Results.NoContent, CustomResults.Problem);
+        });
+
+        group.MapPost("{tableId:guid}/players/{tablePlayerId:guid}/decision", async (
+            Guid championshipId,
+            Guid tableId,
+            Guid tablePlayerId,
+            DecideJoinRequest request,
+            ICommandHandler<DecideJoinRequestCommand> handler,
+            CancellationToken cancellationToken) =>
+        {
+            Result result = await handler.Handle(
+                new DecideJoinRequestCommand(championshipId, tableId, tablePlayerId, request.Approved),
                 cancellationToken);
 
             return result.Match(Results.NoContent, CustomResults.Problem);

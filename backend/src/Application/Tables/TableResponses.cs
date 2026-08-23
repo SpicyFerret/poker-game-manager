@@ -66,7 +66,7 @@ public sealed record TableDetailResponse
     public long BuyInUnits { get; init; }
 
     public JoinPolicy JoinPolicy { get; init; }
-    public bool AllowLateEntry { get; init; }
+    public LateEntryPolicy LateEntry { get; init; }
 
     /// <summary>
     /// Only filled in for someone who can manage the table. It is what lets a
