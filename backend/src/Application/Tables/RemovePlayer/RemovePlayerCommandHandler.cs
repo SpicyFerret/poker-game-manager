@@ -34,9 +34,11 @@ internal sealed class RemovePlayerCommandHandler(
             return Result.Failure(TableErrors.NotFound(command.TableId));
         }
 
-        // Once counting starts the roster is what the reconciliation is built
-        // from, and removing a row would change what the night has to add up to.
-        if (table.Status != TableStatus.Open && table.Status != TableStatus.Running)
+        // Only before the first card is dealt. Once a table is running, taking
+        // someone off it is a decision about a night in progress rather than a
+        // correction to who turned up, and the way out of a running table is to
+        // cash out — which leaves a record — not to disappear from it.
+        if (table.Status != TableStatus.Open)
         {
             return Result.Failure(TableErrors.WrongStatus(table.Status, TableStatus.Open));
         }
@@ -50,11 +52,11 @@ internal sealed class RemovePlayerCommandHandler(
             return Result.Failure(TableErrors.NotAPlayer);
         }
 
-        // The real question is not what status they are in but whether anything
-        // has moved on their behalf. A ledger entry means they paid in and chips
-        // left the case; deleting them then would leave those chips belonging to
-        // nobody, and the table could never be reconciled. Someone who is done
-        // playing leaves the table, they do not vanish from its books.
+        // Belt and braces. The status gate above already keeps this out of reach
+        // — chips only leave the case once a table is Running — but this is the
+        // condition that actually matters, stated against the books rather than
+        // by proxy: a ledger entry means chips left the case for this player, and
+        // deleting them would leave those chips belonging to nobody.
         bool hasLedger = await context.LedgerEntries.AnyAsync(
             e => e.TablePlayerId == player.Id,
             cancellationToken);

@@ -108,9 +108,9 @@ public sealed class RemovePlayerTests(IntegrationTestWebAppFactory factory) : Ba
     }
 
     /// <summary>
-    /// The line that matters. Once the table has started, that player paid in and
-    /// chips left the case for them; deleting the row would leave those chips
-    /// belonging to nobody and the night could never be reconciled.
+    /// The obvious half: that player paid in and chips left the case for them, so
+    /// deleting the row would leave those chips belonging to nobody and the night
+    /// could never be reconciled.
     /// </summary>
     [Fact]
     public async Task RemovePlayer_Should_RefuseOnceThePlayerHasBeenDealtIn()
@@ -134,11 +134,13 @@ public sealed class RemovePlayerTests(IntegrationTestWebAppFactory factory) : Ba
     }
 
     /// <summary>
-    /// A late entrant sitting in standby at a running table never received chips,
-    /// so they can still be taken off — status is not the question, the ledger is.
+    /// Only before the night starts. A late entrant sitting in standby at a
+    /// running table has received no chips, but taking them off is a decision
+    /// about a night in progress rather than a correction to who turned up — the
+    /// way out of a running table is to cash out, which leaves a record.
     /// </summary>
     [Fact]
-    public async Task RemovePlayer_Should_AllowRemovingAStandbyPlayerAtARunningTable()
+    public async Task RemovePlayer_Should_RefuseOnceTheTableHasStarted()
     {
         (Guid championshipId, Guid tableId, AccessTokens owner) = await SetUpAsync();
         await HttpClient.PostAsJsonAsync(
@@ -153,10 +155,10 @@ public sealed class RemovePlayerTests(IntegrationTestWebAppFactory factory) : Ba
 
         HttpResponseMessage response = await RemoveAsync(championshipId, tableId, late.TablePlayerId);
 
-        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+        response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
 
         TableDetail? after = await GetTableAsync(championshipId, tableId);
-        after!.Players.ShouldNotContain(p => p.UserId == lateUserId);
+        after!.Players.ShouldContain(p => p.UserId == lateUserId);
     }
 
     [Fact]

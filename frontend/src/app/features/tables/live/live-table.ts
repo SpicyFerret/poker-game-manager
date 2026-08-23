@@ -321,9 +321,9 @@ export class LiveTable implements OnInit {
   }
 
   /**
-   * The mirror of adding someone by hand. Only offered while they are still in
-   * standby: once chips have left the case for a player they belong to the
-   * night's books, and the API refuses to delete them out of it.
+   * The mirror of adding someone by hand, and only before the night starts:
+   * this is a correction to who turned up, not a decision about a table in
+   * progress. The way out of a running table is to cash out.
    */
   protected canRemovePlayer(player: TablePlayer): boolean {
     const table = this.table();
@@ -331,7 +331,7 @@ export class LiveTable implements OnInit {
     return (
       table !== null &&
       table.canManage &&
-      (table.status === 'Open' || table.status === 'Running') &&
+      table.status === 'Open' &&
       player.status === 'Standby'
     );
   }
