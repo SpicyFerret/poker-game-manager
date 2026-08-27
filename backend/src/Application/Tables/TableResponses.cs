@@ -32,6 +32,16 @@ public sealed record TablePlayerResponse
 
     /// <summary>Whether the settlement will be able to say where to send their money.</summary>
     public bool HasPaymentHandle { get; init; }
+
+    /// <summary>
+    /// Whether this player has already reported a final count. Lets the counting
+    /// screen offer "edit" instead of "report" and start from what they said
+    /// before, rather than an empty form for a correction.
+    /// </summary>
+    public bool HasReportedCount { get; init; }
+
+    /// <summary>What they last reported, by denomination. Empty until they have.</summary>
+    public IReadOnlyDictionary<Guid, int> ReportedCounts { get; init; } = new Dictionary<Guid, int>();
 }
 
 public sealed record ChipStockResponse

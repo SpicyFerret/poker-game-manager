@@ -2,8 +2,12 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { WritableSignal } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { of } from 'rxjs';
+import { vi } from 'vitest';
 
 import { TableDetail, TablePlayer } from '../../../core/tables/table.models';
+import { CountDialog, CountDialogData } from './count-dialog';
 import { LiveTable } from './live-table';
 
 describe('LiveTable', () => {
@@ -19,6 +23,8 @@ describe('LiveTable', () => {
     paidIn: 50,
     rebuyCount: 0,
     hasPaymentHandle: true,
+    hasReportedCount: false,
+    reportedCounts: {},
   };
 
   const other: TablePlayer = {
@@ -30,6 +36,8 @@ describe('LiveTable', () => {
     paidIn: 50,
     rebuyCount: 0,
     hasPaymentHandle: true,
+    hasReportedCount: false,
+    reportedCounts: {},
   };
 
   function table(overrides: Partial<TableDetail> = {}): TableDetail {
@@ -70,6 +78,7 @@ describe('LiveTable', () => {
     canDecideRequest: (player: TablePlayer) => boolean;
     canCashOut: (player: TablePlayer) => boolean;
     start: () => void;
+    reportCount: (player: TablePlayer) => void;
   }
 
   function instance(): Exposed {
@@ -304,5 +313,39 @@ describe('LiveTable', () => {
       stacksAreEqual: true,
       isPossible: true,
     });
+  });
+
+  /**
+   * A correction should start from what was already said, not an empty form
+   * that would silently overwrite it if the person leaves a box blank.
+   */
+  it('should hand the count dialog what the player already reported', () => {
+    const counted = { ...me, hasReportedCount: true, reportedCounts: { d1: 7 } };
+
+    load(table({ players: [counted, other] }));
+
+    const dialog = fixture.debugElement.injector.get(MatDialog);
+    const openSpy = vi
+      .spyOn(dialog, 'open')
+      .mockReturnValue({ afterClosed: () => of(undefined) } as MatDialogRef<CountDialog>);
+
+    instance().reportCount(counted);
+
+    const data = openSpy.mock.calls[0][1]?.data as CountDialogData;
+    expect(data.existing).toEqual({ d1: 7 });
+  });
+
+  it('should not offer a previous report to someone who has not counted yet', () => {
+    load(table({ players: [me, other] }));
+
+    const dialog = fixture.debugElement.injector.get(MatDialog);
+    const openSpy = vi
+      .spyOn(dialog, 'open')
+      .mockReturnValue({ afterClosed: () => of(undefined) } as MatDialogRef<CountDialog>);
+
+    instance().reportCount(me);
+
+    const data = openSpy.mock.calls[0][1]?.data as CountDialogData;
+    expect(data.existing).toBeUndefined();
   });
 });
