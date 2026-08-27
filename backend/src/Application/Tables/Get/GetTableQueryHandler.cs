@@ -61,6 +61,12 @@ internal sealed class GetTableQueryHandler(
 
         ILookup<Guid, LedgerEntry> byPlayer = entries.ToLookup(e => e.TablePlayerId);
 
+        List<FinalCount> finalCounts = await context.FinalCounts
+            .Where(c => c.TableId == table.Id)
+            .ToListAsync(cancellationToken);
+
+        ILookup<Guid, FinalCount> countsByPlayer = finalCounts.ToLookup(c => c.TablePlayerId);
+
         List<TablePlayerResponse> playerResponses =
         [
             .. players.Select(player => new TablePlayerResponse
@@ -72,7 +78,10 @@ internal sealed class GetTableQueryHandler(
                 SeatOrder = player.SeatOrder,
                 PaidIn = LedgerMath.PaidIn(byPlayer[player.Id]),
                 RebuyCount = byPlayer[player.Id].Count(e => e.Type == LedgerEntryType.Rebuy),
-                HasPaymentHandle = player.User.PaymentHandle != null
+                HasPaymentHandle = player.User.PaymentHandle != null,
+                HasReportedCount = countsByPlayer[player.Id].Any(),
+                ReportedCounts = countsByPlayer[player.Id]
+                    .ToDictionary(c => c.ChipDenominationId, c => c.Quantity)
             })
         ];
 

@@ -34,6 +34,10 @@ export interface TablePlayer {
   paidIn: number;
   rebuyCount: number;
   hasPaymentHandle: boolean;
+  /** Whether this player has already reported a final count, so a correction starts from it. */
+  hasReportedCount: boolean;
+  /** What they last reported, keyed by denominationId. Empty until they have. */
+  reportedCounts: Record<string, number>;
 }
 
 export interface ChipStock {

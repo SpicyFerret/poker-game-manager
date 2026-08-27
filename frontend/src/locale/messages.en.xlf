@@ -1039,6 +1039,10 @@
         <source>ainda não contou</source>
         <target>has not counted yet</target>
       </trans-unit>
+      <trans-unit id="counting.edit" datatype="html">
+        <source>Editar contagem</source>
+        <target>Edit count</target>
+      </trans-unit>
       <trans-unit id="counting.report" datatype="html">
         <source> Informar contagem </source>
         <target> Report count </target>

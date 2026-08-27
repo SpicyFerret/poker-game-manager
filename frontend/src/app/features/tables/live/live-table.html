@@ -424,9 +424,12 @@
                   type="button"
                   [disabled]="busy()"
                   (click)="reportCount(player)"
-                  i18n="@@counting.report"
                 >
-                  Informar contagem
+                  @if (hasCounted(player)) {
+                    <span i18n="@@counting.edit">Editar contagem</span>
+                  } @else {
+                    <span i18n="@@counting.report">Informar contagem</span>
+                  }
                 </button>
               </mat-card-actions>
             }
