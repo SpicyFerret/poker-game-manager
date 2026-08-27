@@ -961,6 +961,7 @@ export class LiveTable implements OnInit {
           playerName: player.displayName,
           chips: table.stock,
           moneyPerUnit: table.moneyPerUnit,
+          existing: player.hasReportedCount ? player.reportedCounts : undefined,
         },
       })
       .afterClosed()

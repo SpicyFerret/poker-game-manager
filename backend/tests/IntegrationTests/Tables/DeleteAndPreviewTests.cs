@@ -216,6 +216,41 @@ public sealed class DeleteAndPreviewTests(IntegrationTestWebAppFactory factory)
         }
     }
 
+    /// <summary>
+    /// A plain player rebuying themselves has no manager permission and needs
+    /// none — this is the check that was wrongly set to TableManager, which
+    /// blocked every self-service rebuy behind the preview call the app makes
+    /// before confirming.
+    /// </summary>
+    [Fact]
+    public async Task Preview_Should_BeAvailableToAPlainPlayer_PreviewingTheirOwnRebuy()
+    {
+        (Guid _, AccessTokens owner) = await RegisterAndLoginAsync();
+        Authenticate(owner.AccessToken);
+        (Guid championshipId, Guid tableId) = await SetUpAsync();
+
+        HttpResponseMessage inviteResponse = await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/invites",
+            new { role = "Player", expiresAtUtc = (DateTime?)null, maxUses = (int?)null });
+        InviteDto? invite = await inviteResponse.Content.ReadFromJsonAsync<InviteDto>();
+
+        (Guid _, AccessTokens friend) = await RegisterAndLoginAsync();
+        Authenticate(friend.AccessToken);
+        await HttpClient.PostAsJsonAsync("championships/join", new { code = invite!.Code });
+        await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/tables/{tableId}/join", new { code = (string?)null });
+
+        Authenticate(owner.AccessToken);
+        await HttpClient.PostAsJsonAsync($"championships/{championshipId}/tables/{tableId}/start", new { });
+
+        // Still authenticated as the plain player, not the owner.
+        Authenticate(friend.AccessToken);
+        HttpResponseMessage response = await HttpClient.GetAsync(
+            $"championships/{championshipId}/tables/{tableId}/stack-preview?isRebuy=true");
+
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+    }
+
     [Fact]
     public async Task DeleteTable_Should_NeedTheNameTypedExactly()
     {

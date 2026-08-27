@@ -29,9 +29,12 @@ internal sealed class GetStackPreviewQueryHandler(
         GetStackPreviewQuery query,
         CancellationToken cancellationToken)
     {
+        // Any member may preview: the mix does not depend on who is asking, and
+        // a plain player rebuying or dealing themselves in needs this exactly as
+        // much as a manager dealing someone else in does.
         Result<ChampionshipRole> caller = await championshipContext.RequireRoleAsync(
             query.ChampionshipId,
-            ChampionshipRole.TableManager,
+            ChampionshipRole.Player,
             cancellationToken);
 
         if (caller.IsFailure)
