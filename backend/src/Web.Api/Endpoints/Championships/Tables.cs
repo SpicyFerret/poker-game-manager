@@ -16,6 +16,7 @@ using Application.Tables.RemovePlayer;
 using Application.Tables.Requests;
 using Application.Tables.Settle;
 using Application.Tables.Start;
+using Application.Tables.StackHistory;
 using Domain.Tables;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel;
@@ -353,6 +354,20 @@ internal sealed class Tables : IEndpoint
         {
             Result<StackPreviewResponse> result = await handler.Handle(
                 new GetStackPreviewQuery(championshipId, tableId, isRebuy),
+                cancellationToken);
+
+            return result.Match(Results.Ok, CustomResults.Problem);
+        });
+
+        group.MapGet("{tableId:guid}/players/{tablePlayerId:guid}/stacks", async (
+            Guid championshipId,
+            Guid tableId,
+            Guid tablePlayerId,
+            IQueryHandler<GetPlayerStacksQuery, IReadOnlyList<StackHistoryEntryResponse>> handler,
+            CancellationToken cancellationToken) =>
+        {
+            Result<IReadOnlyList<StackHistoryEntryResponse>> result = await handler.Handle(
+                new GetPlayerStacksQuery(championshipId, tableId, tablePlayerId),
                 cancellationToken);
 
             return result.Match(Results.Ok, CustomResults.Problem);

@@ -1,0 +1,47 @@
+<h2 mat-dialog-title i18n="@@stackHistory.heading">Fichas de {{ data.playerName }}</h2>
+
+<mat-dialog-content>
+  @if (data.entries.length === 0) {
+    <p i18n="@@stackHistory.empty">Ainda não pegou fichas nesta mesa.</p>
+  } @else {
+    <div class="entries">
+      @for (entry of data.entries; track entry.ledgerEntryId) {
+        <div class="entry">
+          <div class="entry__header">
+            <span class="entry__kind">
+              @if (entry.isRebuy) {
+                <span i18n="@@stackHistory.rebuy">Rebuy</span>
+              } @else {
+                <span i18n="@@stackHistory.buyIn">Buy-in</span>
+              }
+            </span>
+            <span class="entry__date">{{ entry.createdAtUtc | date: 'short' }}</span>
+          </div>
+
+          <div class="chips">
+            @for (chip of entry.chips; track chip.denominationId) {
+              @let colour = colourOf(chip.colour);
+              <div
+                class="chip"
+                [style.background]="colour?.swatch ?? 'var(--mat-sys-surface-container-high)'"
+                [style.color]="colour?.ink ?? 'var(--mat-sys-on-surface)'"
+              >
+                <span class="chip__count">{{ chip.quantity }}x</span>
+                <span class="chip__face">{{ chip.faceValue }}</span>
+              </div>
+            }
+          </div>
+
+          <p class="entry__total">
+            <span i18n="@@stackHistory.total">Total</span>
+            <strong>R$ {{ entry.money | number: '1.2-2' }}</strong>
+          </p>
+        </div>
+      }
+    </div>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button matButton mat-dialog-close type="button" i18n="@@common.close">Fechar</button>
+</mat-dialog-actions>
