@@ -11,6 +11,7 @@ import {
   CreateTableRequest,
   Reconciliation,
   Settlement,
+  StackHistoryEntry,
   StackPreview,
   TableDetail,
   TableSummary,
@@ -65,6 +66,17 @@ export class TablesService {
   removePlayer(championshipId: string, tableId: string, tablePlayerId: string): Observable<void> {
     return this.http.delete<void>(
       `${this.base(championshipId)}/${tableId}/players/${tablePlayerId}`,
+    );
+  }
+
+  /** Every buy-in and rebuy this player was actually dealt, newest first. */
+  playerStacks(
+    championshipId: string,
+    tableId: string,
+    tablePlayerId: string,
+  ): Observable<StackHistoryEntry[]> {
+    return this.http.get<StackHistoryEntry[]>(
+      `${this.base(championshipId)}/${tableId}/players/${tablePlayerId}/stacks`,
     );
   }
 
