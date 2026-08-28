@@ -9,6 +9,7 @@ import { vi } from 'vitest';
 import { TableDetail, TablePlayer } from '../../../core/tables/table.models';
 import { CountDialog, CountDialogData } from './count-dialog';
 import { LiveTable } from './live-table';
+import { StackHistoryData, StackHistoryDialog } from './stack-history-dialog';
 
 describe('LiveTable', () => {
   const championshipId = '9a1f1d4c-1c58-4d8e-9a0b-0f2b3c4d5e6f';
@@ -79,6 +80,7 @@ describe('LiveTable', () => {
     canCashOut: (player: TablePlayer) => boolean;
     start: () => void;
     reportCount: (player: TablePlayer) => void;
+    viewStackHistory: (player: TablePlayer) => void;
   }
 
   function instance(): Exposed {
@@ -347,5 +349,37 @@ describe('LiveTable', () => {
 
     const data = openSpy.mock.calls[0][1]?.data as CountDialogData;
     expect(data.existing).toBeUndefined();
+  });
+
+  /**
+   * The button in the footer is the whole point: a player checking their own
+   * chip history should not have to ask a manager for it.
+   */
+  it('should fetch and show a player their own stack history', () => {
+    load(table());
+
+    const dialog = fixture.debugElement.injector.get(MatDialog);
+    const openSpy = vi
+      .spyOn(dialog, 'open')
+      .mockReturnValue({ afterClosed: () => of(undefined) } as MatDialogRef<StackHistoryDialog>);
+
+    instance().viewStackHistory(me);
+
+    const http = TestBed.inject(HttpTestingController);
+    const request = http.expectOne(
+      (r) =>
+        r.method === 'GET' &&
+        r.url.includes(
+          `/championships/${championshipId}/tables/${tableId}/players/${me.tablePlayerId}/stacks`,
+        ),
+    );
+
+    request.flush([
+      { ledgerEntryId: 'l1', isRebuy: false, money: 50, createdAtUtc: '2026-01-01T00:00:00Z', chips: [] },
+    ]);
+
+    const data = openSpy.mock.calls[0][1]?.data as StackHistoryData;
+    expect(data.playerName).toBe(me.displayName);
+    expect(data.entries).toHaveLength(1);
   });
 });

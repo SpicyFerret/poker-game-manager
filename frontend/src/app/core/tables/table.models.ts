@@ -58,6 +58,15 @@ export interface PendingStack {
   chips: StackPreviewChip[];
 }
 
+/** One buy-in or rebuy a player was actually dealt, chips and all. */
+export interface StackHistoryEntry {
+  ledgerEntryId: string;
+  isRebuy: boolean;
+  money: number;
+  createdAtUtc: string;
+  chips: StackPreviewChip[];
+}
+
 export interface TableDetail {
   id: string;
   championshipId: string;

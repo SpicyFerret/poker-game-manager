@@ -19,6 +19,7 @@ import {
   ClockAction,
   Reconciliation,
   Settlement,
+  StackHistoryEntry,
   TableDetail,
   TablePlayer,
   formatDuration,
@@ -40,6 +41,7 @@ import { NavSection, SectionNav } from '../../../shared/section-nav/section-nav'
 import { AddTablePlayerDialog } from './add-table-player-dialog';
 import { BlindLevelsDialog } from './blind-levels-dialog';
 import { ChipTradeDialog, ChipTradeResult } from './chip-trade-dialog';
+import { StackHistoryDialog } from './stack-history-dialog';
 import { StackNoticeDialog } from './stack-notice-dialog';
 import { CountDialog } from './count-dialog';
 
@@ -567,6 +569,31 @@ export class LiveTable implements OnInit {
 
   protected dealIn(player: TablePlayer): void {
     this.confirmStack(player, false);
+  }
+
+  /**
+   * Every buy-in and rebuy this player was actually dealt, chips and all — for
+   * checking against what is in front of them without waiting for a fresh
+   * notice.
+   */
+  protected viewStackHistory(player: TablePlayer): void {
+    this.tables
+      .playerStacks(this.championshipId(), this.tableId(), player.tablePlayerId)
+      .subscribe({
+        next: (entries: StackHistoryEntry[]) => {
+          this.dialog.open(StackHistoryDialog, {
+            data: { playerName: player.displayName, entries },
+          });
+        },
+        error: (err: unknown) => {
+          this.error.set(
+            describeError(
+              err,
+              $localize`:@@table.stackHistoryFailed:Não foi possível carregar as fichas.`,
+            ),
+          );
+        },
+      });
   }
 
   /**

@@ -152,6 +152,11 @@ public static class TableErrors
         "Tables.CannotCashOutSomeoneElse",
         "You can only cash out for yourself. A table manager can cash out anyone");
 
+    /// <summary>Your own stack history is yours to check; someone else's is a manager's business.</summary>
+    public static readonly Error CannotViewSomeoneElsesStacks = Error.Forbidden(
+        "Tables.CannotViewSomeoneElsesStacks",
+        "You can only view your own stacks. A table manager can view anyone's");
+
     /// <summary>
     /// More of a chip handed back than the whole table was ever given. That is a
     /// miscount, and letting it through would drive the issued total negative and

@@ -1711,6 +1711,38 @@
         <source> Encerrar e devolver </source>
         <target> Cash out </target>
       </trans-unit>
+      <trans-unit id="table.stackHistory" datatype="html">
+        <source> 🪙 Minhas fichas </source>
+        <target> 🪙 My stacks </target>
+      </trans-unit>
+      <trans-unit id="table.stackHistoryFailed" datatype="html">
+        <source>Não foi possível carregar as fichas.</source>
+        <target>Could not load the chips.</target>
+      </trans-unit>
+      <trans-unit id="stackHistory.heading" datatype="html">
+        <source>Fichas de <x id="INTERPOLATION" equiv-text="{{ data.playerName }}"/></source>
+        <target>Stacks for <x id="INTERPOLATION" equiv-text="{{ data.playerName }}"/></target>
+      </trans-unit>
+      <trans-unit id="stackHistory.empty" datatype="html">
+        <source>Ainda não pegou fichas nesta mesa.</source>
+        <target>Hasn't been dealt any chips at this table yet.</target>
+      </trans-unit>
+      <trans-unit id="stackHistory.rebuy" datatype="html">
+        <source>Rebuy</source>
+        <target>Rebuy</target>
+      </trans-unit>
+      <trans-unit id="stackHistory.buyIn" datatype="html">
+        <source>Buy-in</source>
+        <target>Buy-in</target>
+      </trans-unit>
+      <trans-unit id="stackHistory.total" datatype="html">
+        <source>Total</source>
+        <target>Total</target>
+      </trans-unit>
+      <trans-unit id="common.close" datatype="html">
+        <source>Fechar</source>
+        <target>Close</target>
+      </trans-unit>
       <trans-unit id="confirm.cashOutTitle" datatype="html">
         <source>Encerrar a noite de <x id="NAME" equiv-text="player.displayName"/>?</source>
         <target>End <x id="NAME" equiv-text="player.displayName"/>'s night?</target>

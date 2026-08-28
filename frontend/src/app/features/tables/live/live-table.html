@@ -567,6 +567,15 @@
         >
           Encerrar e devolver
         </button>
+        <button
+          matButton
+          type="button"
+          [disabled]="busy()"
+          (click)="viewStackHistory(ownPlayer()!)"
+          i18n="@@table.stackHistory"
+        >
+          🪙 Minhas fichas
+        </button>
       </div>
     </div>
   }
