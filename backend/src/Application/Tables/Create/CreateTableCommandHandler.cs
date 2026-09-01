@@ -2,6 +2,7 @@ using Application.Abstractions.Authentication;
 using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Abstractions.Realtime;
 using Domain.Championships;
 using Domain.ChipSets;
 using Domain.Tables;
@@ -14,7 +15,8 @@ internal sealed class CreateTableCommandHandler(
     IApplicationDbContext context,
     IChampionshipContext championshipContext,
     IUserContext userContext,
-    IDateTimeProvider dateTimeProvider)
+    IDateTimeProvider dateTimeProvider,
+    IChampionshipActivityNotifier notifier)
     : ICommandHandler<CreateTableCommand, Guid>
 {
     public async Task<Result<Guid>> Handle(CreateTableCommand command, CancellationToken cancellationToken)
@@ -87,6 +89,8 @@ internal sealed class CreateTableCommandHandler(
         context.Tables.Add(table);
 
         await context.SaveChangesAsync(cancellationToken);
+
+        await notifier.NotifyAsync(command.ChampionshipId, cancellationToken);
 
         return table.Id;
     }

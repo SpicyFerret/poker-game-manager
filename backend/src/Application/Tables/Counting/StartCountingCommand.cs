@@ -1,6 +1,7 @@
 using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Abstractions.Realtime;
 using Domain.Championships;
 using Domain.Tables;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,8 @@ public sealed record StartCountingCommand(Guid ChampionshipId, Guid TableId) : I
 
 internal sealed class StartCountingCommandHandler(
     IApplicationDbContext context,
-    IChampionshipContext championshipContext)
+    IChampionshipContext championshipContext,
+    IChampionshipActivityNotifier notifier)
     : ICommandHandler<StartCountingCommand>
 {
     public async Task<Result> Handle(StartCountingCommand command, CancellationToken cancellationToken)
@@ -45,6 +47,8 @@ internal sealed class StartCountingCommandHandler(
         table.Status = TableStatus.Counting;
 
         await context.SaveChangesAsync(cancellationToken);
+
+        await notifier.NotifyAsync(command.ChampionshipId, cancellationToken);
 
         return Result.Success();
     }

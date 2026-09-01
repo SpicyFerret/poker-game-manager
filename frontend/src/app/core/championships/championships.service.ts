@@ -27,6 +27,11 @@ export class ChampionshipsService {
     return this.http.get<ChampionshipSummary[]>(this.base);
   }
 
+  /** The caller's own arrangement of the list, top to bottom. */
+  reorder(championshipIds: readonly string[]): Observable<void> {
+    return this.http.put<void>(`${this.base}/order`, { championshipIds });
+  }
+
   get(championshipId: string): Observable<Championship> {
     return this.http.get<Championship>(`${this.base}/${championshipId}`);
   }

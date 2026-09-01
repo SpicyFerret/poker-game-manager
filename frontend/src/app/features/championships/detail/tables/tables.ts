@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, input, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, input, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -7,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { Router, RouterLink } from '@angular/router';
+import { debounceTime } from 'rxjs';
 
 import { describeError } from '../../../../core/api/problem-details';
 import {
@@ -15,6 +17,7 @@ import {
   atLeast,
 } from '../../../../core/championships/championship.models';
 import { ChampionshipsService } from '../../../../core/championships/championships.service';
+import { RealtimeService } from '../../../../core/realtime/realtime.service';
 import { TableStatusLabelPipe } from '../../../../core/tables/table-status-label.pipe';
 import {
   JoinPolicy,
@@ -22,6 +25,7 @@ import {
   TableMood,
   TableSummary,
   isActive,
+  isFinished,
   sortForDisplay,
   tableMood,
 } from '../../../../core/tables/table.models';
@@ -50,6 +54,8 @@ export class TablesTab implements OnInit {
   private readonly championships = inject(ChampionshipsService);
   private readonly router = inject(Router);
   private readonly confirm = inject(Confirm);
+  private readonly realtime = inject(RealtimeService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly championshipId = input.required<string>();
   readonly callerRole = input.required<ChampionshipRole>();
@@ -74,6 +80,13 @@ export class TablesTab implements OnInit {
 
   ngOnInit(): void {
     this.load();
+
+    // A table someone else started, finished, or opened shows up here without
+    // waiting for a manual refresh.
+    this.realtime
+      .watch(this.championshipId())
+      .pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.load());
   }
 
   protected canManage(): boolean {
@@ -90,7 +103,10 @@ export class TablesTab implements OnInit {
 
   protected load(): void {
     this.tables.list(this.championshipId()).subscribe({
-      next: (items) => this.items.set(sortForDisplay(items)),
+      // A finished table's result lives in the history tab from here on;
+      // showing it here too would just be clutter next to the ones still
+      // worth acting on.
+      next: (items) => this.items.set(sortForDisplay(items.filter((t) => !isFinished(t.status)))),
       error: (err: unknown) =>
         this.error.set(
           describeError(err, $localize`:@@tables.loadFailed:Não foi possível carregar as mesas.`),

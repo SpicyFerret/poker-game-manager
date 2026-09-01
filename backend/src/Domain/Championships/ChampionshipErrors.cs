@@ -54,4 +54,13 @@ public static class ChampionshipErrors
     public static readonly Error ConfirmationDoesNotMatch = Error.Problem(
         "Championships.ConfirmationDoesNotMatch",
         "Type the championship's name exactly to confirm");
+
+    /// <summary>
+    /// The reordered list has to be exactly the caller's own memberships — one
+    /// missing or unknown id would either silently leave a championship stuck
+    /// wherever it was, or move something that is not the caller's to move.
+    /// </summary>
+    public static readonly Error ReorderMustIncludeEveryChampionship = Error.Problem(
+        "Championships.ReorderMustIncludeEveryChampionship",
+        "The list must include every championship you belong to, exactly once, and nothing else");
 }

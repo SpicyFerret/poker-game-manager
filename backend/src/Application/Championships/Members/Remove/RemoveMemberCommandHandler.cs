@@ -1,6 +1,7 @@
 using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Abstractions.Realtime;
 using Domain.Championships;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
@@ -9,7 +10,8 @@ namespace Application.Championships.Members.Remove;
 
 internal sealed class RemoveMemberCommandHandler(
     IApplicationDbContext context,
-    IChampionshipContext championshipContext)
+    IChampionshipContext championshipContext,
+    IChampionshipActivityNotifier notifier)
     : ICommandHandler<RemoveMemberCommand>
 {
     public async Task<Result> Handle(RemoveMemberCommand command, CancellationToken cancellationToken)
@@ -48,6 +50,8 @@ internal sealed class RemoveMemberCommandHandler(
         context.ChampionshipMembers.Remove(member);
 
         await context.SaveChangesAsync(cancellationToken);
+
+        await notifier.NotifyAsync(command.ChampionshipId, cancellationToken);
 
         return Result.Success();
     }

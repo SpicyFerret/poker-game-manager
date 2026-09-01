@@ -1,10 +1,12 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Observable, of } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
+import { vi } from 'vitest';
 
 import { environment } from '../../../../../environments/environment';
 import { ChampionshipRole, Member } from '../../../../core/championships/championship.models';
+import { RealtimeService } from '../../../../core/realtime/realtime.service';
 import { Confirm } from '../../../../shared/confirm/confirm.service';
 import { MembersTab } from './members';
 
@@ -23,8 +25,11 @@ describe('MembersTab', () => {
 
   let fixture: ComponentFixture<MembersTab>;
   let http: HttpTestingController;
+  let activity: Subject<void>;
 
   beforeEach(async () => {
+    activity = new Subject<void>();
+
     await TestBed.configureTestingModule({
       imports: [MembersTab],
       providers: [
@@ -33,6 +38,7 @@ describe('MembersTab', () => {
         // Auto-confirms, so a click drives the request straight through
         // without a real dialog in the way.
         { provide: Confirm, useValue: { ask: (): Observable<void> => of(undefined) } },
+        { provide: RealtimeService, useValue: { watch: () => activity } },
       ],
     }).compileComponents();
 
@@ -103,5 +109,17 @@ describe('MembersTab', () => {
     request.flush(null);
 
     http.expectOne(`${environment.apiUrl}/championships/${championshipId}/members`).flush([]);
+  });
+
+  /** Someone else adding or removing a member should not need a manual refresh. */
+  it('should reload when the realtime channel reports a change', () => {
+    vi.useFakeTimers();
+
+    activity.next();
+    vi.advanceTimersByTime(300);
+
+    http.expectOne(`${environment.apiUrl}/championships/${championshipId}/members`).flush(members);
+
+    vi.useRealTimers();
   });
 });

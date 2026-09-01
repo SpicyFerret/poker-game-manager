@@ -1,6 +1,7 @@
 using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Abstractions.Realtime;
 using Domain.Championships;
 using Domain.ChipSets;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,8 @@ namespace Application.ChipSets.Update;
 
 internal sealed class UpdateChipSetCommandHandler(
     IApplicationDbContext context,
-    IChampionshipContext championshipContext)
+    IChampionshipContext championshipContext,
+    IChampionshipActivityNotifier notifier)
     : ICommandHandler<UpdateChipSetCommand>
 {
     public async Task<Result> Handle(UpdateChipSetCommand command, CancellationToken cancellationToken)
@@ -86,6 +88,8 @@ internal sealed class UpdateChipSetCommandHandler(
         context.ChipDenominations.RemoveRange(existing.Values);
 
         await context.SaveChangesAsync(cancellationToken);
+
+        await notifier.NotifyAsync(command.ChampionshipId, cancellationToken);
 
         return Result.Success();
     }

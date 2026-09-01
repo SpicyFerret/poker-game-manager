@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 using Web.Api;
 using Web.Api.Extensions;
+using Web.Api.Realtime;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +41,8 @@ if (args.Contains("--migrate-only"))
 
 RouteGroupBuilder apiV1 = app.MapGroup("api/v1");
 app.MapEndpoints(apiV1);
+
+app.MapHub<ChampionshipActivityHub>("hubs/championship-activity");
 
 if (app.Environment.IsDevelopment())
 {

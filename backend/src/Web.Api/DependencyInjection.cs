@@ -1,5 +1,7 @@
 ﻿using System.Text.Json.Serialization;
+using Application.Abstractions.Realtime;
 using Web.Api.Infrastructure;
+using Web.Api.Realtime;
 
 namespace Web.Api;
 
@@ -23,6 +25,9 @@ public static class DependencyInjection
         // stops being a silent breaking change for anyone already deployed.
         services.ConfigureHttpJsonOptions(options =>
             options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+        services.AddSignalR();
+        services.AddScoped<IChampionshipActivityNotifier, ChampionshipActivityNotifier>();
 
         return services;
     }

@@ -1,6 +1,8 @@
 using Application.Abstractions.Authentication;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Abstractions.Realtime;
+using Application.Championships;
 using Domain.Championships;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
@@ -10,7 +12,8 @@ namespace Application.Championships.Join;
 internal sealed class JoinByCodeCommandHandler(
     IApplicationDbContext context,
     IUserContext userContext,
-    IDateTimeProvider dateTimeProvider)
+    IDateTimeProvider dateTimeProvider,
+    IChampionshipActivityNotifier notifier)
     : ICommandHandler<JoinByCodeCommand, JoinByCodeResponse>
 {
     public async Task<Result<JoinByCodeResponse>> Handle(
@@ -62,12 +65,18 @@ internal sealed class JoinByCodeCommandHandler(
             ChampionshipId = invite.ChampionshipId,
             UserId = userContext.UserId,
             Role = invite.Role,
-            JoinedAtUtc = dateTimeProvider.UtcNow
+            JoinedAtUtc = dateTimeProvider.UtcNow,
+            DisplayOrder = await ChampionshipMemberOrdering.NextDisplayOrderAsync(
+                context,
+                userContext.UserId,
+                cancellationToken)
         });
 
         invite.Uses++;
 
         await context.SaveChangesAsync(cancellationToken);
+
+        await notifier.NotifyAsync(invite.ChampionshipId, cancellationToken);
 
         return new JoinByCodeResponse(invite.ChampionshipId, name);
     }

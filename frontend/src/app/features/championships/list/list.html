@@ -25,42 +25,63 @@
     </mat-card>
   }
 
-  @for (championship of items(); track championship.id) {
-    <!--
-      The whole card is the link, rather than a card with an "open" button in it.
-      A card that looks tappable should be tappable, and it is a far bigger target
-      on a phone than a button in the corner.
-    -->
-    <a class="card-link" [routerLink]="['/championships', championship.id]">
-      <mat-card class="championship-card">
-        <mat-card-header>
-          <mat-card-title>{{ championship.name }}</mat-card-title>
-          <mat-card-subtitle>
-            {{ championship.role | roleLabel }} ·
-            <span i18n="@@championships.memberCount">{championship.memberCount, plural,
-              =1 {1 membro}
-              other {{{championship.memberCount}} membros}
-            }</span>
-          </mat-card-subtitle>
-        </mat-card-header>
+  <div
+    class="championship-list"
+    cdkDropList
+    [cdkDropListData]="items()"
+    (cdkDropListDropped)="drop($event)"
+  >
+    @for (championship of items(); track championship.id) {
+      <!--
+        The whole card is the link, rather than a card with an "open" button in
+        it. A card that looks tappable should be tappable, and it is a far
+        bigger target on a phone than a button in the corner. The drag handle
+        is the one part that does not navigate — it grabs the card instead.
+      -->
+      <div class="card-wrapper" cdkDrag [cdkDragData]="championship">
+        <a class="card-link" [routerLink]="['/championships', championship.id]">
+          <mat-card class="championship-card">
+            <button
+              type="button"
+              class="drag-handle"
+              cdkDragHandle
+              (click)="$event.preventDefault(); $event.stopPropagation()"
+              i18n-aria-label="@@championships.dragHandle"
+              aria-label="Arrastar para reordenar"
+            >
+              ☰
+            </button>
 
-        @if (championship.description || championship.leaderDisplayName) {
-          <mat-card-content>
-            @if (championship.description) {
-              <p>{{ championship.description }}</p>
+            <mat-card-header>
+              <mat-card-title>{{ championship.name }}</mat-card-title>
+              <mat-card-subtitle>
+                {{ championship.role | roleLabel }} ·
+                <span i18n="@@championships.memberCount">{championship.memberCount, plural,
+                  =1 {1 membro}
+                  other {{{championship.memberCount}} membros}
+                }</span>
+              </mat-card-subtitle>
+            </mat-card-header>
+
+            @if (championship.description || championship.leaderDisplayName) {
+              <mat-card-content>
+                @if (championship.description) {
+                  <p>{{ championship.description }}</p>
+                }
+                @if (championship.leaderDisplayName; as leader) {
+                  <p class="leader">
+                    <span aria-hidden="true">&#9819;</span>
+                    <strong>{{ leader }}</strong>
+                    <span class="muted" i18n="@@championships.leaderPoints"
+                      >{{ championship.leaderPoints }} pts</span
+                    >
+                  </p>
+                }
+              </mat-card-content>
             }
-            @if (championship.leaderDisplayName; as leader) {
-              <p class="leader">
-                <span aria-hidden="true">&#9819;</span>
-                <strong>{{ leader }}</strong>
-                <span class="muted" i18n="@@championships.leaderPoints"
-                  >{{ championship.leaderPoints }} pts</span
-                >
-              </p>
-            }
-          </mat-card-content>
-        }
-      </mat-card>
-    </a>
-  }
+          </mat-card>
+        </a>
+      </div>
+    }
+  </div>
 </div>

@@ -1,6 +1,7 @@
 using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Abstractions.Realtime;
 using Domain.Championships;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
@@ -9,7 +10,8 @@ namespace Application.Championships.Members.ChangeRole;
 
 internal sealed class ChangeMemberRoleCommandHandler(
     IApplicationDbContext context,
-    IChampionshipContext championshipContext)
+    IChampionshipContext championshipContext,
+    IChampionshipActivityNotifier notifier)
     : ICommandHandler<ChangeMemberRoleCommand>
 {
     public async Task<Result> Handle(ChangeMemberRoleCommand command, CancellationToken cancellationToken)
@@ -55,6 +57,8 @@ internal sealed class ChangeMemberRoleCommandHandler(
         member.Role = command.Role;
 
         await context.SaveChangesAsync(cancellationToken);
+
+        await notifier.NotifyAsync(command.ChampionshipId, cancellationToken);
 
         return Result.Success();
     }

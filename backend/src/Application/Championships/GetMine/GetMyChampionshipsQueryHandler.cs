@@ -22,16 +22,23 @@ internal sealed class GetMyChampionshipsQueryHandler(
                 context.Championships,
                 member => member.ChampionshipId,
                 championship => championship.Id,
-                (member, championship) => new ChampionshipSummaryResponse
+                (member, championship) => new
                 {
-                    Id = championship.Id,
-                    Name = championship.Name,
-                    Description = championship.Description,
-                    Role = member.Role,
-                    MemberCount = context.ChampionshipMembers
-                        .Count(other => other.ChampionshipId == championship.Id)
+                    member.DisplayOrder,
+                    Response = new ChampionshipSummaryResponse
+                    {
+                        Id = championship.Id,
+                        Name = championship.Name,
+                        Description = championship.Description,
+                        Role = member.Role,
+                        MemberCount = context.ChampionshipMembers
+                            .Count(other => other.ChampionshipId == championship.Id)
+                    }
                 })
-            .OrderBy(c => c.Name)
+            // The user's own arrangement, not alphabetical — that is the whole
+            // point of letting them drag the cards around.
+            .OrderBy(c => c.DisplayOrder)
+            .Select(c => c.Response)
             .ToListAsync(cancellationToken);
 
         // One query for every card's leader rather than one per card.
