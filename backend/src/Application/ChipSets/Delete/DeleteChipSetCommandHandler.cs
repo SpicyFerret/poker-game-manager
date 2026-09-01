@@ -1,6 +1,7 @@
 using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Abstractions.Realtime;
 using Domain.Championships;
 using Domain.ChipSets;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,8 @@ namespace Application.ChipSets.Delete;
 
 internal sealed class DeleteChipSetCommandHandler(
     IApplicationDbContext context,
-    IChampionshipContext championshipContext)
+    IChampionshipContext championshipContext,
+    IChampionshipActivityNotifier notifier)
     : ICommandHandler<DeleteChipSetCommand>
 {
     public async Task<Result> Handle(DeleteChipSetCommand command, CancellationToken cancellationToken)
@@ -46,6 +48,8 @@ internal sealed class DeleteChipSetCommandHandler(
         context.ChipSets.Remove(chipSet);
 
         await context.SaveChangesAsync(cancellationToken);
+
+        await notifier.NotifyAsync(command.ChampionshipId, cancellationToken);
 
         return Result.Success();
     }

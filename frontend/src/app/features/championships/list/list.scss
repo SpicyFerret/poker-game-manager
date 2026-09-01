@@ -20,12 +20,70 @@
 }
 
 .championship-card {
+  position: relative;
   margin-bottom: 0.75rem;
   cursor: pointer;
 
   &:hover {
     background: var(--mat-sys-surface-container-high);
   }
+}
+
+.card-wrapper {
+  // cdkDrag needs its own box to move during a drag; margin lives here instead
+  // of on the card so the placeholder left behind keeps the same spacing.
+  margin-bottom: 0.75rem;
+}
+
+.championship-list .championship-card {
+  margin-bottom: 0;
+}
+
+.drag-handle {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: grab;
+  touch-action: none;
+
+  &:hover {
+    background: var(--mat-sys-surface-container-highest);
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 12px;
+  box-shadow: var(--mat-sys-level3);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3;
+}
+
+.cdk-drag-animating {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.championship-list.cdk-drop-list-dragging .card-wrapper:not(.cdk-drag-placeholder) {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
 }
 
 // The crown carries the meaning at a glance; the name is what people read.

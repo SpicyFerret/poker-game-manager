@@ -1,6 +1,7 @@
 using Application.Abstractions.Authentication;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Championships;
 using Domain.Championships;
 using SharedKernel;
 
@@ -43,7 +44,11 @@ internal sealed class CreateChampionshipCommandHandler(
             ChampionshipId = championship.Id,
             UserId = userContext.UserId,
             Role = ChampionshipRole.Owner,
-            JoinedAtUtc = dateTimeProvider.UtcNow
+            JoinedAtUtc = dateTimeProvider.UtcNow,
+            DisplayOrder = await ChampionshipMemberOrdering.NextDisplayOrderAsync(
+                context,
+                userContext.UserId,
+                cancellationToken)
         });
 
         await context.SaveChangesAsync(cancellationToken);

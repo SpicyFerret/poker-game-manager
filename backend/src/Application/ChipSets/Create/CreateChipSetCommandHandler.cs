@@ -1,6 +1,7 @@
 using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Abstractions.Realtime;
 using Domain.Championships;
 using Domain.ChipSets;
 using SharedKernel;
@@ -10,7 +11,8 @@ namespace Application.ChipSets.Create;
 internal sealed class CreateChipSetCommandHandler(
     IApplicationDbContext context,
     IChampionshipContext championshipContext,
-    IDateTimeProvider dateTimeProvider)
+    IDateTimeProvider dateTimeProvider,
+    IChampionshipActivityNotifier notifier)
     : ICommandHandler<CreateChipSetCommand, Guid>
 {
     public async Task<Result<Guid>> Handle(
@@ -56,6 +58,8 @@ internal sealed class CreateChipSetCommandHandler(
         context.ChipSets.Add(chipSet);
 
         await context.SaveChangesAsync(cancellationToken);
+
+        await notifier.NotifyAsync(command.ChampionshipId, cancellationToken);
 
         return chipSet.Id;
     }

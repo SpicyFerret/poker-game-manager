@@ -1,3 +1,4 @@
+using Application.Abstractions.Realtime;
 using Application.Championships.Members.ChangeRole;
 using Application.UnitTests.Abstractions;
 using Domain.Championships;
@@ -30,7 +31,7 @@ public sealed class ChangeMemberRoleCommandHandlerTests : BaseHandlerTest
     }
 
     private static ChangeMemberRoleCommandHandler HandlerFor(TestDbContext context, ChampionshipRole callerRole) =>
-        new(context, new FakeChampionshipContext(callerRole));
+        new(context, new FakeChampionshipContext(callerRole), Substitute.For<IChampionshipActivityNotifier>());
 
     [Fact]
     public async Task Handle_Should_Fail_WhenCallerIsOnlyATableManager()

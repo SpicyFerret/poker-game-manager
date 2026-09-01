@@ -1,6 +1,7 @@
 using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Abstractions.Realtime;
 using Domain.Championships;
 using Domain.Tables;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,8 @@ public sealed record DeleteTableCommand(Guid ChampionshipId, Guid TableId, strin
 
 internal sealed class DeleteTableCommandHandler(
     IApplicationDbContext context,
-    IChampionshipContext championshipContext)
+    IChampionshipContext championshipContext,
+    IChampionshipActivityNotifier notifier)
     : ICommandHandler<DeleteTableCommand>
 {
     public async Task<Result> Handle(DeleteTableCommand command, CancellationToken cancellationToken)
@@ -85,6 +87,8 @@ internal sealed class DeleteTableCommandHandler(
         context.Tables.Remove(table);
 
         await context.SaveChangesAsync(cancellationToken);
+
+        await notifier.NotifyAsync(command.ChampionshipId, cancellationToken);
 
         return Result.Success();
     }

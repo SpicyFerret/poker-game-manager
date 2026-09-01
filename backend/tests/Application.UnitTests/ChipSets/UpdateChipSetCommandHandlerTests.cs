@@ -1,3 +1,4 @@
+using Application.Abstractions.Realtime;
 using Application.ChipSets;
 using Application.ChipSets.Update;
 using Application.UnitTests.Abstractions;
@@ -56,7 +57,7 @@ public sealed class UpdateChipSetCommandHandlerTests : BaseHandlerTest
     }
 
     private static UpdateChipSetCommandHandler HandlerFor(TestDbContext context, ChampionshipRole role) =>
-        new(context, new FakeChampionshipContext(role));
+        new(context, new FakeChampionshipContext(role), Substitute.For<IChampionshipActivityNotifier>());
 
     [Fact]
     public async Task Handle_Should_Fail_WhenCallerIsOnlyATableManager()

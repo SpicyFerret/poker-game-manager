@@ -1,6 +1,8 @@
 using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Abstractions.Realtime;
+using Application.Championships;
 using Domain.Championships;
 using Domain.Users;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +13,8 @@ namespace Application.Championships.Members.Add;
 internal sealed class AddMemberCommandHandler(
     IApplicationDbContext context,
     IChampionshipContext championshipContext,
-    IDateTimeProvider dateTimeProvider)
+    IDateTimeProvider dateTimeProvider,
+    IChampionshipActivityNotifier notifier)
     : ICommandHandler<AddMemberCommand>
 {
     public async Task<Result> Handle(AddMemberCommand command, CancellationToken cancellationToken)
@@ -58,10 +61,16 @@ internal sealed class AddMemberCommandHandler(
             ChampionshipId = command.ChampionshipId,
             UserId = userId,
             Role = command.Role,
-            JoinedAtUtc = dateTimeProvider.UtcNow
+            JoinedAtUtc = dateTimeProvider.UtcNow,
+            DisplayOrder = await ChampionshipMemberOrdering.NextDisplayOrderAsync(
+                context,
+                userId,
+                cancellationToken)
         });
 
         await context.SaveChangesAsync(cancellationToken);
+
+        await notifier.NotifyAsync(command.ChampionshipId, cancellationToken);
 
         return Result.Success();
     }

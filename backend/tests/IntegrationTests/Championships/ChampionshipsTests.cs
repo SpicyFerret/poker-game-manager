@@ -334,4 +334,90 @@ public sealed class ChampionshipsTests(IntegrationTestWebAppFactory factory) : B
     private sealed record ChipSetDto(Guid Id, string Name, long TotalUnits, DenominationDto[] Denominations);
 
     private sealed record DenominationDto(Guid Id, int FaceValue, int EffectiveValue, int Quantity, string? Colour);
+
+    [Fact]
+    public async Task Reorder_Should_ChangeTheOrderTheListComesBackIn()
+    {
+        // Arrange
+        (Guid _, AccessTokens tokens) = await RegisterAndLoginAsync();
+        Authenticate(tokens.AccessToken);
+        Guid first = await CreateChampionshipAsync("Primeira");
+        Guid second = await CreateChampionshipAsync("Segunda");
+        Guid third = await CreateChampionshipAsync("Terceira");
+
+        // Act — the newest-created reordered to the very top.
+        HttpResponseMessage response = await HttpClient.PutAsJsonAsync(
+            "championships/order",
+            new { championshipIds = new[] { third, first, second } });
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+
+        Summary[]? mine = await HttpClient.GetFromJsonAsync<Summary[]>("championships");
+        mine!.Select(c => c.Id).ShouldBe([third, first, second]);
+    }
+
+    [Fact]
+    public async Task Reorder_Should_RefuseAListMissingAChampionship()
+    {
+        // Arrange
+        (Guid _, AccessTokens tokens) = await RegisterAndLoginAsync();
+        Authenticate(tokens.AccessToken);
+        Guid first = await CreateChampionshipAsync("Primeira");
+        await CreateChampionshipAsync("Segunda");
+
+        // Act — only one of the two the caller belongs to.
+        HttpResponseMessage response = await HttpClient.PutAsJsonAsync(
+            "championships/order",
+            new { championshipIds = new[] { first } });
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task Reorder_Should_RefuseAChampionshipThatIsNotTheCallers()
+    {
+        // Arrange
+        (Guid _, AccessTokens ownerTokens) = await RegisterAndLoginAsync();
+        Authenticate(ownerTokens.AccessToken);
+        Guid notMine = await CreateChampionshipAsync("Não é minha");
+
+        (Guid _, AccessTokens callerTokens) = await RegisterAndLoginAsync();
+        Authenticate(callerTokens.AccessToken);
+        Guid mine = await CreateChampionshipAsync("Minha");
+
+        // Act — smuggling in someone else's championship id.
+        HttpResponseMessage response = await HttpClient.PutAsJsonAsync(
+            "championships/order",
+            new { championshipIds = new[] { mine, notMine } });
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task Reorder_Should_PlaceANewlyJoinedChampionshipAfterExistingOnes()
+    {
+        // Arrange
+        (Guid _, AccessTokens ownerTokens) = await RegisterAndLoginAsync();
+        Authenticate(ownerTokens.AccessToken);
+        Guid theirs = await CreateChampionshipAsync("Deles");
+
+        HttpResponseMessage created = await HttpClient.PostAsJsonAsync(
+            $"championships/{theirs}/invites",
+            new { role = "Player", expiresAtUtc = (DateTime?)null, maxUses = (int?)null });
+        Invite? invite = await created.Content.ReadFromJsonAsync<Invite>();
+
+        (Guid _, AccessTokens callerTokens) = await RegisterAndLoginAsync();
+        Authenticate(callerTokens.AccessToken);
+        Guid mine = await CreateChampionshipAsync("Minha");
+
+        // Act — joining a second championship after already having one.
+        await HttpClient.PostAsJsonAsync("championships/join", new { code = invite!.Code });
+
+        // Assert — the one already there stays first; the new one lands after it.
+        Summary[]? mine2 = await HttpClient.GetFromJsonAsync<Summary[]>("championships");
+        mine2!.Select(c => c.Id).ShouldBe([mine, theirs]);
+    }
 }

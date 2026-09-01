@@ -1,4 +1,5 @@
 using Application.Abstractions.Authentication;
+using Application.Abstractions.Realtime;
 using Application.Championships.Join;
 using Application.UnitTests.Abstractions;
 using Domain.Championships;
@@ -54,7 +55,9 @@ public sealed class JoinByCodeCommandHandlerTests : BaseHandlerTest
         IDateTimeProvider clock = Substitute.For<IDateTimeProvider>();
         clock.UtcNow.Returns(Now);
 
-        return new JoinByCodeCommandHandler(context, userContext, clock);
+        IChampionshipActivityNotifier notifier = Substitute.For<IChampionshipActivityNotifier>();
+
+        return new JoinByCodeCommandHandler(context, userContext, clock, notifier);
     }
 
     [Theory]
