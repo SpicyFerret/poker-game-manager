@@ -1,6 +1,7 @@
 using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Abstractions.Realtime;
 using Application.Tables.Counting;
 using Domain.Championships;
 using Domain.ChipSets;
@@ -23,7 +24,8 @@ public sealed record SettleTableCommand(Guid ChampionshipId, Guid TableId) : ICo
 internal sealed class SettleTableCommandHandler(
     IApplicationDbContext context,
     IChampionshipContext championshipContext,
-    IDateTimeProvider dateTimeProvider)
+    IDateTimeProvider dateTimeProvider,
+    IChampionshipActivityNotifier notifier)
     : ICommandHandler<SettleTableCommand>
 {
     public async Task<Result> Handle(SettleTableCommand command, CancellationToken cancellationToken)
@@ -153,6 +155,8 @@ internal sealed class SettleTableCommandHandler(
         table.ClosedAtUtc = now;
 
         await context.SaveChangesAsync(cancellationToken);
+
+        await notifier.NotifyAsync(command.ChampionshipId, cancellationToken);
 
         return Result.Success();
     }

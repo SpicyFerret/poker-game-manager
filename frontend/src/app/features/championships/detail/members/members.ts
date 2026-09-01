@@ -1,8 +1,10 @@
-import { Component, OnInit, inject, input, output, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, input, output, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
+import { debounceTime } from 'rxjs';
 
 import { describeError } from '../../../../core/api/problem-details';
 import {
@@ -14,6 +16,7 @@ import {
 } from '../../../../core/championships/championship.models';
 import { ChampionshipsService } from '../../../../core/championships/championships.service';
 import { RoleLabelPipe } from '../../../../core/championships/role-label.pipe';
+import { RealtimeService } from '../../../../core/realtime/realtime.service';
 import { Confirm } from '../../../../shared/confirm/confirm.service';
 import { AddMemberDialog, AddMemberResult } from './add-member-dialog';
 
@@ -27,6 +30,8 @@ export class MembersTab implements OnInit {
   private readonly championships = inject(ChampionshipsService);
   private readonly dialog = inject(MatDialog);
   private readonly confirm = inject(Confirm);
+  private readonly realtime = inject(RealtimeService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly championshipId = input.required<string>();
   readonly callerRole = input.required<ChampionshipRole>();
@@ -40,6 +45,13 @@ export class MembersTab implements OnInit {
 
   ngOnInit(): void {
     this.load();
+
+    // Someone else adding, removing, or re-ranking a member shows up here
+    // without waiting for a manual refresh.
+    this.realtime
+      .watch(this.championshipId())
+      .pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.load());
   }
 
   protected canAdminister(): boolean {

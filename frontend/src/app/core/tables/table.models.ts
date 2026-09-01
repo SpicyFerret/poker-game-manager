@@ -115,6 +115,16 @@ export function isActive(status: TableStatus): boolean {
 }
 
 /**
+ * A table whose night is over and whose result lives on in the history tab
+ * from here on. The Mesas tab has nothing left to say about it, so it drops
+ * out there entirely rather than sitting around with a dimmed, decorative
+ * card — `Cancelled` is not included here because it has nowhere else to go.
+ */
+export function isFinished(status: TableStatus): boolean {
+  return status === 'Settled' || status === 'Closed';
+}
+
+/**
  * Active tables first, then newest first within each group. On a game night the
  * table in progress is the only one anyone wants, and it should never be buried
  * under months of finished ones.

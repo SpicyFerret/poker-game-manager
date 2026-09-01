@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, input, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, input, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -6,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { Observable } from 'rxjs';
+import { Observable, debounceTime } from 'rxjs';
 
 import { describeError } from '../../../../core/api/problem-details';
 import {
@@ -15,6 +16,7 @@ import {
   atLeast,
 } from '../../../../core/championships/championship.models';
 import { ChampionshipsService } from '../../../../core/championships/championships.service';
+import { RealtimeService } from '../../../../core/realtime/realtime.service';
 import { CHIP_COLOURS, ChipColour, chipColour } from '../../../../shared/chip-colours';
 import {
   ChipScanCandidate,
@@ -42,6 +44,8 @@ export class ChipSetsTab implements OnInit {
   private readonly championships = inject(ChampionshipsService);
   private readonly confirm = inject(Confirm);
   private readonly matDialog = inject(MatDialog);
+  private readonly realtime = inject(RealtimeService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly championshipId = input.required<string>();
   readonly callerRole = input.required<ChampionshipRole>();
@@ -60,6 +64,13 @@ export class ChipSetsTab implements OnInit {
 
   ngOnInit(): void {
     this.load();
+
+    // A maleta someone else created, edited, or deleted shows up here without
+    // waiting for a manual refresh.
+    this.realtime
+      .watch(this.championshipId())
+      .pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.load());
   }
 
   protected get denominations(): FormArray {

@@ -435,6 +435,14 @@
         <source>Não foi possível carregar seus campeonatos.</source>
         <target>Your championships could not be loaded.</target>
       </trans-unit>
+      <trans-unit id="championships.dragHandle" datatype="html">
+        <source>Arrastar para reordenar</source>
+        <target>Drag to reorder</target>
+      </trans-unit>
+      <trans-unit id="championships.reorderFailed" datatype="html">
+        <source>Não foi possível salvar a nova ordem.</source>
+        <target>The new order could not be saved.</target>
+      </trans-unit>
       <trans-unit id="tableStatus.draft" datatype="html">
         <source>Rascunho</source>
         <target>Draft</target>

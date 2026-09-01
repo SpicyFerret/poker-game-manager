@@ -5,6 +5,7 @@ import {
   countUnits,
   formatDuration,
   isActive,
+  isFinished,
   issuedUnits,
   offBy,
   remainingUnits,
@@ -233,4 +234,20 @@ describe('tableMood', () => {
     expect(tableMood('Closed')).toBe('done');
     expect(tableMood('Cancelled')).toBe('done');
   });
+});
+
+describe('isFinished', () => {
+  it.each<TableStatus>(['Settled', 'Closed'])(
+    'should count %s as finished — its result lives in the history tab now',
+    (status) => {
+      expect(isFinished(status)).toBe(true);
+    },
+  );
+
+  it.each<TableStatus>(['Draft', 'Open', 'Running', 'Counting', 'Reconciled', 'Cancelled'])(
+    'should not count %s as finished',
+    (status) => {
+      expect(isFinished(status)).toBe(false);
+    },
+  );
 });
