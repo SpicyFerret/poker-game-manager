@@ -52,6 +52,8 @@ internal sealed class Tables : IEndpoint
 
     public sealed record DeleteTableRequest(string ConfirmName);
 
+    public sealed record SettleRequest(bool Force);
+
     public sealed record DecideJoinRequest(bool Approved);
 
     public sealed record CashOutRequest(Guid TablePlayerId, IReadOnlyList<ChipCountEntry> Counts);
@@ -267,11 +269,12 @@ internal sealed class Tables : IEndpoint
         group.MapPost("{tableId:guid}/settlement", async (
             Guid championshipId,
             Guid tableId,
+            SettleRequest? request,
             ICommandHandler<SettleTableCommand> handler,
             CancellationToken cancellationToken) =>
         {
             Result result = await handler.Handle(
-                new SettleTableCommand(championshipId, tableId),
+                new SettleTableCommand(championshipId, tableId, request?.Force ?? false),
                 cancellationToken);
 
             return result.Match(Results.NoContent, CustomResults.Problem);

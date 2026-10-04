@@ -60,6 +60,7 @@ describe('LiveTable', () => {
       stock: [],
       totalPaidIn: 100,
       canManage: false,
+      canForceSettle: false,
       myPlayerId: 'p1',
       pendingStacks: [],
       ...overrides,

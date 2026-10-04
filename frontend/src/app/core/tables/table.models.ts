@@ -86,6 +86,8 @@ export interface TableDetail {
   stock: ChipStock[];
   totalPaidIn: number;
   canManage: boolean;
+  /** Owner only: may settle although the count does not balance. */
+  canForceSettle: boolean;
   myPlayerId: string | null;
 
   /**

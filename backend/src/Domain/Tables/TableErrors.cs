@@ -86,6 +86,10 @@ public static class TableErrors
         "Tables.CountsDoNotBalance",
         "The chips counted do not match what left the case. Settle up only once they do");
 
+    public static readonly Error OnlyTheOwnerCanForceSettle = Error.Forbidden(
+        "Tables.OnlyTheOwnerCanForceSettle",
+        "Only the championship owner can settle a table whose count does not balance");
+
     public static readonly Error StillWaitingOnCounts = Error.Conflict(
         "Tables.StillWaitingOnCounts",
         "Some players have not reported what they are holding yet");
