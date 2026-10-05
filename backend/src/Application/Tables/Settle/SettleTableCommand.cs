@@ -18,8 +18,13 @@ namespace Application.Tables.Settle;
 /// Only possible once every chip that left the case has been counted back.
 /// Settling against an incomplete count would make someone pay for chips nobody
 /// found.
+///
+/// The championship's owner can override that with <paramref name="Force"/> when
+/// the missing chips are not coming back (a chip lost, someone gone home with
+/// one). Everyone still has to have counted, and the balances are then taken as
+/// reported, so they will not sum to zero by the value of the missing chips.
 /// </summary>
-public sealed record SettleTableCommand(Guid ChampionshipId, Guid TableId) : ICommand;
+public sealed record SettleTableCommand(Guid ChampionshipId, Guid TableId, bool Force = false) : ICommand;
 
 internal sealed class SettleTableCommandHandler(
     IApplicationDbContext context,
@@ -69,7 +74,15 @@ internal sealed class SettleTableCommandHandler(
 
         if (!reconciliation.ChipsBalance)
         {
-            return Result.Failure(TableErrors.CountsDoNotBalance);
+            if (!command.Force)
+            {
+                return Result.Failure(TableErrors.CountsDoNotBalance);
+            }
+
+            if (caller.Value < ChampionshipRole.Owner)
+            {
+                return Result.Failure(TableErrors.OnlyTheOwnerCanForceSettle);
+            }
         }
 
         Championship championship = await context.Championships

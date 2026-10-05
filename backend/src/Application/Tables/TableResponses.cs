@@ -96,6 +96,9 @@ public sealed record TableDetailResponse
     /// <summary>Whether the caller may start, deal, or record a trade here.</summary>
     public bool CanManage { get; init; }
 
+    /// <summary>Whether the caller may settle even though the count does not balance.</summary>
+    public bool CanForceSettle { get; init; }
+
     /// <summary>The caller's own seat, when they are at this table.</summary>
     public Guid? MyPlayerId { get; init; }
 

@@ -1135,6 +1135,18 @@
         <source>A contagem não bate com o que saiu da maleta.</source>
         <target>The count does not match what left the case.</target>
       </trans-unit>
+      <trans-unit id="confirm.forceSettleTitle" datatype="html">
+        <source>Fechar a conta mesmo sem bater?</source>
+        <target>Settle up even though it does not balance?</target>
+      </trans-unit>
+      <trans-unit id="confirm.forceSettleMessage" datatype="html">
+        <source>A contagem não bate com o que saiu da maleta. A conta será calculada com as fichas informadas, e as que faltam não serão cobradas de ninguém. É feito uma vez só.</source>
+        <target>The count does not match what left the case. The settlement will be worked out from the chips reported, and the missing ones will not be charged to anyone. This can only be done once.</target>
+      </trans-unit>
+      <trans-unit id="table.forceSettle" datatype="html">
+        <source>Fechar assim mesmo</source>
+        <target>Settle anyway</target>
+      </trans-unit>
       <trans-unit id="table.settleFailed" datatype="html">
         <source>Não foi possível fechar a conta.</source>
         <target>The table could not be settled.</target>

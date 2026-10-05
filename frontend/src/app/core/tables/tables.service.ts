@@ -176,8 +176,8 @@ export class TablesService {
    * Works out who pays whom and where everyone finished. Once only, and only
    * once the count balances against what left the case.
    */
-  settle(championshipId: string, tableId: string): Observable<void> {
-    return this.http.post<void>(`${this.base(championshipId)}/${tableId}/settlement`, {});
+  settle(championshipId: string, tableId: string, force = false): Observable<void> {
+    return this.http.post<void>(`${this.base(championshipId)}/${tableId}/settlement`, { force });
   }
 
   settlement(championshipId: string, tableId: string): Observable<Settlement> {

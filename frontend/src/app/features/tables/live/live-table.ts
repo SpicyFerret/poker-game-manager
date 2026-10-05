@@ -1043,6 +1043,29 @@ export class LiveTable implements OnInit {
   protected settle(): void {
     const reconciliation = this.reconciliation();
 
+    // Everyone has counted but the chips do not tally: the owner may close the
+    // night anyway, knowing the missing chips are simply not accounted for.
+    if (
+      reconciliation?.everyoneHasCounted &&
+      !reconciliation.chipsBalance &&
+      this.table()?.canForceSettle
+    ) {
+      this.confirm
+        .ask({
+          title: $localize`:@@confirm.forceSettleTitle:Fechar a conta mesmo sem bater?`,
+          message: $localize`:@@confirm.forceSettleMessage:A contagem não bate com o que saiu da maleta. A conta será calculada com as fichas informadas, e as que faltam não serão cobradas de ninguém. É feito uma vez só.`,
+          destructive: true,
+          confirmLabel: $localize`:@@table.forceSettle:Fechar assim mesmo`,
+        })
+        .subscribe(() => {
+          this.run(this.tables.settle(this.championshipId(), this.tableId(), true), {
+            fallback: $localize`:@@table.settleFailed:Não foi possível fechar a conta.`,
+          });
+        });
+
+      return;
+    }
+
     this.confirm
       .ask({
         title: $localize`:@@confirm.settleTitle:Fechar a conta da mesa?`,

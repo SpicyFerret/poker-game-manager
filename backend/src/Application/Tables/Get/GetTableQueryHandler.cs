@@ -117,6 +117,7 @@ internal sealed class GetTableQueryHandler(
             ],
             TotalPaidIn = playerResponses.Sum(p => p.PaidIn),
             CanManage = canManage,
+            CanForceSettle = caller.Value >= ChampionshipRole.Owner,
             MyPlayerId = myPlayerId,
             // Only while the table is live. A notice about a night that has
             // already been counted and settled is noise, not a check.

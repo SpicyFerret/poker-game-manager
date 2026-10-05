@@ -264,6 +264,36 @@ public sealed class SettlementTests(IntegrationTestWebAppFactory factory) : Base
     }
 
     [Fact]
+    public async Task Settle_Should_AllowTheOwnerToForce_WhenTheChipsDoNotAddUp()
+    {
+        (Guid championshipId, Guid tableId, AccessTokens _, AccessTokens _) = await StartedTableAsync();
+
+        await HttpClient.PostAsJsonAsync($"championships/{championshipId}/tables/{tableId}/counting", new { });
+
+        TableDetail? table = await GetTableAsync(championshipId, tableId);
+
+        var shortCount = table!.Stock
+            .Where(s => s.Issued > 0)
+            .ToDictionary(s => s.DenominationId, s => s.Issued);
+        shortCount[table.Stock.OrderBy(s => s.EffectiveValue).First(s => s.Issued > 0).DenominationId] -= 1;
+
+        await ReportAsync(championshipId, tableId, table.Players[0].TablePlayerId,
+            table.Stock.ToDictionary(s => s.DenominationId, _ => 0));
+        await ReportAsync(championshipId, tableId, table.Players[1].TablePlayerId, shortCount);
+
+        HttpResponseMessage plain = await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/tables/{tableId}/settlement", new { });
+        plain.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+
+        HttpResponseMessage forced = await HttpClient.PostAsJsonAsync(
+            $"championships/{championshipId}/tables/{tableId}/settlement", new { force = true });
+        forced.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+
+        TableDetail? after = await GetTableAsync(championshipId, tableId);
+        after!.Status.ShouldBe("Settled");
+    }
+
+    [Fact]
     public async Task Count_Should_BeReplaceableUntilItBalances()
     {
         // Correcting a miscount overwrites it rather than adding to it.
